@@ -1,0 +1,227 @@
+﻿@model eBookStore.ViewModels.BookViewModel
+@using eBookStore.Models
+
+@{ Layout = null; }
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>HomePage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #0073e6;
+            margin: 20px 0;
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+            .search-bar input[type="text"] {
+                width: 300px;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            .search-bar input[type="button"] {
+                padding: 10px 20px;
+                margin-left: 10px;
+                border: none;
+                border-radius: 5px;
+                background-color: #0073e6;
+                color: white;
+                cursor: pointer;
+            }
+
+                .search-bar input[type="button"]:hover {
+                    background-color: #005bb5;
+                }
+
+        .book-container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-item {
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            padding: 20px 0;
+        }
+
+            .book-item img {
+                height: 300px;
+                width: auto;
+                margin-right: 20px;
+                border-radius: 5px;
+            }
+
+
+        .book-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+            .book-details div {
+                margin-bottom: 5px;
+            }
+        /* Style for the buttons */
+        .book-container div input[type="button"] {
+            padding: 12px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Buy Now Button */
+        .book-container div input[value="Buy Now"] {
+            background-color: #28a745;
+            color: white;
+        }
+
+            .book-container div input[value="Buy Now"]:hover {
+                background-color: #218838;
+                transform: scale(1.05);
+            }
+
+        /* Add to Cart Button */
+        .book-container div input[value="Add to Cart"] {
+            background-color: #ffc107;
+            color: black;
+        }
+
+            .book-container div input[value="Add to Cart"]:hover {
+                background-color: #e0a800;
+                transform: scale(1.05);
+            }
+
+        /* Borrow Button */
+        .book-container div input[value="Borrow"] {
+            background-color: #007bff;
+            color: white;
+        }
+
+            .book-container div input[value="Borrow"]:hover {
+                background-color: #0056b3;
+                transform: scale(1.05);
+            }
+
+        /* Additional hover effects */
+        .book-container div input[type="button"]:active {
+            transform: scale(1);
+        }
+
+
+        .line-through {
+            text-decoration: line-through;
+            color: red;
+        }
+
+        .book-item:last-child {
+            border-bottom: none;
+        }
+
+        .book-price {
+            font-weight: bold;
+            color: green;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Welcome to eBook Store</h1>
+    </div>
+    <div class="search-bar">
+        <input id="Text1" type="text" placeholder="Search for books..." />
+        <input id="Button1" type="button" value="Search" />
+    </div>
+
+    <div class="book-container">
+        @foreach (Book obj in Model.booksList)
+        {
+        <div class="book-item">
+            <img src="@obj.coverImagePath" alt="Book Cover" loading="lazy" />
+
+            <div class="book-details">
+                <div><strong>Title:</strong> @obj.coverImagePath</div>
+                <div><strong>Title:</strong> @obj.title</div>
+                <div><strong>Authors:</strong> @string.Join(", ", obj.authors.Select(a => a.authorName))</div>
+                <div><strong>Publisher:</strong> @obj.publisher</div>
+                <div>
+                    <strong>Borrowing Price:</strong>
+                    @if (obj.priceSaleForBorrowing.HasValue)
+                    {
+        <span class="line-through">@obj.priceForBorrowing</span> }
+    else
+    {
+        @obj.priceForBorrowing}
+                </div>
+                <div>
+                    <strong>Buying Price:</strong>
+                    @if (obj.priceSaleForBuying.HasValue)
+                    {
+        <span class="line-through">@obj.priceForBuying</span> }
+    else
+    {
+        @obj.priceForBuying}
+                </div>
+                <div class="book-price">Sale Price: @obj.priceSaleForBuying ?? obj.priceForBuying</div>
+                <div><strong>Year Published:</strong> @obj.yearOfPublishing</div>
+                <div><strong>Age Limitation:</strong> @obj.ageLimitation</div>
+                <div><strong>In Stock:</strong> @obj.quantityInStock</div>
+                <div><strong>Popularity:</strong> @obj.popularity</div>
+                <div><strong>Sale Date:</strong> @obj.dateSale.ToString()</div>
+            </div>
+            <div>
+                <input type="button" name="name" value="Buy Now" />
+                <input type="button" name="name" value="Add to Cart" />
+                <input type="button" name="name" value="Borrow" />
+            </div>
+        </div>}
+
+    <div class="rating-section">
+        <div class="user-rating">
+            <div><strong>Name: </strong>username1</div>
+            <div><strong>Rating: </strong>5</div>
+            <div><strong>Comment: </strong> This is a comment</div>
+        </div>
+        <div class="user-rating">
+            <div><strong>Name: </strong>username1</div>
+            <div><strong>Rating: </strong>5</div>
+            <div><strong>Comment: </strong> This is a comment</div>
+        </div>
+        <div class="user-rating">
+            <div><strong>Name: </strong>username1</div>
+            <div><strong>Rating: </strong>5</div>
+            <div><strong>Comment: </strong> This is a comment</div>
+        </div>
+    </div>
+        
+    </div>
+</body>
+</html>
