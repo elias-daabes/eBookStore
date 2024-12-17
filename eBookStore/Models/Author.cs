@@ -8,8 +8,8 @@ namespace eBookStore.Models
 {
     public class Author
     {
-        //[Required(ErrorMessage = "Author name can not be empty.")]
-        //[StringLength(100, ErrorMessage = "Auther name cannot exceed 100 characters.")]
+        [Required(ErrorMessage = "Author name can not be empty.")]
+        [StringLength(100, ErrorMessage = "Auther name cannot exceed 50 characters.")]
         public string authorName { get; set; }
         public int bookId { get; set; }
     }

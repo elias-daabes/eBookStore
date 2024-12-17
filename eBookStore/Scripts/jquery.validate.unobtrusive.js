@@ -75,7 +75,7 @@
             container.addClass("validation-summary-errors").removeClass("validation-summary-valid");
 
             $.each(validator.errorList, function () {
-                $("<li />").html(this.message).appendTo(list);
+                $("<li/>").html(this.message).appendTo(list);
             });
         }
     }
@@ -263,7 +263,7 @@
         /// mmmm is the parameter name).</param>
         /// <param name="fn" type="Function">The function to call, which adapts the values from the HTML
         /// attributes into jQuery Validate rules and/or messages.</param>
-        /// <returns type="jQuery.validator.unobtrusive.adapters" />
+        /// <returns type="jQuery.validator.unobtrusive.adapters"/>
         if (!fn) {  // Called with no params, just a function
             fn = params;
             params = [];
@@ -279,7 +279,7 @@
         /// in the data-val-nnnn HTML attribute (where nnnn is the adapter name).</param>
         /// <param name="ruleName" type="String" optional="true">[Optional] The name of the jQuery Validate rule. If not provided, the value
         /// of adapterName will be used instead.</param>
-        /// <returns type="jQuery.validator.unobtrusive.adapters" />
+        /// <returns type="jQuery.validator.unobtrusive.adapters"/>
         return this.add(adapterName, function (options) {
             setValidationValues(options, ruleName || adapterName, true);
         });
@@ -301,7 +301,7 @@
         /// contains the minimum value. The default is "min".</param>
         /// <param name="maxAttribute" type="String" optional="true">[Optional] The name of the HTML attribute that
         /// contains the maximum value. The default is "max".</param>
-        /// <returns type="jQuery.validator.unobtrusive.adapters" />
+        /// <returns type="jQuery.validator.unobtrusive.adapters"/>
         return this.add(adapterName, [minAttribute || "min", maxAttribute || "max"], function (options) {
             var min = options.params.min,
                 max = options.params.max;
@@ -327,7 +327,7 @@
         /// The default is "val".</param>
         /// <param name="ruleName" type="String" optional="true">[Optional] The name of the jQuery Validate rule. If not provided, the value
         /// of adapterName will be used instead.</param>
-        /// <returns type="jQuery.validator.unobtrusive.adapters" />
+        /// <returns type="jQuery.validator.unobtrusive.adapters"/>
         return this.add(adapterName, [attribute || "val"], function (options) {
             setValidationValues(options, ruleName || adapterName, options.params[attribute]);
         });

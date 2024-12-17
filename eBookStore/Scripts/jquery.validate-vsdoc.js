@@ -113,7 +113,7 @@ $.extend($.fn, {
 		/// Checks if the selected form is valid or if all selected elements are valid.
 		/// validate() needs to be called on the form before checking it using this method.
 		/// </summary>
-		/// <returns type="Boolean" />
+		/// <returns type="Boolean"/>
 
         if ( $(this[0]).is('form')) {
             return this.validate().form();
@@ -231,7 +231,7 @@ $.validator.format = function(source, params) {
 	/// <param name="params" type="String">
 	/// The first argument to insert, or an array of Strings to insert
 	/// </param>
-	/// <returns type="String" />
+	/// <returns type="String"/>
 
 	if ( arguments.length == 1 ) 
 		return function() {
@@ -379,7 +379,7 @@ $.extend($.validator, {
 			/// Validates the form, returns true if it is valid, false otherwise.
 			/// This behaves as a normal submit event, but returns the result.
 			/// </summary>
-			/// <returns type="Boolean" />
+			/// <returns type="Boolean"/>
 
 			this.checkForm();
 			$.extend(this.submitted, this.errorMap);
@@ -407,7 +407,7 @@ $.extend($.validator, {
 			/// <param name="element" type="Selector">
 			/// An element to validate, must be inside the validated form.
 			/// </param>
-			/// <returns type="Boolean" />
+			/// <returns type="Boolean"/>
 
 			element = this.clean( element );
 			this.lastElement = element;
@@ -481,7 +481,7 @@ $.extend($.validator, {
 			/// a single element, only that element is counted. Most useful in combination with the
 			/// invalidHandler-option.
 			/// </summary>
-			/// <returns type="Number" />
+			/// <returns type="Number"/>
 
 			return this.objectLength(this.invalid);
 		},

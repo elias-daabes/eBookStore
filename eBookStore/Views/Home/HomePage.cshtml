@@ -7,7 +7,7 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width"/>
     <title>HomePage</title>
     <style>
         body {
@@ -157,15 +157,15 @@
         <h1>Welcome to eBook Store</h1>
     </div>
     <div class="search-bar">
-        <input id="Text1" type="text" placeholder="Search for books..." />
-        <input id="Button1" type="button" value="Search" />
+        <input id="Text1" type="text" placeholder="Search for books..."/>
+        <input id="Button1" type="button" value="Search"/>
     </div>
 
     <div class="book-container">
         @foreach (Book obj in Model.booksList)
         {
         <div class="book-item">
-            <img src="@obj.coverImagePath" alt="Book Cover" loading="lazy" />
+            <img src="@obj.coverImagePath" alt="Book Cover" loading="lazy"/>
 
             <div class="book-details">
                 <div><strong>Title:</strong> @obj.coverImagePath</div>
@@ -198,9 +198,9 @@
                 <div><strong>Sale Date:</strong> @obj.dateSale.ToString()</div>
             </div>
             <div>
-                <input type="button" name="name" value="Buy Now" />
-                <input type="button" name="name" value="Add to Cart" />
-                <input type="button" name="name" value="Borrow" />
+                <input type="button" name="name" value="Buy Now"/>
+                <input type="button" name="name" value="Add to Cart"/>
+                <input type="button" name="name" value="Borrow"/>
             </div>
         </div>}
 
