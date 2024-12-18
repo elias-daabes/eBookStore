@@ -103,7 +103,49 @@
 
         #authors-list div {
             margin-bottom: 10px;
+            margin-left: 1px;
         }
+
+        /* Container for authors list */
+        #authors-list {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px; /* Space between each author input */
+        }
+
+            /* Div that contains each author input and button */
+            #authors-list div {
+
+                display: flex;
+                align-items: center;
+
+                gap: 10px; /* Space between input and button */
+            }
+
+            /* Styling for the textbox */
+            #authors-list input[type="text"] {
+                width: 300px; /* Adjust the width as needed */
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 14px;
+                outline: none;
+                transition: border-color 0.3s;
+            }
+
+
+            #authors{
+                border: 1px dashed lightgray;
+                width: 450px;
+                margin-left: 200px;
+            }
+
+            #authors button {
+                margin-top:10px;
+               margin-left: 12px;
+            }
+
     </style>
 </head>
 <body>
@@ -113,20 +155,22 @@
 
             <strong>id:</strong> @Html.TextBoxFor(obj => obj.book.id) @Html.ValidationMessageFor(obj => obj.book.id)<br/>
             <strong>title:</strong> @Html.TextBoxFor(obj => obj.book.title) @Html.ValidationMessageFor(obj => obj.book.title)<br/>
-            <div>
-                <strong>Authors:</strong>
+            <strong>Authors:</strong><br />
+            <div id="authors">
+                 <button type="button" id="add-author">Add Author</button>
                 <div id="authors-list">
-                    @for (int i = 0; i < Model.book.authors.Count; i++)
+                    @Html.TextBoxFor(m => m.book.authors[0].authorName,"", new { placeholder = "Author Name" })
+                    @Html.ValidationMessageFor(m => m.book.authors[0].authorName, "", new { @class = "text-danger" })
+                    @for (int i = 1; i < Model.book.authors.Count; i++)
                     {
-            <div>
-                @Html.TextBoxFor(m => m.book.authors[i].authorName, new { placeholder = "Author Name" })
-                @Html.ValidationMessageFor(m => m.book.authors[i].authorName, "", new { @class = "text-danger" })
-                <button type="button" class="remove-author" onclick="removeAuthor(this)">Remove</button>
-            </div>}
+                        <div>
+                            @Html.TextBoxFor(m => m.book.authors[i].authorName, new { placeholder = "Author Name" })
+                            <button type="button" class="remove-author" onclick="removeAuthor(this)">Remove</button>
+                            @Html.ValidationMessageFor(m => m.book.authors[i].authorName, "", new { @class = "text-danger" })
+                        </div>}
+           
                 </div>
-                <button type="button" id="add-author">Add Author</button>
             </div>
-            <button type="button" id="add-author">Add Author</button><br/>
             <strong>publisher:</strong> @Html.TextBoxFor(obj => obj.book.publisher) @Html.ValidationMessageFor(obj => obj.book.publisher) <br/>
             <strong>price For Borrowing:</strong> @Html.TextBoxFor(obj => obj.book.priceForBorrowing) @Html.ValidationMessageFor(obj => obj.book.priceForBorrowing) <br/>
             <strong>price For Buying:</strong> @Html.TextBoxFor(obj => obj.book.priceForBuying) @Html.ValidationMessageFor(obj => obj.book.priceForBuying) <br/>
@@ -144,27 +188,27 @@
 
             <input id = "Submit1" type = "submit" value = "Add Book"/>
         }
-        </div >
-        <div >
+        </div>
+        <div>
         @using (Html.BeginForm("SearchBookResult", "Book", FormMethod.Get))
         {
             <label > Enter book title to search:</label >
             <input id = "searchTerm" name = "searchTerm" type = "text"/>
             <input id = "Submit1" type = "submit" value = "Search Book"/>
         }
-        </div >
+        </div>
         @using (Html.BeginForm("Enter2", "Book", FormMethod.Get))
         {
-            <div >
-            <label > Sort By:</label >< br/>
+            <div>
+            <label > Sort By:</label ><br/>
             <input type = "radio" name = "sortColumn" value = "Price" id = "sortPrice"/>
-            <label for= "sortPrice" > Price </label >< br/>
+            <label for= "sortPrice" > Price </label ><br/>
 
             <input type = "radio" name = "sortColumn" value = "yearOfPublishing" id = "sortyearOfPublishing"/>
-            <label for= "sortyearOfPublishing" > Release Year </label >< br/>
+            <label for= "sortyearOfPublishing"> Release Year </label><br/>
 
             <input type = "radio" name = "sortColumn" value = "Brand" id = "sortBrand"/>
-            <label for= "sortBrand" > Brand </label >< br/>
+            <label for= "sortBrand" > Brand </label ><br/>
 
             <!--Add more radio buttons as needed -->
             <!--< label > Order:</label >< br/>
@@ -238,7 +282,7 @@
                         <td>@obj.ageLimitation</td>
                         <td>@obj.quantityInStock</td>
                         <td>@obj.popularity</td>
-                        <td>@obj.dateSale.ToString()</td>
+                        <td>@obj.dateSale.ToString().Replace("12:00:00 AM", "");</td>
                         <td>
                             <a href="@Url.Action("EditBook", "Book", new { id = obj.id })" class="">Update</a>
                         </td>

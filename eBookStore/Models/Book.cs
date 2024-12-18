@@ -17,7 +17,11 @@ namespace eBookStore.Models
         public string title { get; set; }
 
         [Required(ErrorMessage = "At least one author is required.")]
-        public List<Author> authors { get; set; } = new List<Author>();// List of authors
+        public List<Author> authors { get; set; } = new List<Author>
+        {
+            new Author { authorName = "", bookId = -1 }
+        };
+
 
         [Required(ErrorMessage = "Publisher is required.")]
         [StringLength(100, ErrorMessage = "Publisher name cannot exceed 100 characters.")]
