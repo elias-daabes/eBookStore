@@ -63,10 +63,13 @@ namespace eBookStore.Models
 
 
         // Custom validation for SaleDate
-        public static ValidationResult ValidateDateOfSale(DateTime dateSale, ValidationContext context)
+        public static ValidationResult ValidateDateOfSale(DateTime? dateSale, ValidationContext context)
         {
+            if(dateSale == null) return ValidationResult.Success;
             var today = DateTime.Now.Date;
             var oneWeekFromToday = today.AddDays(7);
+
+
 
             if (dateSale < today || dateSale > oneWeekFromToday)
             {
@@ -75,33 +78,49 @@ namespace eBookStore.Models
 
             return ValidationResult.Success;
         }
-        
-      
+
+
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            //if ( authors.Count == 0)
-            //{
-            //    yield return new ValidationResult(
-            //        "Please add at least one author.",
-            //        new[] { nameof(authors) }  // Targeting the authors property for validation error
-            //    );
-            //}
+            // Check if dateSale is provided
+            if (dateSale.HasValue)
+            {
+                // If dateSale is provided, ensure both sale prices are provided
+                if (!priceSaleForBorrowing.HasValue)
+                {
+                    yield return new ValidationResult(
+                        "Borrowing sale price is required when a sale date is provided.",
+                        new[] { nameof(priceSaleForBorrowing) }
+                    );
+                }
+                if (!priceSaleForBuying.HasValue)
+                {
+                    yield return new ValidationResult(
+                        "Buying sale price is required when a sale date is provided.",
+                        new[] { nameof(priceSaleForBuying) }
+                    );
+                }
+            }
+
+            // Existing validation for priceSaleForBorrowing
             if (priceSaleForBorrowing >= priceForBorrowing)
             {
                 yield return new ValidationResult(
                     "Sale price for borrowing should be lower than the borrowing price.",
-                    new[] { nameof(priceSaleForBorrowing) }  
+                    new[] { nameof(priceSaleForBorrowing) }
                 );
             }
+            // Existing validation for priceSaleForBuying
             if (priceSaleForBuying >= priceForBuying)
             {
                 yield return new ValidationResult(
                     "Sale price for buying should be lower than the buying price.",
-                    new[] { nameof(priceSaleForBuying) } 
+                    new[] { nameof(priceSaleForBuying) }
                 );
             }
         }
+
 
 
     }

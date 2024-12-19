@@ -153,34 +153,34 @@
         @using (Html.BeginForm("Submit", "Book", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
 
-            <strong>id:</strong> @Html.TextBoxFor(obj => obj.book.id) @Html.ValidationMessageFor(obj => obj.book.id)<br/>
-            <strong>title:</strong> @Html.TextBoxFor(obj => obj.book.title) @Html.ValidationMessageFor(obj => obj.book.title)<br/>
+            <strong>id:</strong> @Html.TextBoxFor(obj => obj.book.id, new { placeholder = "Enter book ID *", @Value="" }) @Html.ValidationMessageFor(obj => obj.book.id)<br/>
+            <strong>title:</strong> @Html.TextBoxFor(obj => obj.book.title, "", new { placeholder = "Enter book title" }) @Html.ValidationMessageFor(obj => obj.book.title)<br/>
             <strong>Authors:</strong><br />
             <div id="authors">
                  <button type="button" id="add-author">Add Author</button>
                 <div id="authors-list">
-                    @Html.TextBoxFor(m => m.book.authors[0].authorName,"", new { placeholder = "Author Name" })
+                    @Html.TextBoxFor(m => m.book.authors[0].authorName,"", new { placeholder = "Author Name *" })
                     @Html.ValidationMessageFor(m => m.book.authors[0].authorName, "", new { @class = "text-danger" })
                     @for (int i = 1; i < Model.book.authors.Count; i++)
                     {
                         <div>
-                            @Html.TextBoxFor(m => m.book.authors[i].authorName, new { placeholder = "Author Name" })
+                            @Html.TextBoxFor(m => m.book.authors[i].authorName, new { placeholder = "Author Name *" })
                             <button type="button" class="remove-author" onclick="removeAuthor(this)">Remove</button>
                             @Html.ValidationMessageFor(m => m.book.authors[i].authorName, "", new { @class = "text-danger" })
                         </div>}
            
                 </div>
             </div>
-            <strong>publisher:</strong> @Html.TextBoxFor(obj => obj.book.publisher) @Html.ValidationMessageFor(obj => obj.book.publisher) <br/>
-            <strong>price For Borrowing:</strong> @Html.TextBoxFor(obj => obj.book.priceForBorrowing) @Html.ValidationMessageFor(obj => obj.book.priceForBorrowing) <br/>
-            <strong>price For Buying:</strong> @Html.TextBoxFor(obj => obj.book.priceForBuying) @Html.ValidationMessageFor(obj => obj.book.priceForBuying) <br/>
-            <strong>price Sale For Borrowing:</strong> @Html.TextBoxFor(obj => obj.book.priceSaleForBorrowing) @Html.ValidationMessageFor(obj => obj.book.priceSaleForBorrowing) <br/>
-            <strong>price Sale For Buying:</strong> @Html.TextBoxFor(obj => obj.book.priceSaleForBuying) @Html.ValidationMessageFor(obj => obj.book.priceSaleForBuying) <br/>
-            <strong>Release Year:</strong> @Html.TextBoxFor(obj => obj.book.yearOfPublishing) @Html.ValidationMessageFor(obj => obj.book.yearOfPublishing) <br/>
+            <strong>publisher:</strong> @Html.TextBoxFor(obj => obj.book.publisher, "", new { placeholder = "Enter publisher *" }) @Html.ValidationMessageFor(obj => obj.book.publisher) <br/>
+            <strong>price For Borrowing:</strong> @Html.TextBoxFor(obj => obj.book.priceForBorrowing, new { placeholder = "Enter borrowing price *", @Value = "" }) @Html.ValidationMessageFor(obj => obj.book.priceForBorrowing) <br/>
+            <strong>price For Buying:</strong> @Html.TextBoxFor(obj => obj.book.priceForBuying, new { placeholder = "Enter buying price *", @Value = "" }) @Html.ValidationMessageFor(obj => obj.book.priceForBuying) <br/>
+            <strong>price Sale For Borrowing:</strong> @Html.TextBoxFor(obj => obj.book.priceSaleForBorrowing, new { placeholder = "Enter sale borrowing price", @Value = "" }) @Html.ValidationMessageFor(obj => obj.book.priceSaleForBorrowing) <br/>
+            <strong>price Sale For Buying:</strong> @Html.TextBoxFor(obj => obj.book.priceSaleForBuying, new { placeholder = "Enter sale buying price", @Value = "" }) @Html.ValidationMessageFor(obj => obj.book.priceSaleForBuying) <br/>
+            <strong>Release Year:</strong> @Html.TextBoxFor(obj => obj.book.yearOfPublishing, new { placeholder = "Enter releasing year *", @Value = "" }) @Html.ValidationMessageFor(obj => obj.book.yearOfPublishing) <br/>
             @*<strong>cover Image Path:</strong> @Html.TextBoxFor(obj => obj.book.coverImagePath) @Html.ValidationMessageFor(obj => obj.book.coverImagePath) <br/>*@
             <strong>cover Image Path:</strong> <input type="file" id="=imgFile" name="imgFile"/> @Html.ValidationMessageFor(obj => obj.book.coverImagePath) <br/>
             @*<strong>age Limitation:</strong> @Html.TextBoxFor(obj => obj.book.ageLimitation) @Html.ValidationMessageFor(obj => obj.book.ageLimitation) <br/>*@
-            <strong>age Limitation:</strong> @Html.DropDownListFor(obj => obj.book.ageLimitation, new SelectList(new List<string> { "No Restriction", "8+", "12+", "16+", "18+" }), "Select an age limitation") @Html.ValidationMessageFor(obj => obj.book.ageLimitation) <br/>
+            <strong>age Limitation:</strong> @Html.DropDownListFor(obj => obj.book.ageLimitation, new SelectList(new List<string> { "No Restriction", "8+", "12+", "16+", "18+" }), "Select an age limitation *") @Html.ValidationMessageFor(obj => obj.book.ageLimitation) <br/>
             <strong > quantityInStock:</strong > @Html.TextBoxFor(obj => obj.book.quantityInStock) @Html.ValidationMessageFor(obj => obj.book.quantityInStock) <br/>
             <strong > Popularity:</strong > @Html.TextBoxFor(obj => obj.book.popularity) @Html.ValidationMessageFor(obj => obj.book.popularity) <br/>
             <strong > dateSale:</strong > @Html.EditorFor(obj => obj.book.dateSale) @Html.ValidationMessageFor(obj => obj.book.dateSale) <br/>
@@ -259,19 +259,28 @@
 
                             @for (int i = 0; i < obj.authors.Count; i++)
                             {
-                                @obj.authors[i].authorName}
+                                if (i != obj.authors.Count - 1)
+                                {
+                                    @String.Concat(@obj.authors[i].authorName, ", ");
+                                }
+                                else
+                                {
+                                    @obj.authors[i].authorName
+                                }
+
+                            }
 
                         </td>
                         <td>@obj.publisher</td>
                         <td>
-                            @if (obj.priceSaleForBorrowing.HasValue)
+                            @if (obj.priceSaleForBorrowing.HasValue && obj.dateSale.HasValue)
                             {<span style="text-decoration: line-through;">@obj.priceForBorrowing</span>}
                         else
                         { @obj.priceForBorrowing}
                         </td>
                         <td>@obj.priceSaleForBorrowing</td>
                         <td>
-                            @if (obj.priceSaleForBuying.HasValue)
+                            @if (obj.priceSaleForBuying.HasValue && obj.dateSale.HasValue)
                             {<span style="text-decoration: line-through;">@obj.priceForBuying</span>}
                         else
                         { @obj.priceForBuying}
@@ -282,7 +291,7 @@
                         <td>@obj.ageLimitation</td>
                         <td>@obj.quantityInStock</td>
                         <td>@obj.popularity</td>
-                        <td>@obj.dateSale.ToString().Replace("12:00:00 AM", "");</td>
+                        <td>@obj.dateSale.ToString().Replace("00:00:00", "")</td>
                         <td>
                             <a href="@Url.Action("EditBook", "Book", new { id = obj.id })" class="">Update</a>
                         </td>

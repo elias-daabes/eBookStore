@@ -3,6 +3,7 @@ using eBookStore.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -30,10 +31,10 @@ namespace eBookStore.Controllers
                 booksList = getBooksList()
             };
             //book.authors = new List<string>();
-            handleImageFile(book, imgFile);
             bool isValidBook = isValidBookID(book);
             if (ModelState.IsValid && isValidBook)
             {
+                handleImageFile(book, imgFile);
                 SaveBookToDB(book);
                 SaveAuthorsToDB(book);
                 bookViewModel.booksList.Add(book);
@@ -157,7 +158,7 @@ namespace eBookStore.Controllers
                                 ageLimitation = reader["ageLimitation"].ToString(),
                                 quantityInStock = Convert.ToInt32(reader["quantityInStock"]),
                                 popularity = Convert.ToInt32(reader["popularity"]),
-                                //dateSale = reader["dateSale"] != DBNull.Value ? Convert.ToDateTime(reader["dateSale"]) : (DateTime?)null                            
+                                dateSale = reader["dateSale"] != DBNull.Value ? Convert.ToDateTime(reader["dateSale"]) : (DateTime?)null                            
                             };
                             string sqlQuery2 = "SELECT * FROM authors WHERE bookId = @bookId";
                             using (SqlCommand command2 = new SqlCommand(sqlQuery2, connection))
@@ -260,8 +261,8 @@ namespace eBookStore.Controllers
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string sqlQuery = "INSERT INTO books (id, title, publisher, priceForBorrowing, priceForBuying,priceSaleForBorrowing, priceSaleForBuying, yearOfPublishing, coverImagePath,ageLimitation, quantityInStock, popularity, dateSale) VALUES " +
-                                                  "(@id, @title, @publisher, @priceForBorrowing, @priceForBuying,@priceSaleForBorrowing, @priceSaleForBuying, @yearOfPublishing, @coverImagePath,@ageLimitation, @quantityInStock, @popularity, @dateSale)";
+                string sqlQuery = "INSERT INTO books (id, title, publisher, priceForBorrowing, priceForBuying, priceSaleForBorrowing, priceSaleForBuying, yearOfPublishing, coverImagePath, ageLimitation, quantityInStock, popularity, dateSale) VALUES " +
+                                  "(@id, @title, @publisher, @priceForBorrowing, @priceForBuying, @priceSaleForBorrowing, @priceSaleForBuying, @yearOfPublishing, @coverImagePath, @ageLimitation, @quantityInStock, @popularity, @dateSale)";
                 using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
                     command.Parameters.AddWithValue("@id", book.id);
@@ -269,26 +270,25 @@ namespace eBookStore.Controllers
                     command.Parameters.AddWithValue("@publisher", book.publisher);
                     command.Parameters.AddWithValue("@priceForBorrowing", book.priceForBorrowing);
                     command.Parameters.AddWithValue("@priceForBuying", book.priceForBuying);
-                    // Check if SalepriceForBorrowing is null or has a value, and use DBNull.Value if null
-                    if (book.priceSaleForBorrowing.HasValue)
-                        command.Parameters.AddWithValue("@priceSaleForBorrowing", book.priceSaleForBorrowing.Value);
-                    else
-                        command.Parameters.AddWithValue("@SalepriceForBorrowing", DBNull.Value); // Use DBNull for null values
-                    if (book.priceSaleForBuying.HasValue)
-                        command.Parameters.AddWithValue("@priceSaleForBuying", book.priceSaleForBuying.Value);
-                    else
-                        command.Parameters.AddWithValue("@priceSaleForBuying", DBNull.Value); // Use DBNull for null values
+
+                    // Handle nullable parameters explicitly
+                    command.Parameters.Add("@priceSaleForBorrowing", SqlDbType.Decimal).Value = book.priceSaleForBorrowing.HasValue ? (object)book.priceSaleForBorrowing.Value : DBNull.Value;
+                    command.Parameters.Add("@priceSaleForBuying", SqlDbType.Decimal).Value = book.priceSaleForBuying.HasValue ? (object)book.priceSaleForBuying.Value : DBNull.Value;
+
                     command.Parameters.AddWithValue("@yearOfPublishing", book.yearOfPublishing);
                     command.Parameters.AddWithValue("@coverImagePath", book.coverImagePath);
                     command.Parameters.AddWithValue("@ageLimitation", book.ageLimitation);
                     command.Parameters.AddWithValue("@quantityInStock", book.quantityInStock);
                     command.Parameters.AddWithValue("@popularity", book.popularity);
-                    command.Parameters.AddWithValue("@dateSale",  book.dateSale);
+
+                    // Handle dateSale as nullable
+                    command.Parameters.Add("@dateSale", SqlDbType.DateTime).Value = book.dateSale.HasValue ? (object)book.dateSale.Value : DBNull.Value;
 
                     command.ExecuteNonQuery();
                 }
             }
         }
+
         private void SaveAuthorsToDB(Book book)
         {
             string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
@@ -382,8 +382,8 @@ namespace eBookStore.Controllers
                                 ageLimitation = reader["ageLimitation"].ToString(),
                                 quantityInStock = Convert.ToInt32(reader["quantityInStock"]),
                                 popularity = Convert.ToInt32(reader["popularity"]),
-                                // dateSale = Convert.ToDateTime(reader["dateSale"])
-                                //dateSale = reader["dateSale"] != DBNull.Value ? Convert.ToDateTime(reader["dateSale"]) : (DateTime?)null,
+                                dateSale = reader["dateSale"] != DBNull.Value ? (DateTime?)reader["dateSale"] : null, // This handles nullable DateTime
+
                             };
 
                             string sqlQuery2 = "SELECT * FROM authors WHERE bookId = @bookId";
