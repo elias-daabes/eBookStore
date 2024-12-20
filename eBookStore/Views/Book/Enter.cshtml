@@ -179,7 +179,6 @@
             <strong>Release Year:</strong> @Html.TextBoxFor(obj => obj.book.yearOfPublishing, new { placeholder = "Enter releasing year *", @Value = "" }) @Html.ValidationMessageFor(obj => obj.book.yearOfPublishing) <br/>
             @*<strong>cover Image Path:</strong> @Html.TextBoxFor(obj => obj.book.coverImagePath) @Html.ValidationMessageFor(obj => obj.book.coverImagePath) <br/>*@
             <strong>cover Image Path:</strong> <input type="file" id="=imgFile" name="imgFile"/> @Html.ValidationMessageFor(obj => obj.book.coverImagePath) <br/>
-            @*<strong>age Limitation:</strong> @Html.TextBoxFor(obj => obj.book.ageLimitation) @Html.ValidationMessageFor(obj => obj.book.ageLimitation) <br/>*@
             <strong>age Limitation:</strong> @Html.DropDownListFor(obj => obj.book.ageLimitation, new SelectList(new List<string> { "No Restriction", "8+", "12+", "16+", "18+" }), "Select an age limitation *") @Html.ValidationMessageFor(obj => obj.book.ageLimitation) <br/>
             <strong > quantityInStock:</strong > @Html.TextBoxFor(obj => obj.book.quantityInStock) @Html.ValidationMessageFor(obj => obj.book.quantityInStock) <br/>
             <strong > Popularity:</strong > @Html.TextBoxFor(obj => obj.book.popularity) @Html.ValidationMessageFor(obj => obj.book.popularity) <br/>
@@ -200,31 +199,37 @@
         @using (Html.BeginForm("Enter2", "Book", FormMethod.Get))
         {
             <div>
-            <label > Sort By:</label ><br/>
-            <input type = "radio" name = "sortColumn" value = "Price" id = "sortPrice"/>
-            <label for= "sortPrice" > Price </label ><br/>
+            <label > Sort By:</label >
+            <input type = "radio" name = "sortColumn" value = "BuyingPrice" id = "sortBuyingPrice" />
+            <label for= "sortPrice" > Buying price *   </label >
+
+            <input type = "radio" name = "sortColumn" value = "BorrowingPrice" id = "sortBorrowingPrice" />
+            <label for= "sortPrice" > Borrowing Price *</label >
 
             <input type = "radio" name = "sortColumn" value = "yearOfPublishing" id = "sortyearOfPublishing"/>
-            <label for= "sortyearOfPublishing"> Release Year </label><br/>
+            <label for= "sortyearOfPublishing"> Release Year </label>
 
-            <input type = "radio" name = "sortColumn" value = "Brand" id = "sortBrand"/>
-            <label for= "sortBrand" > Brand </label ><br/>
+            <input type = "radio" name = "sortColumn" value = "popularity" id = "sortPopularity"/>
+            <label for= "sortPopularity"> Popularity </label>
 
-            <!--Add more radio buttons as needed -->
-            <!--< label > Order:</label >< br/>
-            <input type = "radio" name = "sortOrder" value = "asc" id = "orderAsc"/>
-            <label for= "orderAsc" > Ascending </label >< br/>
+            <input type = "radio" name = "sortColumn" value = "title" id = "sortTitle"/>
+            <label for= "sortTitle" > Title </label ><br/>
+
+            @*Add more radio buttons as needed*@ 
+            <label> Order:</label >
+            <input type = "radio" name = "sortOrder" value = "asc" id = "orderAsc" />
+            <label for= "orderAsc" > Ascending </label>
 
             <input type = "radio" name = "sortOrder" value = "desc" id = "orderDesc"/>
-            <label for= "orderDesc" > Descending </label >< br/>
-
-            < input type = "submit" value = "Sort"/> -->
-            @*<div>
+            <label for= "orderDesc" > Descending </label ><br/>
+            <h6><i>* Include sales prices in valid sale dates </i></h6>
+            <input type = "submit" value = "Sort"/> 
+            <div>
                     @if (ViewBag.Message != null)
                     {
                         <div class="alert alert-info">@ViewBag.Message</div>
                     }
-                </div>*@
+                </div>
 
 
         </div>}

@@ -32,7 +32,7 @@ namespace eBookStore.Controllers
             };
             //book.authors = new List<string>();
             bool isValidBook = isValidBookID(book);
-            if (ModelState.IsValid && isValidBook)
+            if (ModelState.IsValid && isValidBook && imgFile != null)
             {
                 handleImageFile(book, imgFile);
                 SaveBookToDB(book);
@@ -191,51 +191,61 @@ namespace eBookStore.Controllers
             BookViewModel bookViewModel = new BookViewModel
             {
                 book = new Book(),
-                booksList = new List<Book>()
+                booksList = getBooksList()
             };
             return View(bookViewModel);
         }
 
-        //public ActionResult Enter2(string sortColumn, string sortOrder)
-        //{
-        //    List<Book> booksList = getBooksList();
+        public ActionResult Enter2(string sortColumn, string sortOrder)
+        {
+            List<Book> booksList = getBooksList();
 
-        //    // Apply sorting based on selected options
-        //    if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortOrder))
-        //    {
-        //        switch (sortColumn)
-        //        {
-        //            case "priceForBorrowing":
-        //                booksList = sortOrder == "asc"
-        //                    ? booksList.OrderBy(c => c.priceSaleForBorrowing>0 ? c.priceSaleForBorrowing : c.priceForBorrowing).ToList()
-        //                    : booksList.OrderByDescending(c => c.priceSaleForBorrowing > 0 ? c.priceSaleForBorrowing : c.priceForBorrowing).ToList();
-        //                break;
-        //            case "yearOfPublishing":
-        //                booksList = sortOrder == "asc"
-        //                    ? booksList.OrderBy(c => c.yearOfPublishing).ToList()
-        //                    : booksList.OrderByDescending(c => c.yearOfPublishing).ToList();
-        //                break;
-        //            case "title":
-        //                booksList = sortOrder == "asc"
-        //                    ? booksList.OrderBy(c => c.title).ToList()
-        //                    : booksList.OrderByDescending(c => c.title).ToList();
-        //                break;
-        //                // Add more cases as needed
-        //        }
-        //    }
-        //    else
-        //    {
-        //        ViewBag.Message = "No sorting option was chosen; displaying default order.";
-        //    }
+            // Apply sorting based on selected options
+            if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortOrder))
+            {
+                switch (sortColumn)
+                {
+                    case "BorrowingPrice":
+                        booksList = sortOrder == "asc"
+                            ? booksList.OrderBy(c => c.dateSale.HasValue ? c.priceSaleForBorrowing : c.priceForBorrowing).ToList()
+                            : booksList.OrderByDescending(c => c.dateSale.HasValue ? c.priceSaleForBorrowing : c.priceForBorrowing).ToList();
+                        break;
+                    case "BuyingPrice":
+                        booksList = sortOrder == "asc"
+                            ? booksList.OrderBy(c => c.dateSale.HasValue ? c.priceSaleForBuying : c.priceForBuying).ToList()
+                            : booksList.OrderByDescending(c => c.dateSale.HasValue ? c.priceSaleForBuying : c.priceForBuying).ToList();
+                        break;
+                    case "yearOfPublishing":
+                        booksList = sortOrder == "asc"
+                            ? booksList.OrderBy(c => c.yearOfPublishing).ToList()
+                            : booksList.OrderByDescending(c => c.yearOfPublishing).ToList();
+                        break;
+                    case "popularity":
+                        booksList = sortOrder == "asc"
+                            ? booksList.OrderBy(c => c.popularity).ToList()
+                            : booksList.OrderByDescending(c => c.popularity).ToList();
+                        break;
+                    case "title":
+                        booksList = sortOrder == "asc"
+                            ? booksList.OrderBy(c => c.title).ToList()
+                            : booksList.OrderByDescending(c => c.title).ToList();
+                        break;
+                }
+                ViewBag.Message = $"You chose to sort by {sortColumn} in {sortOrder} order.";
+            }
+            else
+            {
+                ViewBag.Message = "No sorting option was chosen; displaying default order.";
+            }
 
-        //    BookViewModel bookViewModel = new BookViewModel
-        //    {
-        //        book = new Book(),
-        //        booksList = booksList
-        //    };
+            BookViewModel bookViewModel = new BookViewModel
+            {
+                book = new Book(),
+                booksList = booksList
+            };
 
-        //    return View("Enter", bookViewModel);
-        //}
+            return View("Enter", bookViewModel);
+        }
 
         public ActionResult EditBook(int id)
         {
