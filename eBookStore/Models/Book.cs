@@ -61,6 +61,9 @@ namespace eBookStore.Models
         [CustomValidation(typeof(Book), nameof(ValidateDateOfSale))]
         public DateTime? dateSale { get; set; } // Date of sale
 
+        [Required(ErrorMessage = "Genre is required.")]
+        public string genre { get; set; }
+
 
         // Custom validation for SaleDate
         public static ValidationResult ValidateDateOfSale(DateTime? dateSale, ValidationContext context)

@@ -79,7 +79,7 @@ namespace eBookStore.Controllers
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string sqlQuery = "UPDATE books SET title = @title, publisher = @publisher, priceForBorrowing = @priceForBorrowing, SalepriceForBorrowing = @SalepriceForBorrowing, Megapixels = @Megapixels, yearOfPublishing = @yearOfPublishing, ageLimitation = @ageLimitation, IsAvailable = @IsAvailable, IsOnSale = IsOnSale, coverImagePath = @coverImagePath, popularity = @popularity, quantityInStock = @quantityInStock WHERE id = @id";
+                string sqlQuery = "UPDATE books SET title = @title, publisher = @publisher, priceForBorrowing = @priceForBorrowing, SalepriceForBorrowing = @SalepriceForBorrowing, Megapixels = @Megapixels, yearOfPublishing = @yearOfPublishing, ageLimitation = @ageLimitation, IsAvailable = @IsAvailable, IsOnSale = IsOnSale, coverImagePath = @coverImagePath, popularity = @popularity, quantityInStock = @quantityInStock, @genre, genre WHERE id = @id";
                 using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
                     command.Parameters.AddWithValue("@id", book.id);
@@ -102,6 +102,7 @@ namespace eBookStore.Controllers
                     command.Parameters.AddWithValue("@quantityInStock", book.quantityInStock);
                     command.Parameters.AddWithValue("@popularity", book.popularity);
                     command.Parameters.AddWithValue("@dateSale", book.dateSale);
+                    command.Parameters.AddWithValue("@genre", book.genre);
 
                     command.ExecuteNonQuery();
                 }
@@ -147,6 +148,7 @@ namespace eBookStore.Controllers
                             {
                                 id = Convert.ToInt32(reader["id"]),
                                 title = reader["title"].ToString(),
+                                genre = reader["genre"].ToString(),
                                 //authors = new List<string>(),
                                 publisher = reader["publisher"].ToString(),
                                 priceForBorrowing = Convert.ToDecimal(reader["priceForBorrowing"]),
@@ -271,12 +273,13 @@ namespace eBookStore.Controllers
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string sqlQuery = "INSERT INTO books (id, title, publisher, priceForBorrowing, priceForBuying, priceSaleForBorrowing, priceSaleForBuying, yearOfPublishing, coverImagePath, ageLimitation, quantityInStock, popularity, dateSale) VALUES " +
-                                  "(@id, @title, @publisher, @priceForBorrowing, @priceForBuying, @priceSaleForBorrowing, @priceSaleForBuying, @yearOfPublishing, @coverImagePath, @ageLimitation, @quantityInStock, @popularity, @dateSale)";
+                string sqlQuery = "INSERT INTO books (id, title, genre, publisher, priceForBorrowing, priceForBuying, priceSaleForBorrowing, priceSaleForBuying, yearOfPublishing, coverImagePath, ageLimitation, quantityInStock, popularity, dateSale) VALUES " +
+                                  "(@id, @title, @genre, @publisher, @priceForBorrowing, @priceForBuying, @priceSaleForBorrowing, @priceSaleForBuying, @yearOfPublishing, @coverImagePath, @ageLimitation, @quantityInStock, @popularity, @dateSale)";
                 using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
                     command.Parameters.AddWithValue("@id", book.id);
                     command.Parameters.AddWithValue("@title", book.title);
+                    command.Parameters.AddWithValue("@genre", book.genre);
                     command.Parameters.AddWithValue("@publisher", book.publisher);
                     command.Parameters.AddWithValue("@priceForBorrowing", book.priceForBorrowing);
                     command.Parameters.AddWithValue("@priceForBuying", book.priceForBuying);
@@ -381,6 +384,7 @@ namespace eBookStore.Controllers
                             {
                                 id = Convert.ToInt32(reader["id"]),
                                 title = reader["title"].ToString(),
+                                genre = reader["genre"].ToString(),
                                 authors = new List<Author>(),
                                 publisher = reader["publisher"].ToString(),
                                 priceForBorrowing = Convert.ToDecimal(reader["priceForBorrowing"]),
