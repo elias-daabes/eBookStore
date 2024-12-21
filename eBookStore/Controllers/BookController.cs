@@ -50,6 +50,13 @@ namespace eBookStore.Controllers
         }
 
         [HttpPost]
+        public ActionResult EditBook(Book book)
+        {
+            return View();
+        }
+
+
+        [HttpPost]
         public ActionResult SaveEdits(Book newBook)
         {
             BookViewModel bookViewModel = new BookViewModel
@@ -84,6 +91,7 @@ namespace eBookStore.Controllers
                 {
                     command.Parameters.AddWithValue("@id", book.id);
                     command.Parameters.AddWithValue("@title", book.title);
+                    command.Parameters.AddWithValue("@genre", book.genre);
                     command.Parameters.AddWithValue("@publisher", book.publisher);
                     command.Parameters.AddWithValue("@priceForBorrowing", book.priceForBorrowing);
                     command.Parameters.AddWithValue("@priceForBuying", book.priceForBuying);
@@ -102,7 +110,6 @@ namespace eBookStore.Controllers
                     command.Parameters.AddWithValue("@quantityInStock", book.quantityInStock);
                     command.Parameters.AddWithValue("@popularity", book.popularity);
                     command.Parameters.AddWithValue("@dateSale", book.dateSale);
-                    command.Parameters.AddWithValue("@genre", book.genre);
 
                     command.ExecuteNonQuery();
                 }
@@ -149,7 +156,6 @@ namespace eBookStore.Controllers
                                 id = Convert.ToInt32(reader["id"]),
                                 title = reader["title"].ToString(),
                                 genre = reader["genre"].ToString(),
-                                //authors = new List<string>(),
                                 publisher = reader["publisher"].ToString(),
                                 priceForBorrowing = Convert.ToDecimal(reader["priceForBorrowing"]),
                                 priceForBuying = Convert.ToDecimal(reader["priceForBuying"]),
@@ -254,6 +260,74 @@ namespace eBookStore.Controllers
 
             Book book = getBookByid(id);
             return View(book);
+        }
+
+        [HttpPost]
+        public ActionResult UpdateBook(Book model, HttpPostedFileBase imgFile)
+        {
+
+            BookViewModel bookViewModel = new BookViewModel
+            {
+                book = new Book(),
+                booksList = getBooksList()
+            };
+
+            if (ModelState.IsValid )
+            {
+                if(imgFile != null)
+                    handleImageFile(model, imgFile);
+                else
+                {
+                    model.coverImagePath = getBookByid(model.id).coverImagePath;
+                }
+
+
+                // Prepare SQL for updating the book in the database
+                string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sqlQuery = "UPDATE books SET title = @title, genre = @genre, publisher = @publisher, priceForBorrowing = @priceForBorrowing, priceForBuying = @priceForBuying, priceSaleForBorrowing = @priceSaleForBorrowing, priceSaleForBuying = @priceSaleForBuying, yearOfPublishing = @yearOfPublishing, coverImagePath = @coverImagePath, ageLimitation = @ageLimitation, quantityInStock = @quantityInStock, popularity = @popularity, dateSale = @dateSale WHERE id = @id";
+
+                    using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                    {
+                        // Add parameters
+                        command.Parameters.AddWithValue("@id", model.id);
+                        command.Parameters.AddWithValue("@title", model.title);
+                        command.Parameters.AddWithValue("@genre", model.genre);
+                        command.Parameters.AddWithValue("@publisher", model.publisher);
+                        command.Parameters.AddWithValue("@priceForBorrowing", model.priceForBorrowing);
+                        command.Parameters.AddWithValue("@priceForBuying", model.priceForBuying);
+
+                        // Handle nullable fields explicitly
+                        command.Parameters.Add("@priceSaleForBorrowing", SqlDbType.Decimal).Value =
+                            model.priceSaleForBorrowing.HasValue ? (object)model.priceSaleForBorrowing.Value : DBNull.Value;
+                        command.Parameters.Add("@priceSaleForBuying", SqlDbType.Decimal).Value =
+                            model.priceSaleForBuying.HasValue ? (object)model.priceSaleForBuying.Value : DBNull.Value;
+
+                        command.Parameters.AddWithValue("@yearOfPublishing", model.yearOfPublishing);
+                        command.Parameters.AddWithValue("@coverImagePath", model.coverImagePath);
+                        command.Parameters.AddWithValue("@ageLimitation", model.ageLimitation);
+                        command.Parameters.AddWithValue("@quantityInStock", model.quantityInStock);
+                        command.Parameters.AddWithValue("@popularity", model.popularity);
+
+                        // Handle nullable dateSale
+                        command.Parameters.Add("@dateSale", SqlDbType.DateTime).Value =
+                            model.dateSale.HasValue ? (object)model.dateSale.Value : DBNull.Value;
+
+                        // Execute query
+                        command.ExecuteNonQuery();
+                    }
+                }
+                bookViewModel.booksList.Remove(getBookByid(model.id));
+                bookViewModel.booksList.Add(model);
+                bookViewModel.book = new Book();
+                // Redirect to a success or details page
+                return RedirectToAction("Enter");
+            }
+
+            // If ModelState is not valid, return the same view with validation errors
+            return View("EditBook", model);
         }
 
         private Book getBookByid(int id)

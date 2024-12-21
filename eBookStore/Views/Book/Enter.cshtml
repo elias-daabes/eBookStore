@@ -154,7 +154,7 @@
         {
 
             <strong>id:</strong> @Html.TextBoxFor(obj => obj.book.id, new { placeholder = "Enter book ID *", @Value = "" }) @Html.ValidationMessageFor(obj => obj.book.id)<br />
-            <strong>title:</strong> @Html.TextBoxFor(obj => obj.book.title, "", new { placeholder = "Enter book title" }) @Html.ValidationMessageFor(obj => obj.book.title)<br />
+            <strong>title:</strong> @Html.TextBoxFor(obj => obj.book.title, new { placeholder = "Enter book title" }) @Html.ValidationMessageFor(obj => obj.book.title)<br />
             <strong>Genre:</strong> @Html.DropDownListFor(obj => obj.book.genre, new SelectList(new List<string> { "Classic", "Dystopian", "Fantasy", "Romance", "Fiction", "Historical Fiction", "Mystery", "Horror", "Post-Apocalyptic", "Adventure", "Science Fiction" }), "Select a genre *") @Html.ValidationMessageFor(obj => obj.book.genre) <br />
             <strong>Authors:</strong><br />
             <div id="authors">
@@ -264,7 +264,7 @@
                         <td>@obj.genre</td>
                         <td>
 
-                            @for (int i = 0; i < obj.authors.Count; i++)
+                            @for (int i = 1; i < obj.authors.Count; i++)
                             {
                                 if (i != obj.authors.Count - 1)
                                 {

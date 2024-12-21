@@ -1,0 +1,213 @@
+﻿@model eBookStore.Models.Book
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>EditBook</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+        }
+
+        div {
+            margin-bottom: 20px;
+        }
+
+        strong {
+            display: inline-block;
+            width: 200px;
+        }
+
+        input[type="text"], input[type="file"], select, .drop-down, .date-box {
+            padding: 8px;
+            margin: 10px 4px;
+            width: 300px;
+        }
+
+        input[type="submit"], button {
+            padding: 8px 15px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+            input[type="submit"]:hover, button:hover {
+                background-color: #0056b3;
+            }
+
+            button.remove-author {
+                margin-left: 10px;
+                background-color: #dc3545;
+            }
+
+                button.remove-author:hover {
+                    background-color: #c82333;
+                }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+
+            table th, table td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: center;
+            }
+
+            table th {
+                background-color: #007bff;
+                color: white;
+            }
+
+            table tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+
+            table tr:hover {
+                background-color: #ddd;
+            }
+
+        img {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+        }
+
+            .delete-button:hover {
+                background-color: #c82333;
+            }
+
+        label {
+            font-weight: bold;
+        }
+
+        #authors-list div {
+            margin-bottom: 10px;
+            margin-left: 1px;
+        }
+
+        /* Container for authors list */
+        #authors-list {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px; /* Space between each author input */
+        }
+
+            /* Div that contains each author input and button */
+            #authors-list div {
+                display: flex;
+                align-items: center;
+                gap: 10px; /* Space between input and button */
+            }
+
+            /* Styling for the textbox */
+            #authors-list input[type="text"] {
+                width: 300px; /* Adjust the width as needed */
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 14px;
+                outline: none;
+                transition: border-color 0.3s;
+            }
+
+
+        #authors {
+            border: 1px dashed lightgray;
+            width: 450px;
+            margin-left: 200px;
+        }
+
+            #authors button {
+                margin-top: 10px;
+                margin-left: 12px;
+            }
+        .drop-down{
+            width: 320px;
+        }
+
+        .date-box{
+            background-color: red;
+        }
+
+    </style>
+</head>
+<body>
+    <h2>Edit Book #@Model.id : @Model.title</h2>
+    <div>
+
+        @using (Html.BeginForm("UpdateBook", "Book", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <strong>ID:</strong> @Html.TextBoxFor(obj => obj.id, new { @readonly = "readonly" }) <br />
+            <strong>title:</strong> @Html.TextBoxFor(obj => obj.title, new { placeholder = "Enter book title", @Value = Model.title }) @Html.ValidationMessageFor(obj => obj.title)
+            <br />
+            <strong>Genre:</strong> @Html.DropDownListFor(obj => obj.genre, new SelectList(new List<string> { "Classic", "Dystopian", "Fantasy", "Romance", "Fiction", "Historical Fiction", "Mystery", "Horror", "Post-Apocalyptic", "Adventure", "Science Fiction" }), "Select a genre *", new { @Value = Model.genre, @class = "drop-down" }) @Html.ValidationMessageFor(obj => obj.genre) <br />
+            <strong>Authors:</strong><br />
+            <div id="authors"> <br/>
+                <button type="button" id="add-author">Add Author</button>
+                <div id="authors-list">
+                    @Html.TextBoxFor(m => m.authors[0].authorName, "", new { placeholder = "Author Name *" })
+                    @Html.ValidationMessageFor(m => m.authors[0].authorName, "", new { @class = "text-danger" })
+                    @for (int i = 1; i < Model.authors.Count; i++)
+                    {
+                        <div>
+                            @Html.TextBoxFor(m => m.authors[i].authorName, new { placeholder = "Author Name *" })
+                            <button type="button" class="remove-author" onclick="removeAuthor(this)">Remove</button>
+                            @Html.ValidationMessageFor(m => m.authors[i].authorName, "", new { @class = "text-danger" })
+                        </div>}
+
+                </div>
+            </div>
+            <strong>publisher:</strong> @Html.TextBoxFor(obj => obj.publisher, "", new { placeholder = "Enter publisher *" }) @Html.ValidationMessageFor(obj => obj.publisher) <br />
+            <strong>price For Buying:</strong> @Html.TextBoxFor(obj => obj.priceForBuying, new { placeholder = "Enter buying price *", @Value = Model.priceForBuying }) @Html.ValidationMessageFor(obj => obj.priceForBuying) <br />
+            <strong>price For Borrowing:</strong> @Html.TextBoxFor(obj => obj.priceForBorrowing, new { placeholder = "Enter borrowing price", @Value = Model.priceForBorrowing }) @Html.ValidationMessageFor(obj => obj.priceForBorrowing)<br />
+            <strong>price Sale For Buying:</strong> @Html.TextBoxFor(obj => obj.priceSaleForBuying, new { placeholder = "Enter sale buying price", @Value = Model.priceSaleForBuying }) @Html.ValidationMessageFor(obj => obj.priceSaleForBuying)<br />
+            <strong>price Sale For Borrowing:</strong> @Html.TextBoxFor(obj => obj.priceSaleForBorrowing, new { placeholder = "Enter sale borrowing price", @Value = Model.priceSaleForBorrowing }) @Html.ValidationMessageFor(obj => obj.priceSaleForBorrowing)<br />
+            <strong>Release Year:</strong> @Html.TextBoxFor(obj => obj.yearOfPublishing, new { placeholder = "Enter releasing year *", @Value = Model.yearOfPublishing }) @Html.ValidationMessageFor(obj => obj.yearOfPublishing)<br />
+            <strong>Upload cover Image:</strong> <input type="file" id="imgFile" name="imgFile" /> @Html.ValidationMessageFor(obj => obj.coverImagePath) <br />
+            <strong>age Limitation:</strong> @Html.DropDownListFor(obj => obj.ageLimitation, new SelectList(new List<string> { "No Restriction", "8+", "12+", "16+", "18+" }), "Select an age limitation *", new { @Value = Model.ageLimitation, @class = "drop-down" }) @Html.ValidationMessageFor(obj => obj.ageLimitation) <br />
+            <strong> quantityInStock:</strong> @Html.TextBoxFor(obj => obj.quantityInStock, new { @Value = Model.quantityInStock }) @Html.ValidationMessageFor(obj => obj.quantityInStock)<br />
+            <strong> Popularity:</strong> @Html.TextBoxFor(obj => obj.popularity, new { @Value = Model.popularity }) @Html.ValidationMessageFor(obj => obj.popularity) <br />
+            <strong> dateSale: </strong> @Html.EditorFor(obj => obj.dateSale, new { htmlAttributes = new { @class = "date-box", @Value = Model.dateSale.HasValue ? Model.dateSale.Value.ToString("yyyy-MM-dd") : "" } }) @Html.ValidationMessageFor(obj => obj.dateSale)<br />
+            <button type="submit" name="field" value="save-changes">Save</button>
+        }
+    </div>
+</body>
+</html>
+<script>
+        let authorIndex = @Model.authors.Count;
+
+        document.getElementById("add-author").addEventListener("click", function () {
+            let authorsList = document.getElementById("authors-list");
+            let newAuthorDiv = document.createElement("div");
+            newAuthorDiv.innerHTML = `
+                <input type="text" name="authors[${authorIndex}].authorName" placeholder="Author Name" />
+                <button type="button" class="remove-author" onclick="removeAuthor(this)">Remove</button>
+            `;
+            authorsList.appendChild(newAuthorDiv);
+            authorIndex++;
+        });
+
+        function removeAuthor(button) {
+            button.parentElement.remove();
+        }
+</script>
