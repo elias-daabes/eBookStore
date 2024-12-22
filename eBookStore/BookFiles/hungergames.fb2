@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fictionbook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0">
+    <description>
+        <title-info>
+            <book-title>hungergames</book-title>
+            <author>
+                <first-name>Author</first-name>
+                <last-name>hungergames Author</last-name>
+            </author>
+        </title-info>
+    </description>
+    <body>
+        <section>
+            <title>hungergames</title>
+            <p>Content for hungergames goes here.</p>
+        </section>
+    </body>
+</fictionbook>

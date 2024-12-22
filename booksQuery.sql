@@ -1,7 +1,7 @@
 ﻿USE tempdb
 GO
 
-drop table books;
+drop table IF EXISTS books;
 CREATE TABLE books (
     id INT  PRIMARY KEY,       -- Unique identifier for the book
     title VARCHAR(150) NOT NULL,             -- Title of the book
@@ -96,3 +96,12 @@ VALUES
 ('Cormac McCarthy', 28),  -- The Road
 ('Yann Martel', 29),      -- Life of Pi
 ('Kurt Vonnegut', 30);    -- Slaughterhouse-Five
+
+drop table IF EXISTS bookPaths;
+CREATE TABLE bookPaths (
+	bookId INT PRIMARY KEY,
+    epubPath VARCHAR(255),                  -- Path to the EPUB file
+    fb2Path VARCHAR(255),                   -- Path to the F2B file
+    mobiPath VARCHAR(255),                  -- Path to the MOBI file
+    pdfPath VARCHAR(255)                    -- Path to the PDF file
+);

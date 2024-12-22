@@ -1,0 +1,107 @@
+﻿@model eBookStore.Models.Book
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddBookFiles</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="file"] {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add files for book #@Model.id: @Model.title</h1>
+        @using (Html.BeginForm("AddFormats", "Book", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.HiddenFor(model => model.id)
+            <div class="form-group">
+                <label for="epubFile">EPUB File:</label>
+                <input type="file" name="epubFile" id="epubFile" accept=".epub" />
+            </div>
+            <div class="form-group">
+                <label for="fb2File">FB2 File:</label>
+                <input type="file" name="fb2File" id="fb2File" accept=".fb2" />
+            </div>
+            <div class="form-group">
+                <label for="mobiFile">MOBI File:</label>
+                <input type="file" name="mobiFile" id="mobiFile" accept=".mobi" />
+            </div>
+            <div class="form-group">
+                <label for="pdfFile">PDF File:</label>
+                <input type="file" name="pdfFile" id="pdfFile" accept=".pdf" />
+            </div>
+            <div>
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-info">@ViewBag.Message</div>
+                }
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Upload Files"/>
+            </div>
+        }
+    </div>
+</body>
+</html>

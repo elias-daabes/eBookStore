@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fictionbook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0">
+    <description>
+        <title-info>
+            <book-title>bookthief</book-title>
+            <author>
+                <first-name>Author</first-name>
+                <last-name>bookthief Author</last-name>
+            </author>
+        </title-info>
+    </description>
+    <body>
+        <section>
+            <title>bookthief</title>
+            <p>Content for bookthief goes here.</p>
+        </section>
+    </body>
+</fictionbook>

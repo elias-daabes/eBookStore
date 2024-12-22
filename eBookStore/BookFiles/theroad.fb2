@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fictionbook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0">
+    <description>
+        <title-info>
+            <book-title>theroad</book-title>
+            <author>
+                <first-name>Author</first-name>
+                <last-name>theroad Author</last-name>
+            </author>
+        </title-info>
+    </description>
+    <body>
+        <section>
+            <title>theroad</title>
+            <p>Content for theroad goes here.</p>
+        </section>
+    </body>
+</fictionbook>

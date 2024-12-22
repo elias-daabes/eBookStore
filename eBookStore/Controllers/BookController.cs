@@ -262,6 +262,74 @@ namespace eBookStore.Controllers
             return View(book);
         }
 
+        public ActionResult AddBookFiles(int id)
+        {
+            Book book = getBookByid(id);
+            return View(book);
+        }
+
+        [HttpPost]
+        public ActionResult AddFormats(Book book, HttpPostedFileBase epubFile, HttpPostedFileBase fb2File, HttpPostedFileBase mobiFile, HttpPostedFileBase pdfFile)
+        {
+            BookViewModel bookViewModel = new BookViewModel
+            {
+                book = new Book(),
+                booksList = getBooksList()
+            };
+
+            List<string> missingFiles = new List<string>();
+
+            if (epubFile == null) missingFiles.Add("EPUB");
+            if (fb2File == null) missingFiles.Add("FB2");
+            if (mobiFile == null) missingFiles.Add("MOBI");
+            if (pdfFile == null) missingFiles.Add("PDF");
+
+            if (missingFiles.Count > 0)
+            {
+                ViewBag.Message = "The following file(s) have not been uploaded: " + string.Join(", ", missingFiles) + ". Please upload all the files";
+                return View("AddBookFiles", getBookByid(book.id)); // Show the form again with a message
+            }
+            else
+            {
+
+                string epubFilePath = "/BookFiles/" + Path.GetFileName(epubFile.FileName);
+                string fb2FilePath = "/BookFiles/" + Path.GetFileName(fb2File.FileName);
+                string mobiFilePath = "/BookFiles/" + Path.GetFileName(mobiFile.FileName);
+                string pdfFilePath = "/BookFiles/" + Path.GetFileName(pdfFile.FileName);
+                epubFile.SaveAs(Server.MapPath(epubFilePath));
+                fb2File.SaveAs(Server.MapPath(fb2FilePath));
+                mobiFile.SaveAs(Server.MapPath(mobiFilePath));
+                pdfFile.SaveAs(Server.MapPath(pdfFilePath));
+                book.epubPath = epubFilePath;
+                book.fb2Path = fb2FilePath;
+                book.mobiPath = mobiFilePath;
+                book.pdfPath = pdfFilePath;
+
+                string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sqlQuery = "INSERT INTO book_files (bookId, epubPath, fb2Path, mobiPath, pdfPath) VALUES " +
+                                      "(@id, @epubPath, @fb2Path, @mobiPath, @pdfPath)";
+                    using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                    {
+                        command.Parameters.AddWithValue("@id", book.id);
+                        command.Parameters.AddWithValue("@epubPath", book.epubPath);
+                        command.Parameters.AddWithValue("@fb2Path", book.fb2Path);
+                        command.Parameters.AddWithValue("@mobiPath", book.mobiPath);
+                        command.Parameters.AddWithValue("@pdfPath", book.pdfPath);
+                       
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            ViewBag.Message = "Files uploaded and saved successfully!";
+            return View("Enter", bookViewModel); 
+
+
+
+        }
+
         [HttpPost]
         public ActionResult UpdateBook(Book model, HttpPostedFileBase imgFile)
         {

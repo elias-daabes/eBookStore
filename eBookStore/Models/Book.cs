@@ -64,6 +64,11 @@ namespace eBookStore.Models
         [Required(ErrorMessage = "Genre is required.")]
         public string genre { get; set; }
 
+        public string epubPath { get; set; } 
+        public string fb2Path { get; set; } 
+        public string mobiPath { get; set; } 
+        public string pdfPath { get; set; } 
+
 
         // Custom validation for SaleDate
         public static ValidationResult ValidateDateOfSale(DateTime? dateSale, ValidationContext context)

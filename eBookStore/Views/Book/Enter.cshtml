@@ -257,59 +257,62 @@
                 @foreach (Book obj in Model.booksList)
                 {
 
-                    <tr>
-                        <td>@obj.id</td>
-                        <td><img src="@obj.coverImagePath" alt="Alternate Text" height="50"/></td>
-                        <td>@obj.title</td>
-                        <td>@obj.genre</td>
-                        <td>
+            <tr>
+                <td>@obj.id</td>
+                <td><img src="@obj.coverImagePath" alt="Alternate Text" height="50" /></td>
+                <td>@obj.title</td>
+                <td>@obj.genre</td>
+                <td>
 
-                            @for (int i = 1; i < obj.authors.Count; i++)
-                            {
-                                if (i != obj.authors.Count - 1)
-                                {
-                                    @String.Concat(@obj.authors[i].authorName, ", ");
-                                }
-                                else
-                                {
-                                    @obj.authors[i].authorName
-                                }
-
-                            }
-
-                        </td>
-                        <td>@obj.publisher</td>
-                        <td>
-                            @if (obj.priceSaleForBorrowing.HasValue && obj.dateSale.HasValue)
-                            {<span style="text-decoration: line-through;">@obj.priceForBorrowing</span>}
+                    @for (int i = 1; i < obj.authors.Count; i++)
+                    {
+                        if (i != obj.authors.Count - 1)
+                        {
+                            @String.Concat(@obj.authors[i].authorName, ", ");
+                        }
                         else
-                        { @obj.priceForBorrowing}
-                        </td>
-                        <td>@obj.priceSaleForBorrowing</td>
-                        <td>
-                            @if (obj.priceSaleForBuying.HasValue && obj.dateSale.HasValue)
-                            {<span style="text-decoration: line-through;">@obj.priceForBuying</span>}
-                        else
-                        { @obj.priceForBuying}
-                        </td>
-                        <td>@obj.priceSaleForBuying</td>
-                        <td>@obj.yearOfPublishing</td>
-                        <td>@obj.coverImagePath</td>
-                        <td>@obj.ageLimitation</td>
-                        <td>@obj.quantityInStock</td>
-                        <td>@obj.popularity</td>
-                        <td>@obj.dateSale.ToString().Replace("00:00:00", "")</td>
-                        <td>
-                            <a href="@Url.Action("EditBook", "Book", new { id = obj.id })" class="">Update</a>
-                        </td>
-                        <td>
-                            @using (Html.BeginForm("DeleteBook", "Book", new { id = obj.id }, FormMethod.Post, new { onsubmit = "return confirm('Are you sure you want to delete this book?" }))
-                            {
-                                <input type="submit" class="delete-button" value="Delete"/>
-                            }
-                        </td>
+                        {
+                            @obj.authors[i].authorName
+                        }
 
-                    </tr>
+                    }
+
+                </td>
+                <td>@obj.publisher</td>
+                <td>
+                    @if (obj.priceSaleForBorrowing.HasValue && obj.dateSale.HasValue)
+                    {<span style="text-decoration: line-through;">@obj.priceForBorrowing</span>}
+                else
+                { @obj.priceForBorrowing}
+                </td>
+                <td>@obj.priceSaleForBorrowing</td>
+                <td>
+                    @if (obj.priceSaleForBuying.HasValue && obj.dateSale.HasValue)
+                    {<span style="text-decoration: line-through;">@obj.priceForBuying</span>}
+                else
+                { @obj.priceForBuying}
+                </td>
+                <td>@obj.priceSaleForBuying</td>
+                <td>@obj.yearOfPublishing</td>
+                <td>@obj.coverImagePath</td>
+                <td>@obj.ageLimitation</td>
+                <td>@obj.quantityInStock</td>
+                <td>@obj.popularity</td>
+                <td>@obj.dateSale.ToString().Replace("00:00:00", "")</td>
+                <td>
+                    <a href="@Url.Action("EditBook", "Book", new { id = obj.id })" class="">Update</a>
+                </td>
+                <td>
+                    <a href="@Url.Action("AddBookFiles", "Book", new { id = obj.id })" class="">Files</a>
+                </td>
+                <td>
+                    @using (Html.BeginForm("DeleteBook", "Book", new { id = obj.id }, FormMethod.Post, new { onsubmit = "return confirm('Are you sure you want to delete this book?" }))
+                    {
+                        <input type="submit" class="delete-button" value="Delete" />
+                    }
+                </td>
+
+            </tr>
 
                 }
             </table>

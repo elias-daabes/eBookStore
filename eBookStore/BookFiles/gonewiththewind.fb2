@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fictionbook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0">
+    <description>
+        <title-info>
+            <book-title>gonewiththewind</book-title>
+            <author>
+                <first-name>Author</first-name>
+                <last-name>gonewiththewind Author</last-name>
+            </author>
+        </title-info>
+    </description>
+    <body>
+        <section>
+            <title>gonewiththewind</title>
+            <p>Content for gonewiththewind goes here.</p>
+        </section>
+    </body>
+</fictionbook>
