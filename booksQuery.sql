@@ -97,11 +97,45 @@ VALUES
 ('Yann Martel', 29),      -- Life of Pi
 ('Kurt Vonnegut', 30);    -- Slaughterhouse-Five
 
-drop table IF EXISTS bookPaths;
-CREATE TABLE bookPaths (
+drop table IF EXISTS book_files;
+CREATE TABLE book_files (
 	bookId INT PRIMARY KEY,
     epubPath VARCHAR(255),                  -- Path to the EPUB file
     fb2Path VARCHAR(255),                   -- Path to the F2B file
     mobiPath VARCHAR(255),                  -- Path to the MOBI file
     pdfPath VARCHAR(255)                    -- Path to the PDF file
 );
+
+-- Insert data into book_files table
+INSERT INTO book_files (bookId, epubPath, fb2Path, mobiPath, pdfPath)
+VALUES 
+(1, '/BookFiles/gatsby.epub', '/BookFiles/gatsby.fb2', '/BookFiles/gatsby.mobi', '/BookFiles/gatsby.pdf'),
+(2, '/BookFiles/mockingbird.epub', '/BookFiles/mockingbird.fb2', '/BookFiles/mockingbird.mobi', '/BookFiles/mockingbird.pdf'),
+(3, '/BookFiles/1984.epub', '/BookFiles/1984.fb2', '/BookFiles/1984.mobi', '/BookFiles/1984.pdf'),
+(4, '/BookFiles/harrypotter1.epub', '/BookFiles/harrypotter1.fb2', '/BookFiles/harrypotter1.mobi', '/BookFiles/harrypotter1.pdf'),
+(5, '/BookFiles/hobbit.epub', '/BookFiles/hobbit.fb2', '/BookFiles/hobbit.mobi', '/BookFiles/hobbit.pdf'),
+(6, '/BookFiles/pride.epub', '/BookFiles/pride.fb2', '/BookFiles/pride.mobi', '/BookFiles/pride.pdf'),
+(7, '/BookFiles/catcher.epub', '/BookFiles/catcher.fb2', '/BookFiles/catcher.mobi', '/BookFiles/catcher.pdf'),
+(8, '/BookFiles/lotr.epub', '/BookFiles/lotr.fb2', '/BookFiles/lotr.mobi', '/BookFiles/lotr.pdf'),
+(9, '/BookFiles/animalfarm.epub', '/BookFiles/animalfarm.fb2', '/BookFiles/animalfarm.mobi', '/BookFiles/animalfarm.pdf'),
+(10, '/BookFiles/narnia.epub', '/BookFiles/narnia.fb2', '/BookFiles/narnia.mobi', '/BookFiles/narnia.pdf'),
+(11, '/BookFiles/alchemist.epub', '/BookFiles/alchemist.fb2', '/BookFiles/alchemist.mobi', '/BookFiles/alchemist.pdf'),
+(12, '/BookFiles/janeeyre.epub', '/BookFiles/janeeyre.fb2', '/BookFiles/janeeyre.mobi', '/BookFiles/janeeyre.pdf'),
+(13, '/BookFiles/wuthering.epub', '/BookFiles/wuthering.fb2', '/BookFiles/wuthering.mobi', '/BookFiles/wuthering.pdf'),
+(14, '/BookFiles/bravenewworld.epub', '/BookFiles/bravenewworld.fb2', '/BookFiles/bravenewworld.mobi', '/BookFiles/bravenewworld.pdf'),
+(15, '/BookFiles/fault.epub', '/BookFiles/fault.fb2', '/BookFiles/fault.mobi', '/BookFiles/fault.pdf'),
+(16, '/BookFiles/gonewiththewind.epub', '/BookFiles/gonewiththewind.fb2', '/BookFiles/gonewiththewind.mobi', '/BookFiles/gonewiththewind.pdf'),
+(17, '/BookFiles/hungergames.epub', '/BookFiles/hungergames.fb2', '/BookFiles/hungergames.mobi', '/BookFiles/hungergames.pdf'),
+(18, '/BookFiles/divergent.epub', '/BookFiles/divergent.fb2', '/BookFiles/divergent.mobi', '/BookFiles/divergent.pdf'),
+(19, '/BookFiles/mazerunner.epub', '/BookFiles/mazerunner.fb2', '/BookFiles/mazerunner.mobi', '/BookFiles/mazerunner.pdf'),
+(20, '/BookFiles/dragontattoo.epub', '/BookFiles/dragontattoo.fb2', '/BookFiles/dragontattoo.mobi', '/BookFiles/dragontattoo.pdf'),
+(21, '/BookFiles/fahrenheit451.epub', '/BookFiles/fahrenheit451.fb2', '/BookFiles/fahrenheit451.mobi', '/BookFiles/fahrenheit451.pdf'),
+(22, '/BookFiles/bookthief.epub', '/BookFiles/bookthief.fb2', '/BookFiles/bookthief.mobi', '/BookFiles/bookthief.pdf'),
+(23, '/BookFiles/percyjackson.epub', '/BookFiles/percyjackson.fb2', '/BookFiles/percyjackson.mobi', '/BookFiles/percyjackson.pdf'),
+(24, '/BookFiles/littlewomen.epub', '/BookFiles/littlewomen.fb2', '/BookFiles/littlewomen.mobi', '/BookFiles/littlewomen.pdf'),
+(25, '/BookFiles/gameofthrones.epub', '/BookFiles/gameofthrones.fb2', '/BookFiles/gameofthrones.mobi', '/BookFiles/gameofthrones.pdf'),
+(26, '/BookFiles/theshining.epub', '/BookFiles/theshining.fb2', '/BookFiles/theshining.mobi', '/BookFiles/theshining.pdf'),
+(27, '/BookFiles/it.epub', '/BookFiles/it.fb2', '/BookFiles/it.mobi', '/BookFiles/it.pdf'),
+(28, '/BookFiles/theroad.epub', '/BookFiles/theroad.fb2', '/BookFiles/theroad.mobi', '/BookFiles/theroad.pdf'),
+(29, '/BookFiles/lifeofpi.epub', '/BookFiles/lifeofpi.fb2', '/BookFiles/lifeofpi.mobi', '/BookFiles/lifeofpi.pdf'),
+(30, '/BookFiles/slaughterhousefive.epub', '/BookFiles/slaughterhousefive.fb2', '/BookFiles/slaughterhousefive.mobi', '/BookFiles/slaughterhousefive.pdf');
