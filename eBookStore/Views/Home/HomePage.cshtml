@@ -36,7 +36,7 @@
                 border-radius: 5px;
             }
 
-            .search-bar input[type="button"] {
+            .search-bar input[type="submit"] {
                 padding: 10px 20px;
                 font-size: 16px;
                 background-color: #007bff;
@@ -46,7 +46,7 @@
                 cursor: pointer;
             }
 
-                .search-bar input[type="button"]:hover {
+                .search-bar input[type="submit"]:hover {
                     background-color: #0056b3;
                 }
 
@@ -252,8 +252,11 @@
     </div>
 
     <div class="search-bar">
-        <input id="Text1" type="text" placeholder="Search for books..." />
-        <input id="Button1" type="button" value="Search" />
+        @using (Html.BeginForm("SearchBookResult", "Home", FormMethod.Get))
+        {
+            <input id="searchTerm" name="searchTerm" type="text" placeholder="Search By Title/Author Name/Publisher"/>
+            <input id="Button1" type="submit" value="Search Book" />
+        }
     </div>
 
     <div class="book-container">
@@ -265,7 +268,7 @@
 
                 <div class="book-details">
                     <div><strong>Title:</strong> @obj.title</div>
-                    <div><strong>Author(s):</strong> @string.Join(", ", obj.authors.Skip(1).Select(a => a.authorName))</div>
+                    <div><strong>Author(s):</strong> @(obj.authors[0].authorName == "" ? string.Join(", ", obj.authors.Skip(1).Select(a => a.authorName)): string.Join(", ", obj.authors.Select(a => a.authorName)))</div>
                     <div><strong>Genre:</strong> @obj.genre</div>
                     <div><strong>Publisher:</strong> @obj.publisher</div>
                     <div>
