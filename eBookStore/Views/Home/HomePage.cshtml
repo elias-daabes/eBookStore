@@ -18,11 +18,6 @@
             color: #333;
         }
 
-        h1 {
-            text-align: center;
-            color: #444;
-        }
-
         .search-bar {
             text-align: center;
             margin: 20px 0;
@@ -54,9 +49,8 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
-            padding: 20px;
-
-
+            flex: 4;
+            padding: 20px 20px 20px 300px;
         }
 
         .book-item {
@@ -106,6 +100,15 @@
                 background-color: #0056b3;
             }
 
+        .two-sides {
+            display: flex;
+            width: 100%;
+        }
+        .right-container {
+            padding-right: 300px;
+            flex: 2;
+        }
+
         .rating-section {
             margin: 20px auto;
             width: 90%;
@@ -153,8 +156,8 @@
         h1 {
             font-size: 36px;
             color: #4CAF50;
-            text-align: center;
-            margin-bottom: 30px;
+            text-align: left;
+
         }
 
         /* Navigation Bar Styling */
@@ -233,12 +236,91 @@
                     transform: translateY(0);
                 }
 
+        /* Filter Container */
+        .filter-container {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
+        }
+
+            /* Labels */
+            .filter-container label {
+                display: block;
+                margin: 10px 0 5px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            /* Radio Buttons and Dropdown */
+            .filter-container input[type="radio"] {
+                margin-right: 8px;
+            }
+
+            .filter-container select {
+                width: 100%;
+                padding: 8px;
+                margin-top: 5px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+
+            /* Sort Button */
+            .filter-container input[type="submit"] {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                color: #fff;
+                background-color: #007bff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+                .filter-container input[type="submit"]:hover {
+                    background-color: #0056b3;
+                }
+
+            /* Messages */
+            .filter-container .alert {
+                margin-top: 15px;
+                padding: 10px;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+
+            .filter-container .alert-info {
+                background-color: #e7f3ff;
+                color: #3178c6;
+                border: 1px solid #bee3f8;
+            }
+
+            /* Subtext */
+            .filter-container h6 {
+                font-size: 12px;
+                color: #555;
+                margin: 10px 0;
+                font-style: italic;
+            }
+
+            .rowed{
+                display:flex;
+            }
 
     </style>
 </head>
 <body>
     <nav>
         <ul>
+            <li><h1>eBook Store</h1></li>
             <li><a href="#cart">My Cart</a></li>
             <li><a href="#login">Log In</a></li>
             <li><a href="#signup">Sign Up</a></li>
@@ -247,9 +329,6 @@
             <li><a href="#logout">Log Out</a></li>
         </ul>
     </nav>
-    <div>
-        <h1>eBook Store</h1>
-    </div>
 
     <div class="search-bar">
         @using (Html.BeginForm("SearchBookResult", "Home", FormMethod.Get))
@@ -258,90 +337,161 @@
             <input id="Button1" type="submit" value="Search Book" />
         }
     </div>
+    <div class="two-sides">
+        <div class="book-container">
+            @foreach (Book obj in Model.booksList)
+            {
+                <div class="book-item">
+                    <div class="book-and-details">
+                        <img src="@obj.coverImagePath" alt="Book Cover" loading="lazy" />
 
-    <div class="book-container">
-        @foreach (Book obj in Model.booksList)
-        {
-            <div class="book-item">
-                <div class="book-and-details">
-                <img src="@obj.coverImagePath" alt="Book Cover" loading="lazy" />
+                        <div class="book-details">
+                            <div><strong>Title:</strong> @obj.title</div>
+                            <div><strong>Author(s):</strong> @(obj.authors[0].authorName == "" ? string.Join(", ", obj.authors.Skip(1).Select(a => a.authorName)): string.Join(", ", obj.authors.Select(a => a.authorName)))</div>
+                            <div><strong>Genre:</strong> @obj.genre</div>
+                            <div><strong>Publisher:</strong> @obj.publisher</div>
+                            <div>
+                                @if (obj.dateSale.HasValue)
+                                {
+                                    <strong>Buying Price:</strong><span class="line-through"> @obj.priceForBuying</span> @obj.priceSaleForBuying
+                                    <br />
+                                    <strong>Borrowing Price:</strong><span class="line-through"> @obj.priceForBorrowing</span> @obj.priceSaleForBorrowing
+                                    <div><strong>Sale Date:</strong> @obj.dateSale.ToString().Replace("00:00:00", "")</div>
+                                }
+                                else
+                                {
+                                    <strong>Buying Price:</strong> @obj.priceForBuying<br />
+                                    <strong>Borrowing Price:</strong> @obj.priceForBorrowing
+                                }
+                            </div>
 
-                <div class="book-details">
-                    <div><strong>Title:</strong> @obj.title</div>
-                    <div><strong>Author(s):</strong> @(obj.authors[0].authorName == "" ? string.Join(", ", obj.authors.Skip(1).Select(a => a.authorName)): string.Join(", ", obj.authors.Select(a => a.authorName)))</div>
-                    <div><strong>Genre:</strong> @obj.genre</div>
-                    <div><strong>Publisher:</strong> @obj.publisher</div>
-                    <div>
-                        @if (obj.dateSale.HasValue)
-                        {
-                            <strong>Buying Price:</strong><span class="line-through"> @obj.priceForBuying</span> @obj.priceSaleForBuying
-                            <br />
-                            <strong>Borrowing Price:</strong><span class="line-through"> @obj.priceForBorrowing</span> @obj.priceSaleForBorrowing
-                            <div><strong>Sale Date:</strong> @obj.dateSale.ToString().Replace("00:00:00", "")</div>
-                        }
-                        else
-                        {
-                            <strong>Buying Price:</strong> @obj.priceForBuying<br />
-                            <strong>Borrowing Price:</strong> @obj.priceForBorrowing
-                        }
+                            <div><strong>Year Published:</strong> @obj.yearOfPublishing</div>
+                            <div><strong>Age Limitation:</strong> @obj.ageLimitation</div>
+                            <div><strong>In Stock:</strong> @obj.quantityInStock</div>
+                            <div><strong>Popularity:</strong> @obj.popularity</div>
+                            @*<div>
+                                    <strong>Download Format(s):</strong><br />
+                                    @if (!string.IsNullOrEmpty(obj.epubPath))
+                                    {
+                                        @Html.ActionLink("epub", "DownloadFile", new { filePath = obj.epubPath })
+                                    }
+                                    @if (!string.IsNullOrEmpty(obj.fb2Path))
+                                    {
+                                        @Html.ActionLink("fb2", "DownloadFile", new { filePath = obj.fb2Path })
+                                    }
+                                    @if (!string.IsNullOrEmpty(obj.mobiPath))
+                                    {
+                                        @Html.ActionLink("mobi", "DownloadFile", new { filePath = obj.mobiPath })
+                                    }
+                                    @if (!string.IsNullOrEmpty(obj.pdfPath))
+                                    {
+                                        @Html.ActionLink("pdf", "DownloadFile", new { filePath = obj.pdfPath })
+                                    }
+                            </div>*@
+                        </div>
                     </div>
-
-                    <div><strong>Year Published:</strong> @obj.yearOfPublishing</div>
-                    <div><strong>Age Limitation:</strong> @obj.ageLimitation</div>
-                    <div><strong>In Stock:</strong> @obj.quantityInStock</div>
-                    <div><strong>Popularity:</strong> @obj.popularity</div>
-                    @*<div>
-                                <strong>Download Format(s):</strong><br />
-                                @if (!string.IsNullOrEmpty(obj.epubPath))
-                                {
-                                    @Html.ActionLink("epub", "DownloadFile", new { filePath = obj.epubPath })
-                                }
-                                @if (!string.IsNullOrEmpty(obj.fb2Path))
-                                {
-                                    @Html.ActionLink("fb2", "DownloadFile", new { filePath = obj.fb2Path })
-                                }
-                                @if (!string.IsNullOrEmpty(obj.mobiPath))
-                                {
-                                    @Html.ActionLink("mobi", "DownloadFile", new { filePath = obj.mobiPath })
-                                }
-                                @if (!string.IsNullOrEmpty(obj.pdfPath))
-                                {
-                                    @Html.ActionLink("pdf", "DownloadFile", new { filePath = obj.pdfPath })
-                                }
-                        </div>*@
+                    <div class="interaction-buttons">
+                        <input type="button" name="name" value="Buy Now" />
+                        <input type="button" name="name" value="Add to Cart" />
+                        @if (obj.popularity < 7)
+                        {
+                            //Books that are not that much pobular
+                            <input type="button" name="name" value="Borrow" />
+                        }
+                        @if (obj.quantityInStock == 0)
+                        {
+                            <input type="button" name="name" value="Add to Waiting List" />
+                        }
                     </div>
                 </div>
-                <div class="interaction-buttons">
-                    <input type="button" name="name" value="Buy Now" />
-                    <input type="button" name="name" value="Add to Cart" />
-                    @if (obj.popularity < 7)
-                    {
-                        //Books that are not that much pobular
-                        <input type="button" name="name" value="Borrow" />
-                    }
-                    @if(obj.quantityInStock == 0)
+            }
+
+        </div>
+        <div class="right-container">
+            <div class="filter-container">
+                @using (Html.BeginForm("Filtering", "Home", FormMethod.Get))
                 {
-                        <input type="button" name="name" value="Add to Waiting List" />
-                }
-                </div>
-            </div>
-        }
+                    
+                        <label> Sort By:</label>
+                        <div class="rowed">
+                            <input type="radio" name="sortColumn" value="BuyingPrice" id="sortBuyingPrice" />
+                            <label for="sortPrice"> Buying price *   </label>
+                        </div>
+                        <div class="rowed">
+                            <input type="radio" name="sortColumn" value="BorrowingPrice" id="sortBorrowingPrice" />
+                            <label for="sortPrice"> Borrowing Price *</label>
+                        </div>
+                        <div class="rowed">
+                            <input type="radio" name="sortColumn" value="yearOfPublishing" id="sortyearOfPublishing" />
+                            <label for="sortyearOfPublishing"> Release Year </label>
+                        </div>
+                        <div class="rowed">
+                            <input type="radio" name="sortColumn" value="popularity" id="sortPopularity" />
+                            <label for="sortPopularity"> Popularity </label>
+                        </div>
+                        <div class="rowed">
+                            <input type="radio" name="sortColumn" value="title" id="sortTitle" />
+                            <label for="sortTitle"> Title </label><br />
+                        </div>
 
-        <div class="rating-section">
-            <div class="user-rating">
-                <div><strong>Name: </strong>username1</div>
-                <div><strong>Rating: </strong>5</div>
-                <div><strong>Comment: </strong> This is a comment</div>
+                        @*Add more radio buttons as needed*@
+                        <label> Order:</label>
+                   
+                    <div class="rowed">
+                        <input type="radio" name="sortOrder" value="asc" id="orderAsc" />
+                        <label for="orderAsc"> Ascending </label>
+                    </div>
+                    <div class="rowed">
+                        <input type="radio" name="sortOrder" value="desc" id="orderDesc" />
+                        <label for="orderDesc"> Descending </label><br />
+                    </div>
+                    <div>
+                        @{List<string> genres = new List<string> {
+                                "Classic", "Dystopian", "Fantasy",
+                                "Romance", "Fiction", "Historical Fiction",
+                                "Mystery", "Horror", "Post-Apocalyptic",
+                                "Adventure", "Science Fiction" }; }
+                    </div>
+
+
+                        <label>Genre: </label>
+                        <select name="genre" id="genre">
+                            <option value="">-- Select Genre --</option>
+                            @foreach (var genre in genres)
+                            {
+                                <option value="@genre">@genre</option>
+                            }
+                        </select><br />
+
+
+                        <h6><i>* Include sales prices in valid sale dates </i></h6>
+                        <input type="submit" value="Sort" />
+                        <div>
+                            @if (ViewBag.Message != null)
+                            {
+                                <div class="alert alert-info">@ViewBag.Message</div>
+                            }
+                        </div>
+                       
+
+                    }
             </div>
-            <div class="user-rating">
-                <div><strong>Name: </strong>username1</div>
-                <div><strong>Rating: </strong>5</div>
-                <div><strong>Comment: </strong> This is a comment</div>
-            </div>
-            <div class="user-rating">
-                <div><strong>Name: </strong>username1</div>
-                <div><strong>Rating: </strong>5</div>
-                <div><strong>Comment: </strong> This is a comment</div>
+            <div class="rating-section">
+                <div class="user-rating">
+                    <div><strong>Name: </strong>username1</div>
+                    <div><strong>Rating: </strong>5</div>
+                    <div><strong>Comment: </strong> This is a comment</div>
+                </div>
+                <div class="user-rating">
+                    <div><strong>Name: </strong>username1</div>
+                    <div><strong>Rating: </strong>5</div>
+                    <div><strong>Comment: </strong> This is a comment</div>
+                </div>
+                <div class="user-rating">
+                    <div><strong>Name: </strong>username1</div>
+                    <div><strong>Rating: </strong>5</div>
+                    <div><strong>Comment: </strong> This is a comment</div>
+                </div>
             </div>
         </div>
     </div>

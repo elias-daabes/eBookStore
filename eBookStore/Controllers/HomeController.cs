@@ -178,6 +178,66 @@ namespace eBookStore.Controllers
 
         }
 
+        public ActionResult Filtering(string sortColumn, string sortOrder, string genre)
+        {
+            List<Book> booksList = getBooksList();
+
+            // Apply genre filtering
+            if (!string.IsNullOrEmpty(genre))
+            {
+                booksList = booksList.Where(b => b.genre.Equals(genre, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            // Apply sorting based on selected options
+            if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortOrder))
+            {
+                switch (sortColumn)
+                {
+                    case "BorrowingPrice":
+                        booksList = sortOrder == "asc"
+                            ? booksList.OrderBy(c => c.dateSale.HasValue ? c.priceSaleForBorrowing : c.priceForBorrowing).ToList()
+                            : booksList.OrderByDescending(c => c.dateSale.HasValue ? c.priceSaleForBorrowing : c.priceForBorrowing).ToList();
+                        break;
+                    case "BuyingPrice":
+                        booksList = sortOrder == "asc"
+                            ? booksList.OrderBy(c => c.dateSale.HasValue ? c.priceSaleForBuying : c.priceForBuying).ToList()
+                            : booksList.OrderByDescending(c => c.dateSale.HasValue ? c.priceSaleForBuying : c.priceForBuying).ToList();
+                        break;
+                    case "yearOfPublishing":
+                        booksList = sortOrder == "asc"
+                            ? booksList.OrderBy(c => c.yearOfPublishing).ToList()
+                            : booksList.OrderByDescending(c => c.yearOfPublishing).ToList();
+                        break;
+                    case "popularity":
+                        booksList = sortOrder == "asc"
+                            ? booksList.OrderBy(c => c.popularity).ToList()
+                            : booksList.OrderByDescending(c => c.popularity).ToList();
+                        break;
+                    case "title":
+                        booksList = sortOrder == "asc"
+                            ? booksList.OrderBy(c => c.title).ToList()
+                            : booksList.OrderByDescending(c => c.title).ToList();
+                        break;
+                }
+                ViewBag.Message = $"You chose to sort by {sortColumn} in {sortOrder} order.";
+            }
+            else if (!string.IsNullOrEmpty(genre))
+            {
+                ViewBag.Message = $"Filtered by genre: {genre}. No sorting option was chosen; displaying default order.";
+            }
+            else
+            {
+                ViewBag.Message = "No filtering or sorting options were chosen; displaying default order.";
+            }
+
+            BookViewModel bookViewModel = new BookViewModel
+            {
+                book = new Book(),
+                booksList = booksList
+            };
+
+            return View("HomePage", bookViewModel);
+        }
 
     }
 }
