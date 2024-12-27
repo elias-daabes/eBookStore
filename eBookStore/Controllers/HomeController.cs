@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -24,12 +25,14 @@ namespace eBookStore.Controllers
             return View(bookViewModel);
         }
 
+
+
         private List<Book> getBooksList()
         {
             List<Book> booksList = new List<Book>();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string sqlQuery = "SELECT * FROM books";
+                string sqlQuery = "SELECT * FROM books b LEFT JOIN book_files f ON b.id = f.bookId";
                 using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
                     connection.Open();
@@ -41,7 +44,7 @@ namespace eBookStore.Controllers
                             {
                                 id = Convert.ToInt32(reader["id"]),
                                 title = reader["title"].ToString(),
-                                //authors = new List<string>(),
+                                genre = reader["genre"].ToString(),
                                 publisher = reader["publisher"].ToString(),
                                 priceForBorrowing = Convert.ToDecimal(reader["priceForBorrowing"]),
                                 priceForBuying = Convert.ToDecimal(reader["priceForBuying"]),
@@ -52,7 +55,11 @@ namespace eBookStore.Controllers
                                 ageLimitation = reader["ageLimitation"].ToString(),
                                 quantityInStock = Convert.ToInt32(reader["quantityInStock"]),
                                 popularity = Convert.ToInt32(reader["popularity"]),
-                                //dateSale = reader["dateSale"] != DBNull.Value ? Convert.ToDateTime(reader["dateSale"]) : (DateTime?)null                            
+                                dateSale = reader["dateSale"] != DBNull.Value ? Convert.ToDateTime(reader["dateSale"]) : (DateTime?)null,
+                                epubPath = reader["epubPath"].ToString(),
+                                fb2Path = reader["fb2Path"].ToString(),
+                                mobiPath = reader["mobiPath"].ToString(),
+                                pdfPath = reader["pdfPath"].ToString()
                             };
                             string sqlQuery2 = "SELECT * FROM authors WHERE bookId = @bookId";
                             using (SqlCommand command2 = new SqlCommand(sqlQuery2, connection))
@@ -75,9 +82,14 @@ namespace eBookStore.Controllers
                             booksList.Add(book);
                         }
                     }
+                        command.ExecuteNonQuery();
                 }
             }
             return booksList;
         }
+
+
+
+
     }
 }

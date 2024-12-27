@@ -30,11 +30,11 @@ CREATE TABLE authors (
 INSERT INTO books (id, title, publisher, priceForBorrowing, priceForBuying, priceSaleForBorrowing, priceSaleForBuying, yearOfPublishing, coverImagePath, ageLimitation, quantityInStock, popularity, dateSale, genre)
 VALUES 
 (1, 'The Great Gatsby', 'Scribner', 2.99, 9.99, NULL, NULL, 1925, '/Images/gatsby.jpg', '18+', 10, 9, NULL, 'Classic'),
-(2, 'To Kill a Mockingbird', 'J.B. Lippincott & Co.', 1.99, 7.99, NULL, NULL, 1960, '/Images/mockingbird.jpg', '12+', 8, 10, NULL, 'Classic'),
+(2, 'To Kill a Mockingbird', 'J.B. Lippincott & Co.', 1.99, 7.99, NULL, NULL, 1960, '/Images/mockingbird.jpg', '12+', 8, 5, NULL, 'Classic'),
 (3, '1984', 'Secker & Warburg', 3.49, 12.99, NULL, NULL, 1949, '/Images/1984.jpg', '18+', 5, 8, NULL, 'Dystopian'),
-(4, 'Harry Potter and the Sorcerers Stone', 'Bloomsbury', 2.50, 10.00, NULL, NULL, 1997, '/Images/harrypotter1.jpg', '8+', 20, 10, NULL, 'Fantasy'),
+(4, 'Harry Potter and the Sorcerers Stone', 'Bloomsbury', 2.50, 10.00, NULL, NULL, 1997, '/Images/harrypotter1.jpg', '8+', 20, 6, NULL, 'Fantasy'),
 (5, 'The Hobbit', 'George Allen & Unwin', 2.75, 8.50, NULL, NULL, 1937, '/Images/hobbit.jpg', '12+', 15, 9, NULL, 'Fantasy'),
-(6, 'Pride and Prejudice', 'T. Egerton', 1.99, 6.99, NULL, NULL, 1813, '/Images/pride.jpg', '12+', 12, 8, NULL, 'Romance'),
+(6, 'Pride and Prejudice', 'T. Egerton', 1.99, 6.99, NULL, NULL, 1813, '/Images/pride.jpg', '12+', 12, 4, NULL, 'Romance'),
 (7, 'The Catcher in the Rye', 'Little, Brown and Company', 2.20, 8.20, NULL, NULL, 1951, '/Images/catcher.jpg', '18+', 7, 7, NULL, 'Classic'),
 (8, 'The Lord of the Rings', 'George Allen & Unwin', 3.00, 12.00, NULL, NULL, 1954, '/Images/lotr.jpg', '12+', 14, 10, NULL, 'Fantasy'),
 (9, 'Animal Farm', 'Secker & Warburg', 1.50, 5.99, NULL, NULL, 1945, '/Images/animalfarm.jpg', '12+', 10, 8, NULL, 'Dystopian'),
