@@ -318,6 +318,7 @@
     </style>
 </head>
 <body>
+
     <nav>
         <ul>
             <li><h1>eBook Store</h1></li>
@@ -333,7 +334,7 @@
     <div class="search-bar">
         @using (Html.BeginForm("SearchBookResult", "Home", FormMethod.Get))
         {
-            <input id="searchTerm" name="searchTerm" type="text" placeholder="Search By Title/Author Name/Publisher"/>
+            <input id="searchTerm" name="searchTerm" type="text" placeholder="Search By Title/Author Name/Publisher" />
             <input id="Button1" type="submit" value="Search Book" />
         }
     </div>
@@ -370,24 +371,24 @@
                             <div><strong>In Stock:</strong> @obj.quantityInStock</div>
                             <div><strong>Popularity:</strong> @obj.popularity</div>
                             @*<div>
-                                    <strong>Download Format(s):</strong><br />
-                                    @if (!string.IsNullOrEmpty(obj.epubPath))
-                                    {
-                                        @Html.ActionLink("epub", "DownloadFile", new { filePath = obj.epubPath })
-                                    }
-                                    @if (!string.IsNullOrEmpty(obj.fb2Path))
-                                    {
-                                        @Html.ActionLink("fb2", "DownloadFile", new { filePath = obj.fb2Path })
-                                    }
-                                    @if (!string.IsNullOrEmpty(obj.mobiPath))
-                                    {
-                                        @Html.ActionLink("mobi", "DownloadFile", new { filePath = obj.mobiPath })
-                                    }
-                                    @if (!string.IsNullOrEmpty(obj.pdfPath))
-                                    {
-                                        @Html.ActionLink("pdf", "DownloadFile", new { filePath = obj.pdfPath })
-                                    }
-                            </div>*@
+                                        <strong>Download Format(s):</strong><br />
+                                        @if (!string.IsNullOrEmpty(obj.epubPath))
+                                        {
+                                            @Html.ActionLink("epub", "DownloadFile", new { filePath = obj.epubPath })
+                                        }
+                                        @if (!string.IsNullOrEmpty(obj.fb2Path))
+                                        {
+                                            @Html.ActionLink("fb2", "DownloadFile", new { filePath = obj.fb2Path })
+                                        }
+                                        @if (!string.IsNullOrEmpty(obj.mobiPath))
+                                        {
+                                            @Html.ActionLink("mobi", "DownloadFile", new { filePath = obj.mobiPath })
+                                        }
+                                        @if (!string.IsNullOrEmpty(obj.pdfPath))
+                                        {
+                                            @Html.ActionLink("pdf", "DownloadFile", new { filePath = obj.pdfPath })
+                                        }
+                                </div>*@
                         </div>
                     </div>
                     <div class="interaction-buttons">
@@ -411,32 +412,32 @@
             <div class="filter-container">
                 @using (Html.BeginForm("Filtering", "Home", FormMethod.Get))
                 {
-                    
-                        <label> Sort By:</label>
-                        <div class="rowed">
-                            <input type="radio" name="sortColumn" value="BuyingPrice" id="sortBuyingPrice" />
-                            <label for="sortPrice"> Buying price *   </label>
-                        </div>
-                        <div class="rowed">
-                            <input type="radio" name="sortColumn" value="BorrowingPrice" id="sortBorrowingPrice" />
-                            <label for="sortPrice"> Borrowing Price *</label>
-                        </div>
-                        <div class="rowed">
-                            <input type="radio" name="sortColumn" value="yearOfPublishing" id="sortyearOfPublishing" />
-                            <label for="sortyearOfPublishing"> Release Year </label>
-                        </div>
-                        <div class="rowed">
-                            <input type="radio" name="sortColumn" value="popularity" id="sortPopularity" />
-                            <label for="sortPopularity"> Popularity </label>
-                        </div>
-                        <div class="rowed">
-                            <input type="radio" name="sortColumn" value="title" id="sortTitle" />
-                            <label for="sortTitle"> Title </label><br />
-                        </div>
 
-                        @*Add more radio buttons as needed*@
-                        <label> Order:</label>
-                   
+                    <label> Sort By:</label>
+                    <div class="rowed">
+                        <input type="radio" name="sortColumn" value="BuyingPrice" id="sortBuyingPrice" />
+                        <label for="sortPrice"> Buying price *   </label>
+                    </div>
+                    <div class="rowed">
+                        <input type="radio" name="sortColumn" value="BorrowingPrice" id="sortBorrowingPrice" />
+                        <label for="sortPrice"> Borrowing Price *</label>
+                    </div>
+                    <div class="rowed">
+                        <input type="radio" name="sortColumn" value="yearOfPublishing" id="sortyearOfPublishing" />
+                        <label for="sortyearOfPublishing"> Release Year </label>
+                    </div>
+                    <div class="rowed">
+                        <input type="radio" name="sortColumn" value="popularity" id="sortPopularity" />
+                        <label for="sortPopularity"> Popularity </label>
+                    </div>
+                    <div class="rowed">
+                        <input type="radio" name="sortColumn" value="title" id="sortTitle" />
+                        <label for="sortTitle"> Title </label><br />
+                    </div>
+
+                    @*Add more radio buttons as needed*@
+                    <label> Order:</label>
+
                     <div class="rowed">
                         <input type="radio" name="sortOrder" value="asc" id="orderAsc" />
                         <label for="orderAsc"> Ascending </label>
@@ -454,27 +455,27 @@
                     </div>
 
 
-                        <label>Genre: </label>
-                        <select name="genre" id="genre">
-                            <option value="">-- Select Genre --</option>
-                            @foreach (var genre in genres)
-                            {
-                                <option value="@genre">@genre</option>
-                            }
-                        </select><br />
+                    <label>Genre: </label>
+                    <select name="genre" id="genre">
+                        <option value="">-- Select Genre --</option>
+                        @foreach (var genre in genres)
+                        {
+                            <option value="@genre">@genre</option>
+                        }
+                    </select><br />
 
 
-                        <h6><i>* Include sales prices in valid sale dates </i></h6>
-                        <input type="submit" value="Sort" />
-                        <div>
-                            @if (ViewBag.Message != null)
-                            {
-                                <div class="alert alert-info">@ViewBag.Message</div>
-                            }
-                        </div>
-                       
+                    <h6><i>* Include sales prices in valid sale dates </i></h6>
+                    <input type="submit" value="Sort" />
+                    <div>
+                        @if (ViewBag.Message != null)
+                        {
+                            <div class="alert alert-info">@ViewBag.Message</div>
+                        }
+                    </div>
 
-                    }
+
+                }
             </div>
             <div class="rating-section">
                 <div class="user-rating">
@@ -495,5 +496,14 @@
             </div>
         </div>
     </div>
+
+        @if (TempData["SignUpSuccessMessage"] != null)
+        {
+            <script type="text/javascript">
+        window.onload = function () {
+            alert("@TempData["SignUpSuccessMessage"]");
+        }
+            </script>
+        }
 </body>
 </html>

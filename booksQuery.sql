@@ -139,3 +139,31 @@ VALUES
 (28, '/BookFiles/theroad.epub', '/BookFiles/theroad.fb2', '/BookFiles/theroad.mobi', '/BookFiles/theroad.pdf'),
 (29, '/BookFiles/lifeofpi.epub', '/BookFiles/lifeofpi.fb2', '/BookFiles/lifeofpi.mobi', '/BookFiles/lifeofpi.pdf'),
 (30, '/BookFiles/slaughterhousefive.epub', '/BookFiles/slaughterhousefive.fb2', '/BookFiles/slaughterhousefive.mobi', '/BookFiles/slaughterhousefive.pdf');
+
+DROP TABLE IF EXISTS Accounts;
+CREATE TABLE Accounts (
+    Id INT PRIMARY KEY IDENTITY(1,1), -- Auto-incrementing primary key
+    FirstName NVARCHAR(50) NOT NULL,   -- First name, max 50 characters, cannot be null
+    LastName NVARCHAR(50) NOT NULL,    -- Last name, max 50 characters, cannot be null
+    Email NVARCHAR(100) NOT NULL,      -- Email address, max 100 characters, cannot be null
+    Password NVARCHAR(100) NOT NULL,   -- Password, max 100 characters, cannot be null
+    IsAdmin BIT NOT NULL DEFAULT 0     -- IsAdmin, default to 0 (false)
+);
+
+INSERT INTO Accounts (FirstName, LastName, Email, Password, IsAdmin)
+VALUES
+    ('Admin', 'Admin', 'admin@admin.com', 'admin', 1),
+    ('Jane', 'Smith', 'jane.smith@example.com', 'Password456', 0),
+    ('Alice', 'Johnson', 'alice.johnson@example.com', 'Password789', 0),
+    ('Bob', 'Williams', 'bob.williams@example.com', 'Password101', 0),
+    ('Charlie', 'Brown', 'charlie.brown@example.com', 'Password102', 0),
+    ('David', 'Jones', 'david.jones@example.com', 'Password103', 0),
+    ('Eva', 'Taylor', 'eva.taylor@example.com', 'Password104', 0),
+    ('Frank', 'Miller', 'frank.miller@example.com', 'Password105', 0),
+    ('Grace', 'Davis', 'grace.davis@example.com', 'Password106', 0),
+    ('Hank', 'Wilson', 'hank.wilson@example.com', 'Password107', 0),
+    ('Ivy', 'Moore', 'ivy.moore@example.com', 'Password108', 0),
+    ('Jack', 'Anderson', 'jack.anderson@example.com', 'Password109', 0),
+    ('Kathy', 'Thomas', 'kathy.thomas@example.com', 'Password110', 0),
+    ('Liam', 'Jackson', 'liam.jackson@example.com', 'Password111', 0),
+    ('Mona', 'White', 'mona.white@example.com', 'Password112', 0);
