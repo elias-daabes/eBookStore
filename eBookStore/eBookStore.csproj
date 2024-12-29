@@ -172,6 +172,7 @@
     <Content Include="Views\Book\EditBook.cshtml" />
     <Content Include="Views\Book\AddBookFiles.cshtml" />
     <Content Include="Views\Account\SignUp.cshtml" />
+    <Content Include="Views\Account\ManageAccounts.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

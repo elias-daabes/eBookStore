@@ -1,4 +1,5 @@
 ﻿using eBookStore.Models;
+using eBookStore.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -11,6 +12,8 @@ namespace eBookStore.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+
         // GET: Account
         public ActionResult Index()
         {
@@ -58,6 +61,63 @@ namespace eBookStore.Controllers
                     command.ExecuteNonQuery();
                 }
             }
+        }
+        public ActionResult ManageAccounts()
+        {
+            AccountViewModel accountViewModel = new AccountViewModel
+            {
+                account = new Account(),
+                accountsList = getAccountsList()
+            };
+            return View(accountViewModel);
+        }
+
+        private List<Account> getAccountsList() { 
+            List<Account> accounts = new List<Account>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery = "SELECT Id, FirstName, LastName, Email, IsAdmin FROM Accounts";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            accounts.Add(new Account
+                            {
+                                Id = reader.GetInt32(0),
+                                FirstName = reader.GetString(1),
+                                LastName = reader.GetString(2),
+                                Email = reader.GetString(3),
+                                IsAdmin = reader.GetBoolean(4)
+                            });
+                        }
+
+                    }
+                }
+            }
+            return accounts;
+        }
+
+
+
+        [HttpPost]
+        public ActionResult DeleteAccount(int accountId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string sqlQuery = "DELETE FROM Accounts WHERE Id = @Id";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", accountId);
+                    command.ExecuteNonQuery();
+                    TempData["SuccessMessage"] = "Account deleted successfully.";
+
+                }
+            }
+            return RedirectToAction("ManageAccounts");
         }
 
     }
