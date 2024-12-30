@@ -161,7 +161,7 @@
         }
         nav {
             background-color: #FDE49E;
-            padding: 10px 0;
+            padding: 5px 0;
             text-align: right;
         }
             nav h1 {
@@ -354,7 +354,12 @@
                 <li><a href="#cart">My Cart</a></li>
                 <li><a href="#waiting-list">My Waiting List</a></li>
                 <li><a href="#library">My Library</a></li>
-                <li><a href="#logout">Log Out</a></li>
+                <li>
+                    @using (Html.BeginForm("Logout", "Account"))
+                    {
+                        <input type="submit" class="nav-btn" value="Logout" />
+                    }
+                </li>
             </ul>
         </nav>
     }
@@ -367,7 +372,7 @@
                 <li>
                     @using (Html.BeginForm("Login", "Account",  FormMethod.Post))
                     {
-                        <input type="submit" class="nav-btn" value="LogIn" />
+                        <input type="submit" class="nav-btn" value="Login" />
                     }
                             </li>
                 <li><a href="#signup">Sign Up</a></li>

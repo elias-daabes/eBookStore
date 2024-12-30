@@ -155,6 +155,13 @@ namespace eBookStore.Controllers
             return View(login);
         }
 
+        public ActionResult Logout()
+        {
+
+            Session.Clear();
+            return RedirectToAction("HomePage","Home");
+        }
+
         private Account ValidateUser(string email, string password)
         {
 
