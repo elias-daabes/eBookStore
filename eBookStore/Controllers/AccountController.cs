@@ -42,6 +42,9 @@ namespace eBookStore.Controllers
                 }
                 SaveAccountToDB(account);
                 TempData["SignUpSuccessMessage"] = "You have successfully signed up!";
+                Session["AccountId"] = account.Id;
+                Session["FirstName"] = account.FirstName;
+                Session["LastName"] = account.LastName;
 
                 return RedirectToAction("HomePage","Home");
             }
