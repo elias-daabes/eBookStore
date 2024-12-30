@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
 
@@ -76,7 +77,7 @@ namespace eBookStore.Controllers
             List<Account> accounts = new List<Account>();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string sqlQuery = "SELECT Id, FirstName, LastName, Email, IsAdmin FROM Accounts";
+                string sqlQuery = "SELECT Id, FirstName, LastName, Email, Password, IsAdmin FROM Accounts";
                 using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
                     connection.Open();
@@ -90,7 +91,8 @@ namespace eBookStore.Controllers
                                 FirstName = reader.GetString(1),
                                 LastName = reader.GetString(2),
                                 Email = reader.GetString(3),
-                                IsAdmin = reader.GetBoolean(4)
+                                Password = reader.GetString(4),
+                                IsAdmin = reader.GetBoolean(5)
                             });
                         }
 
@@ -119,6 +121,62 @@ namespace eBookStore.Controllers
             }
             return RedirectToAction("ManageAccounts");
         }
+
+        [HttpGet]
+        public ActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Login(LoginModel login)
+        {
+
+
+            if (ModelState.IsValid)
+            {
+                
+                // Replace this with your actual logic to validate the user
+                Account account = ValidateUser(login.Email, login.Password);
+
+                if (account != null)
+                {
+                    Session["AccountId"] = account.Id;
+                    Session["FirstName"] = account.FirstName;
+                    Session["LastName"] = account.LastName;
+                    return RedirectToAction("HomePage", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Invalid email or password");
+                }
+            }
+
+            return View(login);
+        }
+
+        private Account ValidateUser(string email, string password)
+        {
+
+            AccountViewModel accountViewModel = new AccountViewModel
+            {
+                account = new Account(),
+                accountsList = getAccountsList()
+            };
+
+            for (int i = 0; i < accountViewModel.accountsList.Count; i++)
+            {
+                Account account = accountViewModel.accountsList[i];
+                if (account.Email.Equals(email, StringComparison.OrdinalIgnoreCase) &&
+                    account.Password == password)
+                {
+                    return account;
+                }
+            }
+
+            return null;
+        }
+
 
     }
 }

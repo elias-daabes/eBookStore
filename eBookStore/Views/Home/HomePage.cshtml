@@ -137,7 +137,7 @@
                 background-color: #0056b3;
             }
         /* Global Reset */
-        /* Global Reset */
+
         * {
             margin: 0;
             padding: 0;
@@ -152,22 +152,29 @@
 
         }
 
-        /* Header Styling */
-        h1 {
-            font-size: 36px;
-            color: #4CAF50;
+        h2 {
             text-align: left;
-
+            font-size: 24px;
+            color: #DD761C;
+            margin: 20px 0;
+            padding: 10px 20px;
         }
-
-        /* Navigation Bar Styling */
         nav {
-            background-color: #A98467;
+            background-color: #FDE49E;
             padding: 10px 0;
             text-align: right;
         }
+            nav h1 {
+                margin: 0;
+                color: #6DC5D1;
+                font-size: 32px;
+                flex-grow: 1; /* Allows h1 to take up space for centering */
+                text-align: left; 
+                padding-left: 8px;
+            }
 
             nav ul {
+                align-items: center;
                 list-style: none;
                 display: flex;
                 justify-content: right;
@@ -176,10 +183,11 @@
 
                 nav ul li {
                     display: inline;
+                    margin-top: 5px;
                 }
 
                     nav ul li a {
-                        color: white;
+                        color: #DD761C;
                         text-decoration: none;
                         font-size: 18px;
                         padding: 10px 20px;
@@ -187,14 +195,32 @@
                     }
 
                         nav ul li a:hover {
-                            background-color: #ADC178;
+                            background-color: #FEB941;
                             transform: translateY(-2px);
                         }
 
                         nav ul li a:active {
-                            background-color: #3e8e41;
+                            background-color: #FEB941;
                             transform: translateY(0);
                         }
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #DD761C;
+            font-size: 1rem;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 10px 20px;
+        }
+        .nav-btn:hover {
+            background-color: #FEB941;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:active {
+            background-color: #FEB941;
+            transform: translateY(0);
+        }
 
 
         .interaction-buttons {
@@ -318,23 +344,46 @@
     </style>
 </head>
 <body>
+    @if (Session["AccountId"] != null)
+    {
 
-    <nav>
-        <ul>
-            <li><h1>eBook Store</h1></li>
-            <li><a href="#cart">My Cart</a></li>
-            <li><a href="#login">Log In</a></li>
-            <li><a href="#signup">Sign Up</a></li>
-            <li><a href="#waiting-list">My Waiting List</a></li>
-            <li><a href="#library">My Library</a></li>
-            <li><a href="#logout">Log Out</a></li>
-        </ul>
-    </nav>
 
+        <nav>
+            <ul>
+                <h1>eBook Store</h1>
+                <li><a href="#cart">My Cart</a></li>
+                <li><a href="#waiting-list">My Waiting List</a></li>
+                <li><a href="#library">My Library</a></li>
+                <li><a href="#logout">Log Out</a></li>
+            </ul>
+        </nav>
+    }
+    else
+    {
+        <nav>
+            <ul>
+                <h1>eBook Store</h1>
+                <li><a href="#cart">My Cart</a></li>
+                <li>
+                    @using (Html.BeginForm("Login", "Account",  FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="LogIn" />
+                    }
+                            </li>
+                <li><a href="#signup">Sign Up</a></li>
+                <li><a href="#waiting-list">My Waiting List</a></li>
+            </ul>
+        </nav>
+
+    }
+    @if (Session["AccountId"] != null)
+    {
+        <h2>Welcome, @Session["FirstName"] @Session["LastName"]!</h2>
+    }
     <div class="search-bar">
         @using (Html.BeginForm("SearchBookResult", "Home", FormMethod.Get))
         {
-            <input id="searchTerm" name="searchTerm" type="text" placeholder="Search By Title/Author Name/Publisher" />
+            <input id="searchTerm" name="searchTerm" type="text" placeholder="Search By Title / Publisher / Author Name" />
             <input id="Button1" type="submit" value="Search Book" />
         }
     </div>
@@ -497,13 +546,13 @@
         </div>
     </div>
 
-        @if (TempData["SignUpSuccessMessage"] != null)
-        {
-            <script type="text/javascript">
+    @if (TempData["SignUpSuccessMessage"] != null)
+    {
+        <script type="text/javascript">
         window.onload = function () {
             alert("@TempData["SignUpSuccessMessage"]");
         }
-            </script>
-        }
+        </script>
+    }
 </body>
 </html>
