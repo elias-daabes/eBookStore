@@ -85,29 +85,29 @@
     <div class="container">
         <h2>Sign Up</h2>
 
-        @using (Html.BeginForm("SignUp", "Account", FormMethod.Post))
+        @using (Html.BeginForm("SignUpAccount", "Account", FormMethod.Post))
         {
             <div class="form-group">
                 <label>First Name</label>
-                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @Value = Model.FirstName })
+                @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger"})
             </div>
 
             <div class="form-group">
                 <label>Last Name</label>
-                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @Value = Model.LastName })
                 @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
             </div>
 
             <div class="form-group">
                 <label>Email</label>
-                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @Value = Model.Email })
                 @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
             </div>
 
             <div class="form-group">
                 <label>Password</label>
-                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", @Value = Model.Password })
                 @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
             </div>
 

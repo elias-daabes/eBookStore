@@ -357,7 +357,7 @@
                 <li>
                     @using (Html.BeginForm("Logout", "Account"))
                     {
-                        <input type="submit" class="nav-btn" value="Logout" />
+                        <input type="submit" class="nav-btn" value="Log Out" />
                     }
                 </li>
             </ul>
@@ -372,11 +372,16 @@
                 <li>
                     @using (Html.BeginForm("Login", "Account",  FormMethod.Post))
                     {
-                        <input type="submit" class="nav-btn" value="Login" />
+                        <input type="submit" class="nav-btn" value="Log In" />
                     }
                             </li>
-                <li><a href="#signup">Sign Up</a></li>
-                <li><a href="#waiting-list">My Waiting List</a></li>
+                <li>
+                    
+                    @using (Html.BeginForm("SignUp", "Account", FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="Sign Up" />
+                    }
+                </li>
             </ul>
         </nav>
 

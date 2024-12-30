@@ -21,24 +21,55 @@ namespace eBookStore.Controllers
             return View();
         }
 
-        [HttpGet]
+
         public ActionResult SignUp()
         {
-            return View(new Account()); 
+            return View(new Account());
         }
-        public ActionResult SignUp(Account account)
+
+        [HttpPost]
+        public ActionResult SignUpAccount(Account account)
         {
             if (ModelState.IsValid)
             {
+                // Check if the email already exists in the database
+                bool emailExists = CheckIfEmailExists(account.Email);
+
+                if (emailExists)
+                {
+                    ModelState.AddModelError("Email", "This email is already registered.");
+                    return View("SignUp",account);
+                }
                 SaveAccountToDB(account);
                 TempData["SignUpSuccessMessage"] = "You have successfully signed up!";
 
                 return RedirectToAction("HomePage","Home");
-                //return RedirectToAction("Success", "AnotherController", new { id = user.Id });
             }
             // Return the view with validation errors
             return View(account);
         }
+
+        private bool CheckIfEmailExists(string email)
+        {
+
+            AccountViewModel accountViewModel = new AccountViewModel
+            {
+                account = new Account(),
+                accountsList = getAccountsList()
+            };
+
+            for (int i = 0; i < accountViewModel.accountsList.Count; i++)
+            {
+                Account account = accountViewModel.accountsList[i];
+                if (account.Email.Equals(email))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
 
         private void SaveAccountToDB(Account account)
         {
