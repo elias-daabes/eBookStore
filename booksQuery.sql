@@ -58,7 +58,7 @@ VALUES
 (27, 'It', 'Viking', 3.80, 13.50, NULL, NULL, 1986, '/Images/it.jpg', '18+', 6, 8, NULL, 'Horror'),
 (28, 'The Road', 'Alfred A. Knopf', 2.50, 9.50, NULL, NULL, 2006, '/Images/theroad.jpg', '18+', 12, 9, NULL, 'Post-Apocalyptic'),
 (29, 'Life of Pi', 'Knopf Canada', 2.60, 8.99, NULL, NULL, 2001, '/Images/lifeofpi.jpg', '12+', 15, 10, NULL, 'Adventure'),
-(30, 'Slaughterhouse-Five', 'Delacorte Press', 2.20, 7.99, NULL, NULL, 1969, '/Images/slaughterhousefive.jpg', '18+', 0, 6, NULL, 'Science Fiction');
+(30, 'Slaughterhouse-Five', 'Delacorte Press', 2.20, 7.99, NULL, NULL, 1969, '/Images/slaughterhousefive.jpg', '18+', 1, 6, NULL, 'Science Fiction');
 
 
 
