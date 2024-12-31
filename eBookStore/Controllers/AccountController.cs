@@ -481,7 +481,7 @@ namespace eBookStore.Controllers
                 return RedirectToAction("HomePage", "Home");
             }
 
-
+            AcquireBookFromStore(bookId);
             addBookToLibrary(accountId, bookId, true);
             TempData["ActionError"] = "complete payment"; //TODO: should be deleted and replace by payment action
             TempData["ActionSuccess"] = "Book '" + getBookByid(bookId).title + "' has been borrowed successfully. Enter the library to view formats.";
