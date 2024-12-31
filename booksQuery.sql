@@ -153,7 +153,7 @@ CREATE TABLE Accounts (
 INSERT INTO Accounts (FirstName, LastName, Email, Password, IsAdmin)
 VALUES
     ('Admin', 'Admin', 'admin@admin.com', 'admin', 1),
-    ('Jane', 'Smith', 'jane.smith@example.com', 'Password456', 0),
+    ('Jane', 'Smith', 'jane.smith@example.com', '123123', 0),
     ('Alice', 'Johnson', 'alice.johnson@example.com', 'Password789', 0),
     ('Bob', 'Williams', 'bob.williams@example.com', 'Password101', 0),
     ('Charlie', 'Brown', 'charlie.brown@example.com', 'Password102', 0),
@@ -167,3 +167,41 @@ VALUES
     ('Kathy', 'Thomas', 'kathy.thomas@example.com', 'Password110', 0),
     ('Liam', 'Jackson', 'liam.jackson@example.com', 'Password111', 0),
     ('Mona', 'White', 'mona.white@example.com', 'Password112', 0);
+
+
+DROP TABLE IF EXISTS Libraries;
+CREATE TABLE Libraries (
+    AccountId INT,
+    BookId INT,
+    BorrowingDate DATE,
+    AcquisitionDate DATE, 
+    PRIMARY KEY (AccountId, BookId)
+);
+
+INSERT INTO Libraries (AccountId, BookId, BorrowingDate, AcquisitionDate)
+VALUES
+(2, 1, '2025-01-20', '2024-11-01'),
+(2, 2, '2025-01-25', '2024-11-10'),
+(2, 3, '2025-01-30', '2024-11-15'),
+(2, 4, NULL, '2024-11-20'),
+(2, 5, NULL, '2024-11-25'),
+(2, 6, NULL, '2024-12-01'),
+(2, 8, NULL, '2024-12-05'),
+(2, 9, NULL, '2024-12-10'),
+(2, 10, NULL, '2024-12-15'),
+(3, 4, NULL, '2024-12-20'),
+(3, 5, NULL, '2024-12-25'),
+(3, 6, NULL, '2024-12-30'),
+(3, 7, NULL, '2025-01-05'),
+(3, 8, NULL, '2025-01-10'),
+(4, 9, NULL, '2025-01-15'),
+(4, 10, NULL, '2025-01-20');
+
+
+--DROP TABLE IF EXISTS Accounts;
+--CREATE TABLE Carts (
+--    CartId INT,
+--    AccountId INT,
+--    BookId INT,
+--    PRIMARY KEY (CartId, AccountId, BookId)
+--);

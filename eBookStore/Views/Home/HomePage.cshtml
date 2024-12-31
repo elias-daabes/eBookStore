@@ -340,10 +340,21 @@
             .rowed{
                 display:flex;
             }
+        .error-message {
+            background-color: #fe6868;
+            color: white;
+            border: 2px solid red;
+            font-size: 18px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 8px 8px;
+            margin: 8px 8px;
+        }
 
     </style>
 </head>
 <body>
+
+
     @if (Session["AccountId"] != null)
     {
 
@@ -353,7 +364,12 @@
                 <h1>eBook Store</h1>
                 <li><a href="#cart">My Cart</a></li>
                 <li><a href="#waiting-list">My Waiting List</a></li>
-                <li><a href="#library">My Library</a></li>
+                <li>
+                    @using (Html.BeginForm("MyLibrary", "Account", FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="My Library" />
+                    }
+                </li>
                 <li>
                     @using (Html.BeginForm("Logout", "Account"))
                     {
@@ -370,13 +386,13 @@
                 <h1>eBook Store</h1>
                 <li><a href="#cart">My Cart</a></li>
                 <li>
-                    @using (Html.BeginForm("Login", "Account",  FormMethod.Post))
+                    @using (Html.BeginForm("Login", "Account", FormMethod.Post))
                     {
                         <input type="submit" class="nav-btn" value="Log In" />
                     }
-                            </li>
+                </li>
                 <li>
-                    
+
                     @using (Html.BeginForm("SignUp", "Account", FormMethod.Post))
                     {
                         <input type="submit" class="nav-btn" value="Sign Up" />
@@ -385,6 +401,10 @@
             </ul>
         </nav>
 
+    }
+    @if (TempData["DeniedAccessToLibrary"] != null)
+    {
+        <div class="error-message">@TempData["DeniedAccessToLibrary"]</div>
     }
     @if (Session["AccountId"] != null)
     {
@@ -429,25 +449,6 @@
                             <div><strong>Age Limitation:</strong> @obj.ageLimitation</div>
                             <div><strong>In Stock:</strong> @obj.quantityInStock</div>
                             <div><strong>Popularity:</strong> @obj.popularity</div>
-                            @*<div>
-                                        <strong>Download Format(s):</strong><br />
-                                        @if (!string.IsNullOrEmpty(obj.epubPath))
-                                        {
-                                            @Html.ActionLink("epub", "DownloadFile", new { filePath = obj.epubPath })
-                                        }
-                                        @if (!string.IsNullOrEmpty(obj.fb2Path))
-                                        {
-                                            @Html.ActionLink("fb2", "DownloadFile", new { filePath = obj.fb2Path })
-                                        }
-                                        @if (!string.IsNullOrEmpty(obj.mobiPath))
-                                        {
-                                            @Html.ActionLink("mobi", "DownloadFile", new { filePath = obj.mobiPath })
-                                        }
-                                        @if (!string.IsNullOrEmpty(obj.pdfPath))
-                                        {
-                                            @Html.ActionLink("pdf", "DownloadFile", new { filePath = obj.pdfPath })
-                                        }
-                                </div>*@
                         </div>
                     </div>
                     <div class="interaction-buttons">
@@ -455,7 +456,7 @@
                         <input type="button" name="name" value="Add to Cart" />
                         @if (obj.popularity < 7)
                         {
-                            //Books that are not that much pobular
+                            //Books that are not that much popular
                             <input type="button" name="name" value="Borrow" />
                         }
                         @if (obj.quantityInStock == 0)
@@ -564,5 +565,6 @@
         }
         </script>
     }
+
 </body>
 </html>

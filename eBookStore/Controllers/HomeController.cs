@@ -22,6 +22,8 @@ namespace eBookStore.Controllers
                 book = new Book(),
                 booksList = getBooksList()
             };
+            //TempData["DeniedAccessToLibrary"] = Session["DeniedAccessToLibrary"];
+            //Session.Remove("DeniedAccessToLibrary");
             return View(bookViewModel);
         }
 

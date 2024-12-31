@@ -137,6 +137,158 @@ namespace eBookStore.Controllers
         }
 
 
+        public ActionResult MyLibrary()
+        {
+            if (Session["AccountId"] != null)
+            {
+                int accountId = (int)Session["AccountId"];
+                Library library = getLibraryBooks(accountId);
+                return View(library);
+            }
+            //Session["DeniedAccessToLibrary"] = "Please log in in order to access your library.";
+            TempData["DeniedAccessToLibrary"] = "Please log in in order to access your library.";
+            return RedirectToAction("HomePage", "Home");
+
+
+        }
+
+        private Library getLibraryBooks(int AccountId)
+        {
+            Library libraryBooks = new Library();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery = "SELECT AccountId, BookId, BorrowingDate, AcquisitionDate FROM Libraries WHERE AccountId = @AccountId";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@AccountId", AccountId);
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        libraryBooks = new Library
+                        {
+                            AccountId = AccountId,
+                            books = new List<Book>(),
+                            BorrowingDates = new List<DateTime?>(),
+                            AcquisitionDate = new List<DateTime>()
+                        };
+
+                        while (reader.Read())
+                        {
+                            int bookId = Convert.ToInt32(reader["BookId"]);
+                            DateTime? borrowingDate = reader["BorrowingDate"] != DBNull.Value ? Convert.ToDateTime(reader["BorrowingDate"]) : (DateTime?)null;
+                            DateTime acquisitionDate = Convert.ToDateTime(reader["AcquisitionDate"]);
+
+                            libraryBooks.books.Add(getBookByid(bookId));
+                            libraryBooks.BorrowingDates.Add(borrowingDate);
+                            libraryBooks.AcquisitionDate.Add(acquisitionDate);
+                        }
+
+                    }
+                }
+            }
+            return libraryBooks;
+        }
+
+
+        public ActionResult DownloadFile(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return HttpNotFound();
+            }
+
+            string path = Server.MapPath(filePath);
+            var fileBytes = System.IO.File.ReadAllBytes(path);
+            return File(fileBytes, "application/octet-stream", filePath);
+        }
+
+        private Book getBookByid(int id)
+        {
+            List<Book> books = getBooksList(null);
+            foreach (Book book in books)
+            {
+                if (book.id == id)
+                    return book;
+            }
+            return null;
+        }
+        private List<Book> getBooksList(string searchTerm)
+        {
+            List<Book> booksList = new List<Book>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery = "SELECT * FROM books b LEFT JOIN book_files f ON b.id = f.bookId";
+
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    sqlQuery += " WHERE title LIKE @title";
+                }
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    connection.Open();
+
+                    if (!string.IsNullOrEmpty(searchTerm))
+                    {
+                        command.Parameters.AddWithValue("@title", "%" + searchTerm + "%");
+                    }
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Book book = new Book
+                            {
+                                id = Convert.ToInt32(reader["id"]),
+                                title = reader["title"].ToString(),
+                                genre = reader["genre"].ToString(),
+                                authors = new List<Author>(),
+                                publisher = reader["publisher"].ToString(),
+                                priceForBorrowing = Convert.ToDecimal(reader["priceForBorrowing"]),
+                                priceForBuying = Convert.ToDecimal(reader["priceForBuying"]),
+                                priceSaleForBorrowing = reader["priceSaleForBorrowing"] != DBNull.Value ? Convert.ToDecimal(reader["priceSaleForBorrowing"]) : (decimal?)null,
+                                priceSaleForBuying = reader["priceSaleForBuying"] != DBNull.Value ? Convert.ToDecimal(reader["priceSaleForBuying"]) : (decimal?)null,
+                                yearOfPublishing = Convert.ToInt32(reader["yearOfPublishing"]),
+                                coverImagePath = reader["coverImagePath"].ToString(),
+                                ageLimitation = reader["ageLimitation"].ToString(),
+                                quantityInStock = Convert.ToInt32(reader["quantityInStock"]),
+                                popularity = Convert.ToInt32(reader["popularity"]),
+                                dateSale = reader["dateSale"] != DBNull.Value ? (DateTime?)reader["dateSale"] : null, // This handles nullable DateTime
+                                epubPath = reader["epubPath"].ToString(),
+                                fb2Path = reader["fb2Path"].ToString(),
+                                mobiPath = reader["mobiPath"].ToString(),
+                                pdfPath = reader["pdfPath"].ToString()
+                            };
+
+                            string sqlQuery2 = "SELECT * FROM authors WHERE bookId = @bookId";
+                            using (SqlCommand command2 = new SqlCommand(sqlQuery2, connection))
+                            {
+                                command2.Parameters.AddWithValue("@bookId", book.id);
+                                using (SqlDataReader reader2 = command2.ExecuteReader())
+                                {
+                                    while (reader2.Read())
+                                    {
+                                        Author author2 = new Author
+                                        {
+                                            authorName = reader2["authorName"].ToString(),
+                                            bookId = Convert.ToInt32(reader2["bookId"])
+                                        };
+                                        book.authors.Add(author2);
+                                    }
+                                }
+                            }
+
+                            booksList.Add(book);
+                        }
+                    }
+                }
+            }
+
+            return booksList;
+
+        }
+
 
         [HttpPost]
         public ActionResult DeleteAccount(int accountId)
