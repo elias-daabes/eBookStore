@@ -49,7 +49,7 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
-            flex: 4;
+            flex: 5;
             padding: 20px 20px 20px 300px;
         }
 
@@ -97,6 +97,19 @@
         }
 
             .book-item input[type="button"]:hover {
+                background-color: #0056b3;
+            }
+        .book-item input[type="submit"] {
+            margin: 5px 5px 0 0;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            .book-item input[type="submit"]:hover {
                 background-color: #0056b3;
             }
 
@@ -225,6 +238,7 @@
 
         .interaction-buttons {
             align-content: end;
+            
         }
         /* Search Bar Styling */
         .search-bar {
@@ -349,6 +363,23 @@
             padding: 8px 8px;
             margin: 8px 8px;
         }
+        .success-message {
+            background-color: #68fe68;
+            color: darkgreen;
+            border: 2px solid green;
+            font-size: 18px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 8px 8px;
+            margin: 8px 8px;
+        }
+        #borrow-btn {
+            background-color: #ffbb00; 
+        }
+
+            #borrow-btn:hover {
+                background-color: #DD761C; /* Darker blue on hover */
+            }
+
 
     </style>
 </head>
@@ -406,6 +437,16 @@
     {
         <div class="error-message">@TempData["DeniedAccessToLibrary"]</div>
     }
+    @if (TempData["BorrowError"] != null)
+    {
+        <div class="error-message">@TempData["BorrowError"]</div>
+    }
+    @if (TempData["BorrowSuccess"] != null)
+    {
+        <div class="success-message">@TempData["BorrowSuccess"]</div>
+    }
+
+
     @if (Session["AccountId"] != null)
     {
         <h2>Welcome, @Session["FirstName"] @Session["LastName"]!</h2>
@@ -457,7 +498,10 @@
                         @if (obj.popularity < 7)
                         {
                             //Books that are not that much popular
-                            <input type="button" name="name" value="Borrow" />
+                            using (Html.BeginForm("BorrowBook", "Account", new { bookId = obj.id, @class = "form"}))
+                            {
+                                <input type="submit" name="name" id="borrow-btn" value="Borrow" />
+                            }
                         }
                         @if (obj.quantityInStock == 0)
                         {

@@ -58,7 +58,7 @@ VALUES
 (27, 'It', 'Viking', 3.80, 13.50, NULL, NULL, 1986, '/Images/it.jpg', '18+', 6, 8, NULL, 'Horror'),
 (28, 'The Road', 'Alfred A. Knopf', 2.50, 9.50, NULL, NULL, 2006, '/Images/theroad.jpg', '18+', 12, 9, NULL, 'Post-Apocalyptic'),
 (29, 'Life of Pi', 'Knopf Canada', 2.60, 8.99, NULL, NULL, 2001, '/Images/lifeofpi.jpg', '12+', 15, 10, NULL, 'Adventure'),
-(30, 'Slaughterhouse-Five', 'Delacorte Press', 2.20, 7.99, NULL, NULL, 1969, '/Images/slaughterhousefive.jpg', '18+', 10, 8, NULL, 'Science Fiction');
+(30, 'Slaughterhouse-Five', 'Delacorte Press', 2.20, 7.99, NULL, NULL, 1969, '/Images/slaughterhousefive.jpg', '18+', 0, 6, NULL, 'Science Fiction');
 
 
 
@@ -180,7 +180,7 @@ CREATE TABLE Libraries (
 
 INSERT INTO Libraries (AccountId, BookId, BorrowingDate, AcquisitionDate)
 VALUES
-(2, 1, '2024-01-20', '2024-11-01'),
+(2, 1, '2025-01-20', '2024-11-01'),
 (2, 2, '2025-01-25', '2024-11-10'),
 (2, 3, '2025-01-30', '2024-11-15'),
 (2, 4, NULL, '2024-11-20'),

@@ -3,6 +3,7 @@ using eBookStore.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Claims;
@@ -38,7 +39,7 @@ namespace eBookStore.Controllers
                 if (emailExists)
                 {
                     ModelState.AddModelError("Email", "This email is already registered.");
-                    return View("SignUp",account);
+                    return View("SignUp", account);
                 }
                 SaveAccountToDB(account);
                 TempData["SignUpSuccessMessage"] = "You have successfully signed up!";
@@ -46,7 +47,7 @@ namespace eBookStore.Controllers
                 Session["FirstName"] = account.FirstName;
                 Session["LastName"] = account.LastName;
 
-                return RedirectToAction("HomePage","Home");
+                return RedirectToAction("HomePage", "Home");
             }
             // Return the view with validation errors
             return View(account);
@@ -107,7 +108,8 @@ namespace eBookStore.Controllers
             return View(accountViewModel);
         }
 
-        private List<Account> getAccountsList() { 
+        private List<Account> getAccountsList()
+        {
             List<Account> accounts = new List<Account>();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -321,7 +323,7 @@ namespace eBookStore.Controllers
 
             if (ModelState.IsValid)
             {
-                
+
                 // Replace this with your actual logic to validate the user
                 Account account = ValidateUser(login.Email, login.Password);
 
@@ -345,9 +347,9 @@ namespace eBookStore.Controllers
         private void deleteOverDuedBooks(int id)
         {
             Library library = getLibraryBooks(id);
-            for(int i = 0; i < library.books.Count; i++)
+            for (int i = 0; i < library.books.Count; i++)
             {
-                if(library.BorrowingDates[i] != null && library.BorrowingDates[i] < DateTime.Today)
+                if (library.BorrowingDates[i] != null && library.BorrowingDates[i] < DateTime.Today)
                 {
                     DeleteBookFromLibraryFunction(id, library.books[i].id);
                     // quentity of book should be increased by 1
@@ -375,7 +377,7 @@ namespace eBookStore.Controllers
                     command.ExecuteNonQuery();
                 }
             }
-      
+
 
         }
 
@@ -383,7 +385,7 @@ namespace eBookStore.Controllers
         {
 
             Session.Clear();
-            return RedirectToAction("HomePage","Home");
+            return RedirectToAction("HomePage", "Home");
         }
 
         private Account ValidateUser(string email, string password)
@@ -437,6 +439,58 @@ namespace eBookStore.Controllers
                 }
 
             }
+        }
+
+        public ActionResult BorrowBook(int bookId)
+        {
+            if (Session["accountId"] == null)
+            {
+                TempData["BorrowError"] = "Please log in to complete this action.";
+                return RedirectToAction("HomePage", "Home");
+            }
+            int accountId = (int)Session["accountId"];
+            Library library = getLibraryBooks(accountId);
+
+            foreach( Book book in library.books)
+                if (book.id == bookId)
+                {
+                    TempData["BorrowError"] = "You already have this book.";
+                    return RedirectToAction("HomePage", "Home");
+                }
+
+            if (library.BorrowingDates.Count == 3)
+            {
+                TempData["BorrowError"] = "You cannot borrow more than 3 books.";
+                return RedirectToAction("HomePage", "Home");
+            }
+
+
+            addBookToLibrary(accountId, bookId);
+            TempData["BorrowError"] = "complete payment"; //TODO: should be deleted and replace by payment action
+            TempData["BorrowSuccess"] = "Book '" + getBookByid(bookId).title + "' has been borrowed successfully. Enter the library to view formats.";
+            return RedirectToAction("HomePage", "Home");
+
+        }
+
+        private void addBookToLibrary(int accountId, int bookId)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string sqlQuery = "INSERT INTO Libraries (AccountId, BookId, BorrowingDate, AcquisitionDate) VALUES " +
+                                  "(@AccountId, @BookId, @BorrowingDate, @AcquisitionDate)";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@AccountId", accountId);
+                    command.Parameters.AddWithValue("@BookId", bookId);
+                    command.Parameters.Add("@BorrowingDate", SqlDbType.DateTime).Value = DateTime.Today.AddDays(30);
+                    command.Parameters.Add("@AcquisitionDate", SqlDbType.DateTime).Value = DateTime.Today;
+
+                    command.ExecuteNonQuery();
+                }
+            }
+
         }
     }
 }
