@@ -327,6 +327,7 @@ namespace eBookStore.Controllers
 
                 if (account != null)
                 {
+                    deleteOverDuedBooks(account.Id);
                     Session["AccountId"] = account.Id;
                     Session["FirstName"] = account.FirstName;
                     Session["LastName"] = account.LastName;
@@ -339,6 +340,43 @@ namespace eBookStore.Controllers
             }
 
             return View(login);
+        }
+
+        private void deleteOverDuedBooks(int id)
+        {
+            Library library = getLibraryBooks(id);
+            for(int i = 0; i < library.books.Count; i++)
+            {
+                if(library.BorrowingDates[i] != null && library.BorrowingDates[i] < DateTime.Today)
+                {
+                    DeleteBookFromLibraryFunction(id, library.books[i].id);
+                    // quentity of book should be increased by 1
+                    ReturnBookToStore(library.books[i].id);
+                    //send notification
+                }
+            }
+        }
+
+        private void ReturnBookToStore(int id)
+        {
+
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string sqlQuery = "UPDATE books SET quantityInStock = quantityInStock + 1 WHERE id = @id";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+
+                    command.Parameters.AddWithValue("@id", id);
+
+                    // Execute query
+                    command.ExecuteNonQuery();
+                }
+            }
+      
+
         }
 
         public ActionResult Logout()
@@ -373,6 +411,17 @@ namespace eBookStore.Controllers
         [HttpPost]
         public ActionResult DeleteBookFromLibrary(int accountId, int bookId)
         {
+            DeleteBookFromLibraryFunction(accountId, bookId);
+            //BookViewModel bookViewModel = new BookViewModel
+            //{
+            //    book = new Book(),
+            //    booksList = getBooksList(null)
+            //};
+            return RedirectToAction("MyLibrary");
+        }
+
+        private void DeleteBookFromLibraryFunction(int accountId, int bookId)
+        {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -388,13 +437,6 @@ namespace eBookStore.Controllers
                 }
 
             }
-            //BookViewModel bookViewModel = new BookViewModel
-            //{
-            //    book = new Book(),
-            //    booksList = getBooksList(null)
-            //};
-            return RedirectToAction("MyLibrary");
         }
-
     }
 }

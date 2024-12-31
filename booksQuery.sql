@@ -180,7 +180,7 @@ CREATE TABLE Libraries (
 
 INSERT INTO Libraries (AccountId, BookId, BorrowingDate, AcquisitionDate)
 VALUES
-(2, 1, '2025-01-20', '2024-11-01'),
+(2, 1, '2024-01-20', '2024-11-01'),
 (2, 2, '2025-01-25', '2024-11-10'),
 (2, 3, '2025-01-30', '2024-11-15'),
 (2, 4, NULL, '2024-11-20'),
