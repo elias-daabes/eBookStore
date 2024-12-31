@@ -370,6 +370,31 @@ namespace eBookStore.Controllers
             return null;
         }
 
+        [HttpPost]
+        public ActionResult DeleteBookFromLibrary(int accountId, int bookId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string deleteBookQuery = "DELETE FROM Libraries WHERE BookId = @bookId AND AccountId = @accountId ";
+
+                using (SqlCommand command = new SqlCommand(deleteBookQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@bookId", bookId);
+                    command.Parameters.AddWithValue("@accountId", accountId);
+
+                    command.ExecuteNonQuery();
+                }
+
+            }
+            //BookViewModel bookViewModel = new BookViewModel
+            //{
+            //    book = new Book(),
+            //    booksList = getBooksList(null)
+            //};
+            return RedirectToAction("MyLibrary");
+        }
 
     }
 }
