@@ -377,10 +377,27 @@ namespace eBookStore.Controllers
                     command.ExecuteNonQuery();
                 }
             }
-
-
         }
 
+        private void AcquireBookFromStore(int id)
+        {
+
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string sqlQuery = "UPDATE books SET quantityInStock = quantityInStock - 1 WHERE id = @id";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+
+                    command.Parameters.AddWithValue("@id", id);
+
+                    // Execute query
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
         public ActionResult Logout()
         {
 
@@ -454,25 +471,56 @@ namespace eBookStore.Controllers
             foreach( Book book in library.books)
                 if (book.id == bookId)
                 {
-                    TempData["BorrowError"] = "You already have this book.";
+                    TempData["ActionError"] = "You already have this book.";
                     return RedirectToAction("HomePage", "Home");
                 }
 
             if (library.BorrowingDates.Count == 3)
             {
-                TempData["BorrowError"] = "You cannot borrow more than 3 books.";
+                TempData["ActionError"] = "You cannot borrow more than 3 books.";
                 return RedirectToAction("HomePage", "Home");
             }
 
 
-            addBookToLibrary(accountId, bookId);
-            TempData["BorrowError"] = "complete payment"; //TODO: should be deleted and replace by payment action
-            TempData["BorrowSuccess"] = "Book '" + getBookByid(bookId).title + "' has been borrowed successfully. Enter the library to view formats.";
+            addBookToLibrary(accountId, bookId, true);
+            TempData["ActionError"] = "complete payment"; //TODO: should be deleted and replace by payment action
+            TempData["ActionSuccess"] = "Book '" + getBookByid(bookId).title + "' has been borrowed successfully. Enter the library to view formats.";
             return RedirectToAction("HomePage", "Home");
 
         }
 
-        private void addBookToLibrary(int accountId, int bookId)
+        public ActionResult BuyBook(int bookId)
+        {
+            if (Session["accountId"] == null)
+            {
+                TempData["ActionError"] = "Please log in to complete this action.";
+                return RedirectToAction("HomePage", "Home");
+            }
+            int accountId = (int)Session["accountId"];
+            Library library = getLibraryBooks(accountId);
+
+            foreach (Book book in library.books)
+                if (book.id == bookId)
+                {
+                    TempData["ActionError"] = "You already have this book.";
+                    return RedirectToAction("HomePage", "Home");
+                }
+
+            Book wantedBook = getBookByid(bookId);
+            if(wantedBook.quantityInStock == 0)
+            {
+                TempData["ActionError"] = "Book out of stock.";
+                return RedirectToAction("HomePage", "Home");
+            }
+            AcquireBookFromStore(bookId);
+            addBookToLibrary(accountId, bookId, false);
+            TempData["ActionError"] = "complete payment"; //TODO: should be deleted and replace by payment action
+            TempData["ActionSuccess"] = "Book '" + getBookByid(bookId).title + "' has been purchased successfully. Enter the library to view formats.";
+            return RedirectToAction("HomePage", "Home");
+
+        }
+
+        private void addBookToLibrary(int accountId, int bookId, bool isBorrow)
         {
             string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -484,7 +532,11 @@ namespace eBookStore.Controllers
                 {
                     command.Parameters.AddWithValue("@AccountId", accountId);
                     command.Parameters.AddWithValue("@BookId", bookId);
-                    command.Parameters.Add("@BorrowingDate", SqlDbType.DateTime).Value = DateTime.Today.AddDays(30);
+                    if(isBorrow)
+                        command.Parameters.Add("@BorrowingDate", SqlDbType.DateTime).Value = DateTime.Today.AddDays(30);
+                    else
+                        command.Parameters.Add("@BorrowingDate", SqlDbType.DateTime).Value = DBNull.Value;
+
                     command.Parameters.Add("@AcquisitionDate", SqlDbType.DateTime).Value = DateTime.Today;
 
                     command.ExecuteNonQuery();

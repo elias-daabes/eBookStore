@@ -437,13 +437,13 @@
     {
         <div class="error-message">@TempData["DeniedAccessToLibrary"]</div>
     }
-    @if (TempData["BorrowError"] != null)
+    @if (TempData["ActionError"] != null)
     {
-        <div class="error-message">@TempData["BorrowError"]</div>
+        <div class="error-message">@TempData["ActionError"]</div>
     }
-    @if (TempData["BorrowSuccess"] != null)
+    @if (TempData["ActionSuccess"] != null)
     {
-        <div class="success-message">@TempData["BorrowSuccess"]</div>
+        <div class="success-message">@TempData["ActionSuccess"]</div>
     }
 
 
@@ -493,12 +493,15 @@
                         </div>
                     </div>
                     <div class="interaction-buttons">
-                        <input type="button" name="name" value="Buy Now" />
+                        @using (Html.BeginForm("BuyBook", "Account", new { bookId = obj.id}))
+                        {
+                            <input type="submit" name="name" id="buy-btn" value="Buy" />
+                        }
                         <input type="button" name="name" value="Add to Cart" />
                         @if (obj.popularity < 7)
                         {
                             //Books that are not that much popular
-                            using (Html.BeginForm("BorrowBook", "Account", new { bookId = obj.id, @class = "form"}))
+                            using (Html.BeginForm("BorrowBook", "Account", new { bookId = obj.id}))
                             {
                                 <input type="submit" name="name" id="borrow-btn" value="Borrow" />
                             }
