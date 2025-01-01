@@ -77,10 +77,12 @@
 
             table tr:nth-child(even) {
                 background-color: #f2f2f2;
+                cursor:pointer;
             }
 
             table tr:hover {
                 background-color: #ddd;
+                cursor: pointer;
             }
 
         img {
@@ -257,7 +259,9 @@
                 @foreach (Book obj in Model.booksList)
                 {
 
-            <tr>
+            <tr                      
+                onclick ="window.location.href='@Url.Action("ViewBook", "Book", new { id = obj.id })';"
+                onkeypress="if (event.key === 'Enter') window.location.href='@Url.Action("ViewBook", "Book", new { id = obj.id })';">
                 <td>@obj.id</td>
                 <td><img src="@obj.coverImagePath" alt="Alternate Text" height="50" /></td>
                 <td>@obj.title</td>

@@ -54,6 +54,12 @@ namespace eBookStore.Controllers
         {
             return View();
         }
+        
+        public ActionResult ViewBook(int id)
+        {
+            Book book = getBookByid(id);
+            return View(book);
+        }
 
 
         [HttpPost]
