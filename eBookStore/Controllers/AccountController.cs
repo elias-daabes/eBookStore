@@ -458,12 +458,12 @@ namespace eBookStore.Controllers
             }
         }
 
-        public ActionResult BorrowBook(int bookId)
+        public ActionResult BorrowBook(int bookId, bool isHomePage)
         {
             if (Session["accountId"] == null)
             {
-                TempData["BorrowError"] = "Please log in to complete this action.";
-                return RedirectToAction("HomePage", "Home");
+                TempData["ActionError"] = "Please log in to complete borrowing process.";
+                return isHomePage ? RedirectToAction("HomePage", "Home"): RedirectToAction("ViewBook", "Book", new { id = bookId });
             }
             int accountId = (int)Session["accountId"];
             Library library = getLibraryBooks(accountId);
@@ -472,13 +472,13 @@ namespace eBookStore.Controllers
                 if (book.id == bookId)
                 {
                     TempData["ActionError"] = "You already have this book.";
-                    return RedirectToAction("HomePage", "Home");
+                    return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
                 }
 
             if (library.BorrowingDates.Count == 3)
             {
                 TempData["ActionError"] = "You cannot borrow more than 3 books.";
-                return RedirectToAction("HomePage", "Home");
+                return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
             }
 
             AcquireBookFromStore(bookId);
@@ -489,12 +489,12 @@ namespace eBookStore.Controllers
 
         }
 
-        public ActionResult BuyBook(int bookId)
+        public ActionResult BuyBook(int bookId, bool isHomePage)
         {
             if (Session["accountId"] == null)
             {
-                TempData["ActionError"] = "Please log in to complete this action.";
-                return RedirectToAction("HomePage", "Home");
+                TempData["ActionError"] = "Please log in to complete this purchasing process.";
+                return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
             }
             int accountId = (int)Session["accountId"];
             Library library = getLibraryBooks(accountId);
@@ -503,14 +503,14 @@ namespace eBookStore.Controllers
                 if (book.id == bookId)
                 {
                     TempData["ActionError"] = "You already have this book.";
-                    return RedirectToAction("HomePage", "Home");
+                    return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
                 }
 
             Book wantedBook = getBookByid(bookId);
             if(wantedBook.quantityInStock == 0)
             {
                 TempData["ActionError"] = "Book out of stock.";
-                return RedirectToAction("HomePage", "Home");
+                return isHomePage? RedirectToAction("HomePage", "Home"): RedirectToAction("ViewBook", "Book", new { id = bookId });
             }
             AcquireBookFromStore(bookId);
             addBookToLibrary(accountId, bookId, false);

@@ -496,7 +496,7 @@
                         </div>
                     </div>
                     <div class="interaction-buttons">
-                        @using (Html.BeginForm("BuyBook", "Account", new { bookId = obj.id }))
+                        @using (Html.BeginForm("BuyBook", "Account", new { bookId = obj.id, isHomePage = true }))
                         {
                             <input type="submit" name="name" id="buy-btn" value="Buy" />
                         }
@@ -504,7 +504,7 @@
                         @if (obj.popularity < 7)
                         {
                             //Books that are not that much popular
-                            using (Html.BeginForm("BorrowBook", "Account", new { bookId = obj.id }))
+                            using (Html.BeginForm("BorrowBook", "Account", new { bookId = obj.id, isHomePage = true }))
                             {
                                 <input type="submit" name="name" id="borrow-btn" value="Borrow" />
                             }

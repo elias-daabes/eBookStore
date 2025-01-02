@@ -426,6 +426,15 @@
                 </li>
             </ul>
         </nav>}
+    @if (TempData["DeniedAccessToLibrary"] != null)
+    {
+        <div class="error-message">@TempData["DeniedAccessToLibrary"]</div>}
+    @if (TempData["ActionError"] != null)
+    {
+        <div class="error-message">@TempData["ActionError"]</div>}
+    @if (TempData["ActionSuccess"] != null)
+    {
+        <div class="success-message">@TempData["ActionSuccess"]</div>}
     <div class="book-container">
         <div class="book-item">
             <div class="book-and-details">
@@ -458,7 +467,7 @@
                 </div>
             </div>
             <div class="interaction-buttons">
-                @using (Html.BeginForm("BuyBook", "Account", new { bookId = Model.id }))
+                @using (Html.BeginForm("BuyBook", "Account", new { bookId = Model.id, isHomePage = false }))
                 {
                     <input type="submit" name="name" id="buy-btn" value="Buy" />
                 }
@@ -466,7 +475,7 @@
                 @if (Model.popularity < 7)
                 {
                     //Books that are not that much popular
-                    using (Html.BeginForm("BorrowBook", "Account", new { bookId = Model.id }))
+                    using (Html.BeginForm("BorrowBook", "Account", new { bookId = Model.id, isHomePage = false }))
                     {
                         <input type="submit" name="name" id="borrow-btn" value="Borrow" />
                     }
@@ -475,7 +484,7 @@
                 {
                     <input type="button" name="name" value="Add to Waiting List" />
                 }
-                
+
             </div>
         </div>
 
@@ -500,14 +509,6 @@
         </div>
     </div>
 
-    @if (TempData["DeniedAccessToLibrary"] != null)
-    {
-        <div class="error-message">@TempData["DeniedAccessToLibrary"]</div>}
-    @if (TempData["ActionError"] != null)
-    {
-        <div class="error-message">@TempData["ActionError"]</div>}
-    @if (TempData["ActionSuccess"] != null)
-    {
-        <div class="success-message">@TempData["ActionSuccess"]</div>}
+
 </body>
 </html>
