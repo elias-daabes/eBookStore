@@ -1,4 +1,4 @@
-﻿@model eBookStore.ViewModels.BookViewModel
+﻿@model eBookStore.ViewModels.HomePageViewModel
 @using eBookStore.Models
 
 @{ Layout = null; }
@@ -381,6 +381,10 @@
                 background-color: #DD761C; /* Darker blue on hover */
             }
 
+        .fixed-textarea {
+            width: 280px;
+            resize: none;
+        }
 
     </style>
 </head>
@@ -461,7 +465,7 @@
     </div>
     <div class="two-sides">
         <div class="book-container">
-            @foreach (Book obj in Model.booksList)
+            @foreach (Book obj in Model.bookViewModel.booksList)
             {
                 <div class="book-item" 
                      onclick ="window.location.href='@Url.Action("ViewBook", "Book", new { id = obj.id })';"
@@ -588,21 +592,43 @@
                 }
             </div>
             <div class="rating-section">
-                <div class="user-rating">
-                    <div><strong>Name: </strong>username1</div>
-                    <div><strong>Rating: </strong>5</div>
-                    <div><strong>Comment: </strong> This is a comment</div>
-                </div>
-                <div class="user-rating">
-                    <div><strong>Name: </strong>username1</div>
-                    <div><strong>Rating: </strong>5</div>
-                    <div><strong>Comment: </strong> This is a comment</div>
-                </div>
-                <div class="user-rating">
-                    <div><strong>Name: </strong>username1</div>
-                    <div><strong>Rating: </strong>5</div>
-                    <div><strong>Comment: </strong> This is a comment</div>
-                </div>
+                <h3>Add Your Feedback</h3>
+                @using (Html.BeginForm("AddWebFeedback", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.HiddenFor(obj => obj.webFeedbackViewModel.webFeedback.AccountId)
+                    <div class="form-group">
+                        <label for="rating"><strong>Rating (1 to 5):</strong></label>
+
+                        @Html.DropDownListFor(obj => obj.webFeedbackViewModel.webFeedback.Rating, new SelectList(new List<int> { 5, 4, 3, 2, 1 })) @Html.ValidationMessageFor(obj => obj.webFeedbackViewModel.webFeedback.Rating) <br />
+
+                    </div>
+
+                    <div class="form-group">
+                        @Html.TextAreaFor(model => model.webFeedbackViewModel.webFeedback.Comment, new { placeholder = "Enter your feedback...", @class = "fixed-textarea" }) @Html.ValidationMessageFor(obj => obj.webFeedbackViewModel.webFeedback.Comment)
+
+                    </div>
+
+                    <input type="submit" class="btn btn-primary" value="Send Feedback" />
+                }
+                @foreach (WebFeedback wf in Model.webFeedbackViewModel.webFeedbacksList)
+                {
+                    <div class="user-rating">
+                        <div><strong>Name: </strong>@wf.Name</div>
+                        <div>
+                            <strong>Rating: </strong>
+                            @for (int i = 1; i <= wf.Rating; i++)
+                            {
+                                @:★
+                            }
+                            @for (int i = wf.Rating + 1; i <= 5; i++)
+                            {
+                                @:☆
+                            }
+                        </div>
+                        <div><strong>Comment: </strong>@wf.Comment</div>
+                        <div>@wf.Created_At.ToString("dd/MM/yyyy")</div>
+                    </div>
+                }
             </div>
         </div>
     </div>

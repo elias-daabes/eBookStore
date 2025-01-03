@@ -17,15 +17,136 @@ namespace eBookStore.Controllers
         // GET: Home
         public ActionResult HomePage()
         {
-            BookViewModel bookViewModel = new BookViewModel
+            HomePageViewModel homePageViewModel = new HomePageViewModel
             {
-                book = new Book(),
-                booksList = getBooksList()
+                bookViewModel = new BookViewModel
+                {
+                    book = new Book(),
+                    booksList = getBooksList()
+                },
+                 webFeedbackViewModel = new WebFeedbackViewModel
+                 {
+                    webFeedback = new WebFeedback(),
+                    webFeedbacksList = getWebFeedbacksList()
+                }
+
             };
-            return View(bookViewModel);
+            return View(homePageViewModel);
+        }
+
+        private List<WebFeedback> getWebFeedbacksList()
+        {
+
+            List<WebFeedback> webFeedbackList = new List<WebFeedback>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery = "SELECT * FROM WebFeedbacks, Accounts WHERE WebFeedbacks.AccountId = Accounts.Id";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            WebFeedback webFeedback = new WebFeedback
+                            {
+                                AccountId = Convert.ToInt32(reader["AccountId"]),
+                                Rating = Convert.ToInt32(reader["Rating"]),
+                                Comment = reader["Comment"].ToString(),
+                                Created_At = Convert.ToDateTime(reader["Created_At"]),
+                                Name = reader["FirstName"].ToString() + " " + reader["LastName"].ToString()
+
+                            };
+
+                            webFeedbackList.Add(webFeedback);
+                        }
+                    }
+                    command.ExecuteNonQuery();
+                }
+            }
+            return webFeedbackList;
+        }
+
+        [HttpPost]
+        public ActionResult AddWebFeedback(HomePageViewModel homePageViewModel)
+        {
+            WebFeedback webFeedback = homePageViewModel.webFeedbackViewModel.webFeedback;
+
+            HomePageViewModel _homePageViewModel = new HomePageViewModel
+            {
+                bookViewModel = new BookViewModel
+                {
+                    book = new Book(),
+                    booksList = getBooksList()
+                },
+                webFeedbackViewModel = new WebFeedbackViewModel
+                {
+                    webFeedback = new WebFeedback(),
+                    webFeedbacksList = getWebFeedbacksList()
+                }
+            };
+            if (Session["AccountId"] == null)
+            {
+                TempData["ActionError"] = "Please log in to give feedback.";
+                return RedirectToAction("HomePage");
+            }
+
+            webFeedback.AccountId = (int)Session["AccountId"];
+            bool isValidFeedback = isValidWebFeedbackID(webFeedback.AccountId);
+
+            if (ModelState.IsValid && isValidFeedback)
+            {
+                SaveWebFeedbackToDB(webFeedback);
+                _homePageViewModel.webFeedbackViewModel.webFeedbacksList.Add(webFeedback);
+                _homePageViewModel.webFeedbackViewModel.webFeedback = new WebFeedback();
+                return View("HomePage", _homePageViewModel);
+            }
+
+            if (!isValidFeedback)
+            {
+                ModelState.AddModelError("webFeedbackViewModel.webFeedback.Comment", "You have already sent a feedback.");
+            }
+
+            return RedirectToAction("HomePage", _homePageViewModel);
         }
 
 
+
+
+        private void SaveWebFeedbackToDB(WebFeedback webFeedback)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sqlQuery = "INSERT INTO WebFeedbacks (AccountId, Rating, Comment, Created_At) VALUES " +
+                                    "(@AccountId, @Rating, @Comment, @Created_At)";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@AccountId", webFeedback.AccountId);
+                    command.Parameters.AddWithValue("@Rating", webFeedback.Rating);
+                    command.Parameters.AddWithValue("@Created_At", DateTime.Today);
+                    command.Parameters.AddWithValue("@Comment", webFeedback.Comment);
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        // every user can give one feedback only!
+        private bool isValidWebFeedbackID(int id)
+        {
+            List<WebFeedback> webFeedbacks = getWebFeedbacksList();
+            foreach(WebFeedback wf in webFeedbacks)
+            {
+                if (wf.AccountId == id)
+                    return false;
+            }
+            return true;
+        }
 
         private List<Book> getBooksList()
         {
@@ -99,6 +220,7 @@ namespace eBookStore.Controllers
             return View("HomePage", bookViewModel);
         }
 
+       
         private List<Book> getBooksList(string searchTerm)
         {
             List<Book> booksList = new List<Book>();

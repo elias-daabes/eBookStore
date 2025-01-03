@@ -197,6 +197,24 @@ VALUES
 (4, 9, NULL, '2025-01-15'),
 (4, 10, NULL, '2025-01-20');
 
+DROP TABLE IF EXISTS WebFeedbacks;
+CREATE TABLE WebFeedbacks (
+	AccountId INT PRIMARY KEY,
+	Rating INT,
+	Comment TEXT,
+	Created_At DATETIME
+);
+
+INSERT INTO WebFeedbacks (AccountId, Rating, Comment, Created_At) 
+VALUES 
+(3, 5, 'The prices are so cheap. I highly recommend it!', '2025-01-01 14:45:00'),
+(4, 5, 'Absolutely loved it! A masterpiece.', '2025-01-01 16:00:00'),
+(5, 2, 'Not worth the hype. Disappointed.', '2025-01-01 18:20:00'),
+(6, 4, 'Good website with lots of books.', '2025-01-01 19:50:00'),
+(7, 3, 'The website was okay, but the loading felt slow.', '2025-01-01 21:10:00'),
+(8, 5, 'Excellent book with engaging content.', '2025-01-01 22:30:00'),
+(9, 1, 'Did not enjoy it at all.', '2025-01-02 08:00:00'),
+(10, 4, 'Very informative and well-written.', '2025-01-02 09:30:00');
 
 --DROP TABLE IF EXISTS Accounts;
 --CREATE TABLE Carts (
