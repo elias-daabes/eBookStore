@@ -216,6 +216,34 @@ VALUES
 (9, 1, 'Did not enjoy it at all.', '2025-01-02 08:00:00'),
 (10, 4, 'Very informative and well-written.', '2025-01-02 09:30:00');
 
+DROP TABLE IF EXISTS BookFeedbacks;
+CREATE TABLE BookFeedbacks (
+	AccountId INT,
+	BookId INT,
+	Rating INT,
+	Comment TEXT,
+	Created_At DATETIME,
+	PRIMARY KEY(AccountId, BookId)
+);
+
+
+INSERT INTO BookFeedbacks (AccountId, BookId, Rating, Comment, Created_At)
+VALUES
+    (2, 1, 4, 'Interesting read, but a bit slow at times.', '2025-01-02 09:30:00'),
+    (3, 1, 3, 'It was okay, but not what I expected.', '2025-01-01 15:45:00'),
+    (4, 1, 5, 'Loved it! Couldn’t put it down.', '2025-01-03 10:00:00'),
+    (5, 1, 2, 'Didn’t enjoy the book. Found it boring.', '2025-01-02 11:20:00'),
+    (6, 1, 4, 'Good story, but the ending was a bit predictable.', '2025-01-01 14:30:00'),
+    (7, 2, 3, 'It was okay, but some parts dragged on.', '2025-01-02 13:10:00'),
+    (8, 2, 5, 'Amazing book! Will definitely read it again.', '2025-01-01 16:50:00'),
+    (9, 2, 4, 'Nice plot, but the pacing was slow at times.', '2025-01-03 14:40:00'),
+    (10, 2, 1, 'Not my type of book. I didn’t enjoy it at all.', '2025-01-02 17:25:00'),
+    (11, 3, 5, 'An incredible read! Totally worth the time.', '2025-01-01 18:30:00'),
+    (12, 3, 3, 'The story was decent, but could have been better.', '2025-01-03 09:00:00'),
+    (13, 3, 4, 'Enjoyable read with some great moments.', '2025-01-02 16:15:00'),
+    (14, 3, 5, 'Fantastic book! Loved every page of it.', '2025-01-03 11:10:00'),
+    (15, 3, 2, 'The book didn’t meet my expectations.', '2025-01-01 19:40:00');
+
 --DROP TABLE IF EXISTS Accounts;
 --CREATE TABLE Carts (
 --    CartId INT,

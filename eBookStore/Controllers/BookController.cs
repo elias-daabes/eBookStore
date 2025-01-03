@@ -54,11 +54,16 @@ namespace eBookStore.Controllers
         {
             return View();
         }
-        
+
         public ActionResult ViewBook(int id)
         {
-            Book book = getBookByid(id);
-            return View(book);
+            BookFeedbackViewModel bookFeedbackViewModel = new BookFeedbackViewModel
+            {
+                book = getBookByid(id),
+                bookFeedback = new BookFeedback(),
+                bookFeedbacksList = getBookFeedbacksListById(id, -1)
+            };
+            return View(bookFeedbackViewModel);
         }
 
 
@@ -646,6 +651,216 @@ namespace eBookStore.Controllers
             };
 
             return View("Enter", bookViewModel);
+        }
+
+        [HttpPost]
+        public ActionResult AddBookFeedback(BookFeedbackViewModel bookFeedbackViewModel)
+        {
+            int currentBookId = bookFeedbackViewModel.bookFeedback.BookId;
+            if (Session["AccountId"] == null)
+            {
+                TempData["ActionError"] = "Please log in to give a feedback.";
+                return RedirectToAction("ViewBook", new { id = currentBookId });
+            }
+            BookFeedback bookFeedback = bookFeedbackViewModel.bookFeedback;
+            int activeUserId = (int)Session["AccountId"];
+            bookFeedback.AccountId = activeUserId;
+            List<BookFeedback> _bookFeedbacksList = getBookFeedbacksListById(currentBookId, activeUserId);
+
+            BookFeedbackViewModel _bookFeedbackViewModel = new BookFeedbackViewModel
+            {
+                book = new Book(),
+                bookFeedback = new BookFeedback(),
+                bookFeedbacksList = getBookFeedbacksListById(currentBookId,-1)
+            };
+            bool inLibrary = isInAccountLibrary(activeUserId, currentBookId);
+            if (!inLibrary)
+            {
+                TempData["ActionError"] = "You do not have this book.";
+                return RedirectToAction("ViewBook", new { id = currentBookId });
+            }
+
+            if (_bookFeedbacksList.Count > 0)
+            {
+                TempData["ActionError"] = "You can send one feedback only.";
+                return RedirectToAction("ViewBook", new { id = currentBookId });
+            }
+            if (ModelState.IsValid)
+            {
+                SaveBookFeedbackToDB(bookFeedback);
+                _bookFeedbackViewModel.bookFeedbacksList.Add(bookFeedback);
+                _bookFeedbackViewModel.bookFeedback = new BookFeedback();
+                return RedirectToAction("ViewBook", new { id = currentBookId });
+            }
+
+
+
+            return RedirectToAction("ViewBook", new { id = bookFeedbackViewModel.bookFeedback.BookId });
+        }
+
+        private bool isInAccountLibrary(int activeUserId, int bookId)
+        {
+            Library library = getLibraryBooks(activeUserId);
+            foreach(Book book in library.books)
+            {
+                if (book.id == bookId)
+                    return true;
+            }
+            return false;
+        }
+
+        private List<BookFeedback> getBookFeedbacksListById(int bookId, int accountId)
+        {
+
+            List<BookFeedback> bookFeedbackList = new List<BookFeedback>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery;
+                if (accountId == -1)
+                {
+                    sqlQuery = "SELECT * FROM BookFeedbacks, Accounts WHERE BookFeedbacks.AccountId = Accounts.Id AND bookId = @bookId";
+                }
+                else
+                {
+                    sqlQuery = "SELECT * FROM BookFeedbacks, Accounts WHERE BookFeedbacks.AccountId = Accounts.Id AND bookId = @bookId AND Accounts.Id = @feedbackerId";
+                }
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@bookId", bookId);
+                    if (accountId != -1)
+                        command.Parameters.AddWithValue("@feedbackerId", accountId);
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            BookFeedback bookFeedback = new BookFeedback
+                            {
+                                AccountId = Convert.ToInt32(reader["AccountId"]),
+                                BookId = Convert.ToInt32(reader["BookId"]),
+                                Rating = Convert.ToInt32(reader["Rating"]),
+                                Comment = reader["Comment"].ToString(),
+                                Created_At = Convert.ToDateTime(reader["Created_At"]),
+                                Name = reader["FirstName"].ToString() + " " + reader["LastName"].ToString()
+
+                            };
+
+                            bookFeedbackList.Add(bookFeedback);
+                        }
+                    }
+                    command.ExecuteNonQuery();
+                }
+            }
+            return bookFeedbackList;
+        }
+
+
+        private void SaveBookFeedbackToDB(BookFeedback bookFeedback)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string sqlQuery = "INSERT INTO BookFeedbacks (AccountId, BookId, Rating, Comment, Created_At) VALUES " +
+                                    "(@AccountId, @BookId, @Rating, @Comment, @Created_At)";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@AccountId", bookFeedback.AccountId);
+                    command.Parameters.AddWithValue("@BookId", bookFeedback.BookId);
+                    command.Parameters.AddWithValue("@Rating", bookFeedback.Rating);
+                    command.Parameters.AddWithValue("@Created_At", DateTime.Today);
+                    command.Parameters.AddWithValue("@Comment", bookFeedback.Comment);
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        // every user can give one feedback only!
+        private bool isValidbookFeedbackID(int accountId, int bookId)
+        {
+            List<BookFeedback> bookFeedbacks = getBookFeedbacksListById(bookId, accountId);
+            foreach (BookFeedback bf in bookFeedbacks)
+            {
+                if (bf.AccountId == accountId && bf.BookId == bookId)
+                    return false;
+            }
+            return true;
+        }
+
+
+
+        private List<WebFeedback> getWebFeedbacksList()
+        {
+
+            List<WebFeedback> webFeedbackList = new List<WebFeedback>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery = "SELECT * FROM WebFeedbacks, Accounts WHERE WebFeedbacks.AccountId = Accounts.Id";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            WebFeedback webFeedback = new WebFeedback
+                            {
+                                AccountId = Convert.ToInt32(reader["AccountId"]),
+                                Rating = Convert.ToInt32(reader["Rating"]),
+                                Comment = reader["Comment"].ToString(),
+                                Created_At = Convert.ToDateTime(reader["Created_At"]),
+                                Name = reader["FirstName"].ToString() + " " + reader["LastName"].ToString()
+
+                            };
+
+                            webFeedbackList.Add(webFeedback);
+                        }
+                    }
+                    command.ExecuteNonQuery();
+                }
+            }
+            return webFeedbackList;
+        }
+
+        private Library getLibraryBooks(int AccountId)
+        {
+            Library libraryBooks = new Library();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery = "SELECT AccountId, BookId, BorrowingDate, AcquisitionDate FROM Libraries WHERE AccountId = @AccountId";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@AccountId", AccountId);
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        libraryBooks = new Library
+                        {
+                            AccountId = AccountId,
+                            books = new List<Book>(),
+                            BorrowingDates = new List<DateTime?>(),
+                            AcquisitionDate = new List<DateTime>()
+                        };
+
+                        while (reader.Read())
+                        {
+                            int bookId = Convert.ToInt32(reader["BookId"]);
+                            DateTime? borrowingDate = reader["BorrowingDate"] != DBNull.Value ? Convert.ToDateTime(reader["BorrowingDate"]) : (DateTime?)null;
+                            DateTime acquisitionDate = Convert.ToDateTime(reader["AcquisitionDate"]);
+
+                            libraryBooks.books.Add(getBookByid(bookId));
+                            libraryBooks.BorrowingDates.Add(borrowingDate);
+                            libraryBooks.AcquisitionDate.Add(acquisitionDate);
+                        }
+
+                    }
+                }
+            }
+            return libraryBooks;
         }
 
     }

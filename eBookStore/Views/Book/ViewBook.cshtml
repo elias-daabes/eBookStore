@@ -1,5 +1,5 @@
-﻿@model eBookStore.Models.Book
-
+﻿@model eBookStore.ViewModels.BookFeedbackViewModel
+@using eBookStore.Models
 @{
     Layout = null;
 }
@@ -51,7 +51,7 @@
             justify-content: center;
             gap: 20px;
             flex: 5;
-            padding:20px 300px;
+            padding: 20px 300px;
         }
 
         .book-item {
@@ -386,6 +386,11 @@
             #borrow-btn:hover {
                 background-color: #DD761C; /* Darker blue on hover */
             }
+
+        .star {
+            color: darkorange;
+            
+        }
     </style>
 </head>
 <body>
@@ -438,49 +443,49 @@
     <div class="book-container">
         <div class="book-item">
             <div class="book-and-details">
-                <img src="@Model.coverImagePath" alt="Book Cover" loading="lazy" />
+                <img src="@Model.book.coverImagePath" alt="Book Cover" loading="lazy" />
 
                 <div class="book-details">
-                    <div><h2> @Model.title</h2></div>
-                    <div><strong>Author(s):</strong> @(Model.authors[0].authorName == "" ? string.Join(", ", Model.authors.Skip(1).Select(a => a.authorName)): string.Join(", ", Model.authors.Select(a => a.authorName)))</div>
-                    <div><strong>Genre:</strong> @Model.genre</div>
-                    <div><strong>Publisher:</strong> @Model.publisher</div>
+                    <div><h2> @Model.book.title</h2></div>
+                    <div><strong>Author(s):</strong> @(Model.book.authors[0].authorName == "" ? string.Join(", ", Model.book.authors.Skip(1).Select(a => a.authorName)): string.Join(", ", Model.book.authors.Select(a => a.authorName)))</div>
+                    <div><strong>Genre:</strong> @Model.book.genre</div>
+                    <div><strong>Publisher:</strong> @Model.book.publisher</div>
                     <div>
-                        @if (Model.dateSale.HasValue)
+                        @if (Model.book.dateSale.HasValue)
                         {
-                            <strong>Buying Price:</strong><span class="line-through"> @Model.priceForBuying</span> @Model.priceSaleForBuying
+                            <strong>Buying Price:</strong><span class="line-through"> @Model.book.priceForBuying</span> @Model.book.priceSaleForBuying
                             <br />
-                            <strong>Borrowing Price:</strong><span class="line-through"> @Model.priceForBorrowing</span> @Model.priceSaleForBorrowing
-                            <div><strong>Sale Date:</strong> @Model.dateSale.ToString().Replace("00:00:00", "")</div>
+                            <strong>Borrowing Price:</strong><span class="line-through"> @Model.book.priceForBorrowing</span> @Model.book.priceSaleForBorrowing
+                            <div><strong>Sale Date:</strong> @Model.book.dateSale.ToString().Replace("00:00:00", "")</div>
                         }
                         else
                         {
-                            <strong>Buying Price:</strong> @Model.priceForBuying<br />
-                            <strong>Borrowing Price:</strong> @Model.priceForBorrowing
+                            <strong>Buying Price:</strong> @Model.book.priceForBuying<br />
+                            <strong>Borrowing Price:</strong> @Model.book.priceForBorrowing
                         }
                     </div>
 
-                    <div><strong>Year Published:</strong> @Model.yearOfPublishing</div>
-                    <div><strong>Age Limitation:</strong> @Model.ageLimitation</div>
-                    <div><strong>In Stock:</strong> @Model.quantityInStock</div>
-                    <div><strong>Popularity:</strong> @Model.popularity</div>
+                    <div><strong>Year Published:</strong> @Model.book.yearOfPublishing</div>
+                    <div><strong>Age Limitation:</strong> @Model.book.ageLimitation</div>
+                    <div><strong>In Stock:</strong> @Model.book.quantityInStock</div>
+                    <div><strong>Popularity:</strong> @Model.book.popularity</div>
                 </div>
             </div>
             <div class="interaction-buttons">
-                @using (Html.BeginForm("BuyBook", "Account", new { bookId = Model.id, isHomePage = false }))
+                @using (Html.BeginForm("BuyBook", "Account", new { bookId = Model.book.id, isHomePage = false }))
                 {
                     <input type="submit" name="name" id="buy-btn" value="Buy" />
                 }
                 <input type="button" name="name" value="Add to Cart" />
-                @if (Model.popularity < 7)
+                @if (Model.book.popularity < 7)
                 {
                     //Books that are not that much popular
-                    using (Html.BeginForm("BorrowBook", "Account", new { bookId = Model.id, isHomePage = false }))
+                    using (Html.BeginForm("BorrowBook", "Account", new { bookId = Model.book.id, isHomePage = false }))
                     {
                         <input type="submit" name="name" id="borrow-btn" value="Borrow" />
                     }
                 }
-                @if (Model.quantityInStock == 0)
+                @if (Model.book.quantityInStock == 0)
                 {
                     <input type="button" name="name" value="Add to Waiting List" />
                 }
@@ -491,22 +496,46 @@
 
     </div>
     <div class="rating-section">
-        <div><strong>Average Rate:</strong> 5/5 </div>
-        <div class="user-rating">
-            <div><strong>Name: </strong>username1</div>
-            <div><strong>Rating: </strong>5</div>
-            <div><strong>Comment: </strong> This is a comment</div>
-        </div>
-        <div class="user-rating">
-            <div><strong>Name: </strong>username1</div>
-            <div><strong>Rating: </strong>5</div>
-            <div><strong>Comment: </strong> This is a comment</div>
-        </div>
-        <div class="user-rating">
-            <div><strong>Name: </strong>username1</div>
-            <div><strong>Rating: </strong>5</div>
-            <div><strong>Comment: </strong> This is a comment</div>
-        </div>
+                <h3>Add Your Feedback</h3>
+                @using (Html.BeginForm("AddBookFeedback", "Book", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.Hidden("bookFeedback.AccountId", Session["AccountId"])
+                    @Html.Hidden("bookFeedback.BookId", Model.book.id)
+                    @Html.Hidden("bookFeedback.Created_At", DateTime.Now.ToString("yyyy-MM-dd"))
+
+                    <div class="form-group">
+                        <label for="rating"><strong>Rating (1 to 5):</strong></label>
+
+                        @Html.DropDownListFor(obj => obj.bookFeedback.Rating, new SelectList(new List<int> { 5, 4, 3, 2, 1 })) @Html.ValidationMessageFor(obj => obj.bookFeedback.Rating) <br />
+
+                    </div>
+
+                    <div class="form-group">
+                        @Html.TextAreaFor(model => model.bookFeedback.Comment, new { placeholder = "Enter your feedback...", @class = "fixed-textarea" }) @Html.ValidationMessageFor(obj => obj.bookFeedback.Comment)
+
+                    </div>
+
+                    <input type="submit" class="btn btn-primary" value="Send Feedback" />
+                }
+        @foreach (BookFeedback bookFeedback in Model.bookFeedbacksList)
+        {
+            <div class="user-rating">
+                <div><strong>Name: </strong>@bookFeedback.Name</div>
+                <div>
+                    <strong>Rating: </strong>
+                    @for (int i = 1; i <= bookFeedback.Rating; i++)
+                    {
+                        <label class="star">★</label>
+                    }
+                    @for (int i = bookFeedback.Rating + 1; i <= 5; i++)
+                    {
+                        <label class="star">☆</label>
+                    }
+                </div>
+                <div><strong>Comment: </strong>@bookFeedback.Comment</div>
+                <div>@bookFeedback.Created_At.ToString("dd/MM/yyyy")</div>
+            </div>
+        }
     </div>
 
 
