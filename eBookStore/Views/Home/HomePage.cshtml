@@ -595,7 +595,9 @@
                 <h3>Add Your Feedback</h3>
                 @using (Html.BeginForm("AddWebFeedback", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {
-                    @Html.HiddenFor(obj => obj.webFeedbackViewModel.webFeedback.AccountId)
+                    @Html.Hidden("webFeedbackViewModel.webFeedback.AccountId", Session["AccountId"])
+                    @Html.Hidden("webFeedbackViewModel.webFeedback.Created_At", DateTime.Now.ToString("yyyy-MM-dd"))
+
                     <div class="form-group">
                         <label for="rating"><strong>Rating (1 to 5):</strong></label>
 

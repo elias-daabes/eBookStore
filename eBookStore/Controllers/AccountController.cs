@@ -41,7 +41,7 @@ namespace eBookStore.Controllers
                     ModelState.AddModelError("Email", "This email is already registered.");
                     return View("SignUp", account);
                 }
-                SaveAccountToDB(account);
+                SaveAccountToDB(account);          
                 TempData["SignUpSuccessMessage"] = "You have successfully signed up!";
                 Session["AccountId"] = account.Id;
                 Session["FirstName"] = account.FirstName;
@@ -83,8 +83,9 @@ namespace eBookStore.Controllers
             {
                 connection.Open();
 
-                string sqlQuery = "INSERT INTO Accounts (FirstName, LastName, Email, Password, IsAdmin) VALUES " +
-                                  "(@FirstName, @LastName, @Email, @Password, @IsAdmin)";
+                string sqlQuery = "INSERT INTO Accounts (FirstName, LastName, Email, Password, IsAdmin) " +
+                                          "OUTPUT INSERTED.Id " +
+                                          "VALUES (@FirstName, @LastName, @Email, @Password, @IsAdmin)";
 
                 using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
@@ -93,6 +94,8 @@ namespace eBookStore.Controllers
                     command.Parameters.AddWithValue("@Email", account.Email);
                     command.Parameters.AddWithValue("@Password", account.Password);
                     command.Parameters.AddWithValue("@IsAdmin", 0);
+
+                    account.Id = Convert.ToInt32(command.ExecuteScalar());
 
                     command.ExecuteNonQuery();
                 }

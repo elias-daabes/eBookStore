@@ -93,19 +93,20 @@ namespace eBookStore.Controllers
 
             webFeedback.AccountId = (int)Session["AccountId"];
             bool isValidFeedback = isValidWebFeedbackID(webFeedback.AccountId);
-
-            if (ModelState.IsValid && isValidFeedback)
+            if (!isValidFeedback)
+            {
+                TempData["ActionError"] = "You can send one feedback only.";
+                return RedirectToAction("HomePage");
+            }
+            if (ModelState.IsValid )
             {
                 SaveWebFeedbackToDB(webFeedback);
                 _homePageViewModel.webFeedbackViewModel.webFeedbacksList.Add(webFeedback);
                 _homePageViewModel.webFeedbackViewModel.webFeedback = new WebFeedback();
-                return View("HomePage", _homePageViewModel);
+                return RedirectToAction("HomePage", _homePageViewModel);
             }
 
-            if (!isValidFeedback)
-            {
-                ModelState.AddModelError("webFeedbackViewModel.webFeedback.Comment", "You have already sent a feedback.");
-            }
+
 
             return RedirectToAction("HomePage", _homePageViewModel);
         }
