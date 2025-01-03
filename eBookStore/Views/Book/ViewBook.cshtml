@@ -523,14 +523,9 @@
                 <div><strong>Name: </strong>@bookFeedback.Name</div>
                 <div>
                     <strong>Rating: </strong>
-                    @for (int i = 1; i <= bookFeedback.Rating; i++)
-                    {
-                        <label class="star">★</label>
-                    }
-                    @for (int i = bookFeedback.Rating + 1; i <= 5; i++)
-                    {
-                        <label class="star">☆</label>
-                    }
+                    <span style="color:orange">
+                        @(new string('★', bookFeedback.Rating))@(new string('☆', 5 - bookFeedback.Rating))
+                    </span>
                 </div>
                 <div><strong>Comment: </strong>@bookFeedback.Comment</div>
                 <div>@bookFeedback.Created_At.ToString("dd/MM/yyyy")</div>

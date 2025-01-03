@@ -618,14 +618,10 @@
                         <div><strong>Name: </strong>@wf.Name</div>
                         <div>
                             <strong>Rating: </strong>
-                            @for (int i = 1; i <= wf.Rating; i++)
-                            {
-                                @:★
-                            }
-                            @for (int i = wf.Rating + 1; i <= 5; i++)
-                            {
-                                @:☆
-                            }
+                                <span style="color:orange">
+                                    @(new string('★', wf.Rating))@(new string('☆', 5 - wf.Rating))
+                                </span>
+                            
                         </div>
                         <div><strong>Comment: </strong>@wf.Comment</div>
                         <div>@wf.Created_At.ToString("dd/MM/yyyy")</div>

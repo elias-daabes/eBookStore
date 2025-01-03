@@ -212,13 +212,20 @@ namespace eBookStore.Controllers
 
         public ActionResult SearchBookResult(string searchTerm)
         {
-            BookViewModel bookViewModel = new BookViewModel
-            {
-                book = new Book(),
-                booksList = getBooksList(searchTerm)
+            HomePageViewModel homePageViewModel = new HomePageViewModel { 
+                bookViewModel = new BookViewModel
+                {
+                    book = new Book(),
+                    booksList = getBooksList(searchTerm)
+                },
+                webFeedbackViewModel = new WebFeedbackViewModel
+                {
+                    webFeedback = new WebFeedback(),
+                    webFeedbacksList = getWebFeedbacksList()
+                }
             };
 
-            return View("HomePage", bookViewModel);
+            return View("HomePage", homePageViewModel);
         }
 
        
@@ -353,13 +360,21 @@ namespace eBookStore.Controllers
                 ViewBag.Message = "No filtering or sorting options were chosen; displaying default order.";
             }
 
-            BookViewModel bookViewModel = new BookViewModel
-            {
-                book = new Book(),
-                booksList = booksList
+            HomePageViewModel homePageViewModel = new HomePageViewModel { 
+                bookViewModel = new BookViewModel
+                {
+                    book = new Book(),
+                    booksList = booksList
+                },
+                webFeedbackViewModel = new WebFeedbackViewModel
+                {
+                    webFeedback = new WebFeedback(),
+                    webFeedbacksList = getWebFeedbacksList()
+                }
+
             };
 
-            return View("HomePage", bookViewModel);
+            return View("HomePage", homePageViewModel);
         }
 
     }
