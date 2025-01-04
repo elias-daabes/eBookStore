@@ -154,7 +154,6 @@ namespace eBookStore.Controllers
             TempData["DeniedAccessToLibrary"] = "Please log in in order to access your library.";
             return RedirectToAction("HomePage", "Home");
 
-
         }
 
         private Library getLibraryBooks(int AccountId)
@@ -403,8 +402,9 @@ namespace eBookStore.Controllers
         }
         public ActionResult Logout()
         {
-
+            Cart cart = (Cart)Session["Cart"];
             Session.Clear();
+            Session["Cart"] = cart;
             return RedirectToAction("HomePage", "Home");
         }
 

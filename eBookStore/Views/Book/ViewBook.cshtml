@@ -399,7 +399,12 @@
         <nav>
             <ul>
                 <h1>eBook Store</h1>
-                <li><a href="#cart">My Cart</a></li>
+                <li>
+                    @using (Html.BeginForm("MyCart", "Cart", FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="My Cart" />
+                    }
+                </li>
                 <li><a href="#waiting-list">My Waiting List</a></li>
                 <li>
                     @using (Html.BeginForm("MyLibrary", "Account", FormMethod.Post))
@@ -418,7 +423,12 @@
         <nav>
             <ul>
                 <h1>eBook Store</h1>
-                <li><a href="#cart">My Cart</a></li>
+                <li>
+                    @using (Html.BeginForm("MyCart", "Cart", FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="My Cart" />
+                    }
+                </li>
                 <li>
                     @using (Html.BeginForm("Login", "Account", FormMethod.Post))
                     {
@@ -474,9 +484,12 @@
             <div class="interaction-buttons">
                 @using (Html.BeginForm("BuyBook", "Account", new { bookId = Model.book.id, isHomePage = false }))
                 {
-                    <input type="submit" name="name" id="buy-btn" value="Buy" />
+                    <input type="submit" name="name" id="buy-btn" value="Buy Now" />
                 }
-                <input type="button" name="name" value="Add to Cart" />
+                @using (Html.BeginForm("AddBookToCart", "Cart", new { bookId = Model.book.id, isHomePage = false }))
+                {
+                    <input type="submit" name="name" id="cart-btn" value="Add To Cart" />
+                }
                 @if (Model.book.popularity < 7)
                 {
                     //Books that are not that much popular

@@ -243,11 +243,3 @@ VALUES
     (13, 3, 4, 'Enjoyable read with some great moments.', '2025-01-02 16:15:00'),
     (14, 3, 5, 'Fantastic book! Loved every page of it.', '2025-01-03 11:10:00'),
     (15, 3, 2, 'The book didn’t meet my expectations.', '2025-01-01 19:40:00');
-
---DROP TABLE IF EXISTS Accounts;
---CREATE TABLE Carts (
---    CartId INT,
---    AccountId INT,
---    BookId INT,
---    PRIMARY KEY (CartId, AccountId, BookId)
---);
