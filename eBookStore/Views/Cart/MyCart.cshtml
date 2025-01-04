@@ -99,6 +99,19 @@
             .return-button:hover {
                 background-color: #f47d00;
             }
+        .buy-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #1db300;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .buy-btn:hover{
+            background-color: #008207;
+        }
     </style>
 </head>
 <body>
@@ -138,13 +151,16 @@
             <label><strong>Total: </strong>@Model.BooksList.Sum(book => book.priceForBuying)</label>
             @if (ViewBag.RemovedBooks != null && ViewBag.RemovedBooks.Count > 0)
             {
-        <div class="alert alert-info">
-            <strong>Removed Books:</strong><br />
-            @foreach (var book in ViewBag.RemovedBooks)
+                <div class="alert alert-info">
+                    <strong>Removed Books:</strong><br />
+                    @foreach (var book in ViewBag.RemovedBooks)
+                    {
+                        <label> - @book</label><br />}
+                </div>}
+            @using (Html.BeginForm("BuyCart", "Cart"))
             {
-           <label> - @book</label><br />}
-        </div>}
+                <input type="submit" class="buy-btn" value="Buy Cart" />}
         </div>
-    </div>
+        </div>
 </body>
 </html>

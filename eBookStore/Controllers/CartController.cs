@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
@@ -175,7 +176,21 @@ namespace eBookStore.Controllers
             }
 
             Book book = getBookByid(bookId);
-            //Cart cart = getCartFromDB(accountId);
+
+            if (Session["AccountId"] != null)
+            {
+                Library library = getLibraryBooks((int)Session["AccountId"]);
+                foreach (Book b in library.books)
+                {
+                    if (bookId == b.id)
+                    {
+                        TempData["ActionError"] = "The book '" + book.title + "' is already in your library.";
+                        return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
+                    }
+                }
+            }
+
+
             if (cart.BooksList.Count > 0)
                 foreach (Book b in cart.BooksList)
                 {
@@ -226,5 +241,75 @@ namespace eBookStore.Controllers
             }
             return libraryBooks;
         }
+
+
+        public ActionResult BuyCart()
+        {
+            if (Session["accountId"] == null)
+            {
+                TempData["ActionError"] = "Please log in to complete this purchasing process.";
+                return RedirectToAction("MyCart", "Cart");
+            }
+            Cart cart = (Cart)Session["Cart"];
+            int accountId = (int)Session["accountId"];
+
+            foreach (Book book in cart.BooksList)
+            {
+                AcquireBookFromStore(book.id);
+                addBookToLibrary(accountId, book.id, false);
+
+            }
+            Session["Cart"] = null;
+            TempData["ActionError"] = "complete payment"; //TODO: should be deleted and replace by payment action
+            TempData["ActionSuccess"] = "Books has been purchased successfully. Enter the library to view formats.";
+            return RedirectToAction("HomePage", "Home");
+
+        }
+
+        private void AcquireBookFromStore(int id)
+        {
+
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string sqlQuery = "UPDATE books SET quantityInStock = quantityInStock - 1 WHERE id = @id";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+
+                    command.Parameters.AddWithValue("@id", id);
+
+                    // Execute query
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void addBookToLibrary(int accountId, int bookId, bool isBorrow)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string sqlQuery = "INSERT INTO Libraries (AccountId, BookId, BorrowingDate, AcquisitionDate) VALUES " +
+                                  "(@AccountId, @BookId, @BorrowingDate, @AcquisitionDate)";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@AccountId", accountId);
+                    command.Parameters.AddWithValue("@BookId", bookId);
+                    if (isBorrow)
+                        command.Parameters.Add("@BorrowingDate", SqlDbType.DateTime).Value = DateTime.Today.AddDays(30);
+                    else
+                        command.Parameters.Add("@BorrowingDate", SqlDbType.DateTime).Value = DBNull.Value;
+
+                    command.Parameters.Add("@AcquisitionDate", SqlDbType.DateTime).Value = DateTime.Today;
+
+                    command.ExecuteNonQuery();
+                }
+            }
+
+        }
+
     }
 }
