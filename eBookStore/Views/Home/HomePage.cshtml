@@ -398,7 +398,7 @@
         <nav>
             <ul>
                 <h1>eBook Store</h1>
-                <li>                    
+                <li>
                     @using (Html.BeginForm("MyCart", "Cart", FormMethod.Post))
                     {
                         <input type="submit" class="nav-btn" value="My Cart" />
@@ -476,8 +476,8 @@
         <div class="book-container">
             @foreach (Book obj in Model.bookViewModel.booksList)
             {
-                <div class="book-item" 
-                     onclick ="window.location.href='@Url.Action("ViewBook", "Book", new { id = obj.id })';"
+                <div class="book-item"
+                     onclick="window.location.href='@Url.Action("ViewBook", "Book", new { id = obj.id })';"
                      onkeypress="if (event.key === 'Enter') window.location.href='@Url.Action("ViewBook", "Book", new { id = obj.id })';">
                     <div class="book-and-details">
                         <img src="@obj.coverImagePath" alt="Book Cover" loading="lazy" />
@@ -630,10 +630,10 @@
                         <div><strong>Name: </strong>@wf.Name</div>
                         <div>
                             <strong>Rating: </strong>
-                                <span style="color:orange">
-                                    @(new string('★', wf.Rating))@(new string('☆', 5 - wf.Rating))
-                                </span>
-                            
+                            <span style="color:orange">
+                                @(new string('★', wf.Rating))@(new string('☆', 5 - wf.Rating))
+                            </span>
+
                         </div>
                         <div><strong>Comment: </strong>@wf.Comment</div>
                         <div>@wf.Created_At.ToString("dd/MM/yyyy")</div>
@@ -649,6 +649,20 @@
         window.onload = function () {
             alert("@TempData["SignUpSuccessMessage"]");
         }
+        </script>
+    }
+    @if (TempData["WaitlistRequest"] != null)
+    {
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var message = '@TempData["WaitlistRequest"]';
+            var userConfirmed = confirm(message);
+
+            if (userConfirmed) {
+                // Redirect to add to waitlist action
+                window.location.href = '@Url.Action("AddToWaitlist", "Waitlist", new { bookId = (int)TempData["BookId"] })';
+            }
+        });
         </script>
     }
 

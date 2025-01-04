@@ -114,6 +114,7 @@ namespace eBookStore.Controllers
                                 quantityInStock = Convert.ToInt32(reader["quantityInStock"]),
                                 popularity = Convert.ToInt32(reader["popularity"]),
                                 dateSale = reader["dateSale"] != DBNull.Value ? (DateTime?)reader["dateSale"] : null, // This handles nullable DateTime
+                                borrowingCopies = Convert.ToInt32(reader["borrowingCopies"])
 
                             };
 

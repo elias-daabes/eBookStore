@@ -67,7 +67,11 @@ namespace eBookStore.Models
         public string epubPath { get; set; } 
         public string fb2Path { get; set; } 
         public string mobiPath { get; set; } 
-        public string pdfPath { get; set; } 
+        public string pdfPath { get; set; }
+
+        [Required]
+        [Range(0, 3, ErrorMessage = "The number of copies for borrowing must be between 0 and 3.")]
+        public int borrowingCopies { get; set; } = 3;
 
 
         // Custom validation for SaleDate

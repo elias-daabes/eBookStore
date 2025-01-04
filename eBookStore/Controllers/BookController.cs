@@ -97,7 +97,7 @@ namespace eBookStore.Controllers
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string sqlQuery = "UPDATE books SET title = @title, publisher = @publisher, priceForBorrowing = @priceForBorrowing, SalepriceForBorrowing = @SalepriceForBorrowing, Megapixels = @Megapixels, yearOfPublishing = @yearOfPublishing, ageLimitation = @ageLimitation, IsAvailable = @IsAvailable, IsOnSale = IsOnSale, coverImagePath = @coverImagePath, popularity = @popularity, quantityInStock = @quantityInStock, @genre, genre WHERE id = @id";
+                string sqlQuery = "UPDATE books SET title = @title, publisher = @publisher, priceForBorrowing = @priceForBorrowing, SalepriceForBorrowing = @SalepriceForBorrowing, Megapixels = @Megapixels, yearOfPublishing = @yearOfPublishing, ageLimitation = @ageLimitation, IsAvailable = @IsAvailable, IsOnSale = IsOnSale, coverImagePath = @coverImagePath, popularity = @popularity, quantityInStock = @quantityInStock, genre = @genre, borrowingCopies = @borrowingCopies WHERE id = @id";
                 using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
                     command.Parameters.AddWithValue("@id", book.id);
@@ -121,6 +121,7 @@ namespace eBookStore.Controllers
                     command.Parameters.AddWithValue("@quantityInStock", book.quantityInStock);
                     command.Parameters.AddWithValue("@popularity", book.popularity);
                     command.Parameters.AddWithValue("@dateSale", book.dateSale);
+                    command.Parameters.AddWithValue("@borrowingCopies", book.borrowingCopies);
 
                     command.ExecuteNonQuery();
                 }
@@ -177,6 +178,7 @@ namespace eBookStore.Controllers
                                 ageLimitation = reader["ageLimitation"].ToString(),
                                 quantityInStock = Convert.ToInt32(reader["quantityInStock"]),
                                 popularity = Convert.ToInt32(reader["popularity"]),
+                                borrowingCopies = Convert.ToInt32(reader["borrowingCopies"]),
                                 dateSale = reader["dateSale"] != DBNull.Value ? Convert.ToDateTime(reader["dateSale"]) : (DateTime?)null                            
                             };
                             string sqlQuery2 = "SELECT * FROM authors WHERE bookId = @bookId";
@@ -366,7 +368,7 @@ namespace eBookStore.Controllers
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "UPDATE books SET title = @title, genre = @genre, publisher = @publisher, priceForBorrowing = @priceForBorrowing, priceForBuying = @priceForBuying, priceSaleForBorrowing = @priceSaleForBorrowing, priceSaleForBuying = @priceSaleForBuying, yearOfPublishing = @yearOfPublishing, coverImagePath = @coverImagePath, ageLimitation = @ageLimitation, quantityInStock = @quantityInStock, popularity = @popularity, dateSale = @dateSale WHERE id = @id";
+                    string sqlQuery = "UPDATE books SET title = @title, genre = @genre, publisher = @publisher, priceForBorrowing = @priceForBorrowing, priceForBuying = @priceForBuying, priceSaleForBorrowing = @priceSaleForBorrowing, priceSaleForBuying = @priceSaleForBuying, yearOfPublishing = @yearOfPublishing, coverImagePath = @coverImagePath, ageLimitation = @ageLimitation, quantityInStock = @quantityInStock, popularity = @popularity, dateSale = @dateSale, borrowingCopies = @borrowingCopies WHERE id = @id";
 
                     using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                     {
@@ -389,6 +391,7 @@ namespace eBookStore.Controllers
                         command.Parameters.AddWithValue("@ageLimitation", model.ageLimitation);
                         command.Parameters.AddWithValue("@quantityInStock", model.quantityInStock);
                         command.Parameters.AddWithValue("@popularity", model.popularity);
+                        command.Parameters.AddWithValue("@borrowingCopies", model.borrowingCopies);
 
                         // Handle nullable dateSale
                         command.Parameters.Add("@dateSale", SqlDbType.DateTime).Value =
@@ -426,8 +429,8 @@ namespace eBookStore.Controllers
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string sqlQuery = "INSERT INTO books (id, title, genre, publisher, priceForBorrowing, priceForBuying, priceSaleForBorrowing, priceSaleForBuying, yearOfPublishing, coverImagePath, ageLimitation, quantityInStock, popularity, dateSale) VALUES " +
-                                  "(@id, @title, @genre, @publisher, @priceForBorrowing, @priceForBuying, @priceSaleForBorrowing, @priceSaleForBuying, @yearOfPublishing, @coverImagePath, @ageLimitation, @quantityInStock, @popularity, @dateSale)";
+                string sqlQuery = "INSERT INTO books (id, title, genre, publisher, priceForBorrowing, priceForBuying, priceSaleForBorrowing, priceSaleForBuying, yearOfPublishing, coverImagePath, ageLimitation, quantityInStock, popularity, dateSale, borrowingCopies) VALUES " +
+                                  "(@id, @title, @genre, @publisher, @priceForBorrowing, @priceForBuying, @priceSaleForBorrowing, @priceSaleForBuying, @yearOfPublishing, @coverImagePath, @ageLimitation, @quantityInStock, @popularity, @dateSale, @borrowingCopies)";
                 using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
                     command.Parameters.AddWithValue("@id", book.id);
@@ -446,6 +449,7 @@ namespace eBookStore.Controllers
                     command.Parameters.AddWithValue("@ageLimitation", book.ageLimitation);
                     command.Parameters.AddWithValue("@quantityInStock", book.quantityInStock);
                     command.Parameters.AddWithValue("@popularity", book.popularity);
+                    command.Parameters.AddWithValue("@borrowingCopies", book.borrowingCopies);
 
                     // Handle dateSale as nullable
                     command.Parameters.Add("@dateSale", SqlDbType.DateTime).Value = book.dateSale.HasValue ? (object)book.dateSale.Value : DBNull.Value;
@@ -550,6 +554,7 @@ namespace eBookStore.Controllers
                                 quantityInStock = Convert.ToInt32(reader["quantityInStock"]),
                                 popularity = Convert.ToInt32(reader["popularity"]),
                                 dateSale = reader["dateSale"] != DBNull.Value ? (DateTime?)reader["dateSale"] : null, // This handles nullable DateTime
+                                borrowingCopies = Convert.ToInt32(reader["borrowingCopies"])
 
                             };
 

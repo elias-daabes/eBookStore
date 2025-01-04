@@ -182,9 +182,10 @@
             <strong>Release Year:</strong> @Html.TextBoxFor(obj => obj.book.yearOfPublishing, new { placeholder = "Enter releasing year *", @Value = "" }) @Html.ValidationMessageFor(obj => obj.book.yearOfPublishing) <br />
             <strong>cover Image Path:</strong> <input type="file" id="=imgFile" name="imgFile" /> @Html.ValidationMessageFor(obj => obj.book.coverImagePath) <br />
             <strong>age Limitation:</strong> @Html.DropDownListFor(obj => obj.book.ageLimitation, new SelectList(new List<string> { "No Restriction", "8+", "12+", "16+", "18+" }), "Select an age limitation *") @Html.ValidationMessageFor(obj => obj.book.ageLimitation) <br />
-            <strong> quantityInStock:</strong> @Html.TextBoxFor(obj => obj.book.quantityInStock) @Html.ValidationMessageFor(obj => obj.book.quantityInStock) <br />
-            <strong> Popularity:</strong> @Html.TextBoxFor(obj => obj.book.popularity) @Html.ValidationMessageFor(obj => obj.book.popularity) <br />
-            <strong> dateSale:</strong> @Html.EditorFor(obj => obj.book.dateSale) @Html.ValidationMessageFor(obj => obj.book.dateSale) <br />
+            <strong>quantityInStock:</strong> @Html.TextBoxFor(obj => obj.book.quantityInStock) @Html.ValidationMessageFor(obj => obj.book.quantityInStock) <br />
+            <strong>Popularity:</strong> @Html.TextBoxFor(obj => obj.book.popularity) @Html.ValidationMessageFor(obj => obj.book.popularity) <br />
+            <strong>dateSale:</strong> @Html.EditorFor(obj => obj.book.dateSale) @Html.ValidationMessageFor(obj => obj.book.dateSale) <br />
+            <strong>Borrowing Copies:</strong> @Html.TextBoxFor(obj => obj.book.borrowingCopies) @Html.ValidationMessageFor(obj => obj.book.borrowingCopies) <br />
 
 
             <input id="Submit1" type="submit" value="Add Book" />
@@ -254,6 +255,7 @@
                     <th>quantity In Stock</th>
                     <th>Popularity</th>
                     <th>sale Date</th>
+                    <th>Borrowing Copies</th>
                 </tr>
 
                 @foreach (Book obj in Model.booksList)
@@ -303,6 +305,7 @@
                 <td>@obj.quantityInStock</td>
                 <td>@obj.popularity</td>
                 <td>@obj.dateSale.ToString().Replace("00:00:00", "")</td>
+                <td>@obj.borrowingCopies</td>
                 <td>
                     <a href="@Url.Action("EditBook", "Book", new { id = obj.id })" class="">Update</a>
                 </td>
@@ -315,6 +318,7 @@
                         <input type="submit" class="delete-button" value="Delete" />
                     }
                 </td>
+
 
             </tr>
 

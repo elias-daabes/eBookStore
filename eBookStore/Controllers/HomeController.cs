@@ -181,7 +181,9 @@ namespace eBookStore.Controllers
                                 epubPath = reader["epubPath"].ToString(),
                                 fb2Path = reader["fb2Path"].ToString(),
                                 mobiPath = reader["mobiPath"].ToString(),
-                                pdfPath = reader["pdfPath"].ToString()
+                                pdfPath = reader["pdfPath"].ToString(),
+                                borrowingCopies = Convert.ToInt32(reader["borrowingCopies"])
+
                             };
                             string sqlQuery2 = "SELECT * FROM authors WHERE bookId = @bookId";
                             using (SqlCommand command2 = new SqlCommand(sqlQuery2, connection))
@@ -277,6 +279,7 @@ namespace eBookStore.Controllers
                                 quantityInStock = Convert.ToInt32(reader["quantityInStock"]),
                                 popularity = Convert.ToInt32(reader["popularity"]),
                                 dateSale = reader["dateSale"] != DBNull.Value ? (DateTime?)reader["dateSale"] : null, // This handles nullable DateTime
+                                borrowingCopies = Convert.ToInt32(reader["borrowingCopies"])
 
                             };
 

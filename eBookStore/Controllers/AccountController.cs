@@ -262,7 +262,8 @@ namespace eBookStore.Controllers
                                 epubPath = reader["epubPath"].ToString(),
                                 fb2Path = reader["fb2Path"].ToString(),
                                 mobiPath = reader["mobiPath"].ToString(),
-                                pdfPath = reader["pdfPath"].ToString()
+                                pdfPath = reader["pdfPath"].ToString(),
+                                borrowingCopies = Convert.ToInt32(reader["borrowingCopies"])
                             };
 
                             string sqlQuery2 = "SELECT * FROM authors WHERE bookId = @bookId";
@@ -368,7 +369,7 @@ namespace eBookStore.Controllers
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string sqlQuery = "UPDATE books SET quantityInStock = quantityInStock + 1 WHERE id = @id";
+                string sqlQuery = "UPDATE books SET borrowingCopies = borrowingCopies + 1 WHERE id = @id";
 
                 using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
@@ -381,7 +382,7 @@ namespace eBookStore.Controllers
             }
         }
 
-        private void AcquireBookFromStore(int id)
+        private void BuyBookFromStore(int id)
         {
 
             string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
@@ -389,6 +390,26 @@ namespace eBookStore.Controllers
             {
                 connection.Open();
                 string sqlQuery = "UPDATE books SET quantityInStock = quantityInStock - 1 WHERE id = @id";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+
+                    command.Parameters.AddWithValue("@id", id);
+
+                    // Execute query
+                    command.ExecuteNonQuery();
+                }
+            }
+        } 
+        
+        private void BorrowBookFromStore(int id)
+        {
+
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string sqlQuery = "UPDATE books SET borrowingCopies = borrowingCopies - 1 WHERE id = @id";
 
                 using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
@@ -431,14 +452,13 @@ namespace eBookStore.Controllers
         }
 
         [HttpPost]
-        public ActionResult DeleteBookFromLibrary(int accountId, int bookId)
+        public ActionResult DeleteBookFromLibrary(int accountId, int bookId, bool isBorrow)
         {
             DeleteBookFromLibraryFunction(accountId, bookId);
-            //BookViewModel bookViewModel = new BookViewModel
-            //{
-            //    book = new Book(),
-            //    booksList = getBooksList(null)
-            //};
+            if (isBorrow)
+            {
+                ReturnBookToStore(bookId);
+            }
             return RedirectToAction("MyLibrary");
         }
 
@@ -478,13 +498,21 @@ namespace eBookStore.Controllers
                     return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
                 }
 
-            if (library.BorrowingDates.Count == 3)
+            if (library.BorrowingDates.Count(date => date != null) == 3)
             {
                 TempData["ActionError"] = "You cannot borrow more than 3 books.";
                 return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
             }
+            Book book1 = getBookByid(bookId);
 
-            AcquireBookFromStore(bookId);
+            if (book1.borrowingCopies == 0)
+            {
+                TempData["BookId"] = book1.id;
+                TempData["WaitlistRequest"] = "Borrowing copies are not available currently for '"+ book1.title +"' book. Do you want to be added to wait list?";
+                return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
+            }
+
+            BorrowBookFromStore(bookId);
             addBookToLibrary(accountId, bookId, true);
             TempData["ActionError"] = "complete payment"; //TODO: should be deleted and replace by payment action
             TempData["ActionSuccess"] = "Book '" + getBookByid(bookId).title + "' has been borrowed successfully. Enter the library to view formats.";
@@ -515,7 +543,7 @@ namespace eBookStore.Controllers
                 TempData["ActionError"] = "Book out of stock.";
                 return isHomePage? RedirectToAction("HomePage", "Home"): RedirectToAction("ViewBook", "Book", new { id = bookId });
             }
-            AcquireBookFromStore(bookId);
+            BuyBookFromStore(bookId);
             addBookToLibrary(accountId, bookId, false);
             TempData["ActionError"] = "complete payment"; //TODO: should be deleted and replace by payment action
             TempData["ActionSuccess"] = "Book '" + getBookByid(bookId).title + "' has been purchased successfully. Enter the library to view formats.";

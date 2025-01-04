@@ -153,7 +153,7 @@
                         }
                         else
                         {
-                            using (Html.BeginForm("DeleteBookFromLibrary", "Account", new { bookId = Model.books[index].id, accountId = Model.AccountId }, FormMethod.Post, new { onsubmit = "return confirm('Are you sure you want to return this book?');" }))
+                            using (Html.BeginForm("DeleteBookFromLibrary", "Account", new { bookId = Model.books[index].id, accountId = Model.AccountId , isBorrow = true}, FormMethod.Post, new { onsubmit = "return confirm('Are you sure you want to return this book?');" }))
                             {
                                 <input type="submit" class="return-button" value="Return Book" />
                             }
