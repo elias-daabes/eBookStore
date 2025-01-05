@@ -10,6 +10,7 @@ namespace eBookStore.Models
         public int bookId { get; set; }
         public int accountId { get; set; }
         public DateTime added_At { get; set; }
+        public DateTime available_At { get; set; }
         public bool notified { get; set; }
     }
 }

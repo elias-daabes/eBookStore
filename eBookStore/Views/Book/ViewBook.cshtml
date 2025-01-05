@@ -405,7 +405,12 @@
                         <input type="submit" class="nav-btn" value="My Cart" />
                     }
                 </li>
-                <li><a href="#waiting-list">My Waiting List</a></li>
+                <li>
+                    @using (Html.BeginForm("MyWaitlist", "Waitlist", FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="My Waitlist" />
+                    }
+                </li>
                 <li>
                     @using (Html.BeginForm("MyLibrary", "Account", FormMethod.Post))
                     {

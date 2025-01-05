@@ -181,21 +181,21 @@ CREATE TABLE Libraries (
 
 INSERT INTO Libraries (AccountId, BookId, BorrowingDate, AcquisitionDate)
 VALUES
-(2, 1, '2025-01-20', '2024-11-01'),
-(2, 2, '2025-01-25', '2024-11-10'),
-(2, 3, '2025-01-30', '2024-11-15'),
+(2, 1, '2025-01-1', '2024-11-01'),
+(2, 2, NULL, '2024-11-10'),
+(2, 3, '2025-01-3', '2024-11-15'),
 (2, 4, NULL, '2024-11-20'),
 (2, 5, NULL, '2024-11-25'),
 (2, 6, NULL, '2024-12-01'),
 (2, 8, NULL, '2024-12-05'),
 (2, 9, NULL, '2024-12-10'),
 (2, 10, NULL, '2024-12-15'),
-(3, 4, NULL, '2024-12-20'),
+(3, 1, '2025-01-2', '2024-12-20'),
 (3, 5, NULL, '2024-12-25'),
 (3, 6, NULL, '2024-12-30'),
 (3, 7, NULL, '2025-01-05'),
 (3, 8, NULL, '2025-01-10'),
-(4, 9, NULL, '2025-01-15'),
+(4, 1, '2025-01-3', '2025-01-15'),
 (4, 10, NULL, '2025-01-20');
 
 DROP TABLE IF EXISTS WebFeedbacks;
@@ -230,9 +230,9 @@ CREATE TABLE BookFeedbacks (
 
 INSERT INTO BookFeedbacks (AccountId, BookId, Rating, Comment, Created_At)
 VALUES
-    (2, 1, 4, 'Interesting read, but a bit slow at times.', '2025-01-02 09:30:00'),
-    (3, 1, 3, 'It was okay, but not what I expected.', '2025-01-01 15:45:00'),
-    (4, 1, 5, 'Loved it! Couldn’t put it down.', '2025-01-03 10:00:00'),
+    (2, 1, 4, 'Interesting read, but a bit slow at times.', '2025-01-02 00:00:00'),
+    (3, 1, 3, 'It was okay, but not what I expected.', '2025-01-01 0:00:00'),
+    (4, 1, 5, 'Loved it! Couldn’t put it down.', '2025-01-03 00:00:00'),
     (5, 1, 2, 'Didn’t enjoy the book. Found it boring.', '2025-01-02 11:20:00'),
     (6, 1, 4, 'Good story, but the ending was a bit predictable.', '2025-01-01 14:30:00'),
     (7, 2, 3, 'It was okay, but some parts dragged on.', '2025-01-02 13:10:00'),
@@ -250,6 +250,7 @@ CREATE TABLE Waitlist (
 	bookId INT NOT NULL,
 	accountId INT NOT NULL,
 	added_At DATETIME NOT NULL,
+	available_At DATETIME NOT NULL,
 	notified BIT DEFAULT 0,
 	PRIMARY KEY(BookId,AccountId)
 );

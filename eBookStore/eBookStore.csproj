@@ -141,6 +141,7 @@
     <Compile Include="ViewModels\AccountViewModel.cs" />
     <Compile Include="ViewModels\BookFeedbackViewModel.cs" />
     <Compile Include="ViewModels\BookViewModel.cs" />
+    <Compile Include="ViewModels\WaitlistViewModel.cs" />
     <Compile Include="ViewModels\WebFeedbackViewModel.cs" />
     <Compile Include="ViewModels\HomePageViewModel.cs" />
   </ItemGroup>
@@ -188,12 +189,12 @@
     <Content Include="Views\Account\MyLibrary.cshtml" />
     <Content Include="Views\Book\ViewBook.cshtml" />
     <Content Include="Views\Cart\MyCart.cshtml" />
+    <Content Include="Views\Waitlist\MyWaitlist.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="BookFiles\" />
     <Folder Include="Images\" />
-    <Folder Include="Views\Waitlist\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

@@ -17,6 +17,7 @@ namespace eBookStore.Controllers
         // GET: Home
         public ActionResult HomePage()
         {
+            deleteOverDuedBooks();
             HomePageViewModel homePageViewModel = new HomePageViewModel
             {
                 bookViewModel = new BookViewModel
@@ -379,6 +380,143 @@ namespace eBookStore.Controllers
 
             return View("HomePage", homePageViewModel);
         }
+
+        private void deleteOverDuedBooks()
+        {
+            List<Account> accountsList = getAccountsList();
+            foreach (Account account in accountsList) { 
+                Library library = getLibraryBooks(account.Id);
+                for (int i = 0; i < library.books.Count; i++)
+                    {
+                        if (library.BorrowingDates[i] != null && library.BorrowingDates[i] < DateTime.Today)
+                        {
+                            DeleteBookFromLibraryFunction(account.Id, library.books[i].id);
+                            // quentity of book should be increased by 1
+                            ReturnBookToStore(library.books[i].id);
+                            //send notification
+                        }
+                    }
+            }
+        }
+
+        private List<Account> getAccountsList()
+        {
+            List<Account> accounts = new List<Account>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery = "SELECT Id, FirstName, LastName, Email, Password, IsAdmin FROM Accounts";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            accounts.Add(new Account
+                            {
+                                Id = reader.GetInt32(0),
+                                FirstName = reader.GetString(1),
+                                LastName = reader.GetString(2),
+                                Email = reader.GetString(3),
+                                Password = reader.GetString(4),
+                                IsAdmin = reader.GetBoolean(5)
+                            });
+                        }
+
+                    }
+                }
+            }
+            return accounts;
+        }
+
+
+        private void ReturnBookToStore(int id)
+        {
+
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string sqlQuery = "UPDATE books SET borrowingCopies = borrowingCopies + 1 WHERE id = @id";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+
+                    command.Parameters.AddWithValue("@id", id);
+
+                    // Execute query
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void DeleteBookFromLibraryFunction(int accountId, int bookId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string deleteBookQuery = "DELETE FROM Libraries WHERE BookId = @bookId AND AccountId = @accountId ";
+
+                using (SqlCommand command = new SqlCommand(deleteBookQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@bookId", bookId);
+                    command.Parameters.AddWithValue("@accountId", accountId);
+
+                    command.ExecuteNonQuery();
+                }
+
+            }
+        }
+
+        private Library getLibraryBooks(int AccountId)
+        {
+            Library libraryBooks = new Library();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery = "SELECT AccountId, BookId, BorrowingDate, AcquisitionDate FROM Libraries WHERE AccountId = @AccountId";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@AccountId", AccountId);
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        libraryBooks = new Library
+                        {
+                            AccountId = AccountId,
+                            books = new List<Book>(),
+                            BorrowingDates = new List<DateTime?>(),
+                            AcquisitionDate = new List<DateTime>()
+                        };
+
+                        while (reader.Read())
+                        {
+                            int bookId = Convert.ToInt32(reader["BookId"]);
+                            DateTime? borrowingDate = reader["BorrowingDate"] != DBNull.Value ? Convert.ToDateTime(reader["BorrowingDate"]) : (DateTime?)null;
+                            DateTime acquisitionDate = Convert.ToDateTime(reader["AcquisitionDate"]);
+
+                            libraryBooks.books.Add(getBookByid(bookId));
+                            libraryBooks.BorrowingDates.Add(borrowingDate);
+                            libraryBooks.AcquisitionDate.Add(acquisitionDate);
+                        }
+
+                    }
+                }
+            }
+            return libraryBooks;
+        }
+        private Book getBookByid(int id)
+        {
+            List<Book> books = getBooksList(null);
+            foreach (Book book in books)
+            {
+                if (book.id == id)
+                    return book;
+            }
+            return null;
+        }
+        
+
 
     }
 }

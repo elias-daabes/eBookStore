@@ -332,7 +332,7 @@ namespace eBookStore.Controllers
 
                 if (account != null)
                 {
-                    deleteOverDuedBooks(account.Id);
+                    //deleteOverDuedBooks(account.Id);
                     Session["AccountId"] = account.Id;
                     Session["FirstName"] = account.FirstName;
                     Session["LastName"] = account.LastName;
@@ -508,7 +508,7 @@ namespace eBookStore.Controllers
             if (book1.borrowingCopies == 0)
             {
                 TempData["BookId"] = book1.id;
-                TempData["WaitlistRequest"] = "Borrowing copies are not available currently for '"+ book1.title +"' book. Do you want to be added to wait list?";
+                TempData["WaitlistRequest"] = $"Borrowing copies are not available currently for '{book1.title}' book. {getWaitlistsListByBookId(book1.id).Count} readers are in the waiting list. it could be available at {getNextAvailableDate(book1.id).ToString("dd/MM/yyyy")}. Do you want to be added to wait list?";
                 return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
             }
 
@@ -519,6 +519,96 @@ namespace eBookStore.Controllers
             return RedirectToAction("HomePage", "Home");
 
         }
+
+        public List<Waitlist> getWaitlistsListByBookId(int bookId)
+        {
+            List<Waitlist> waitlists = new List<Waitlist>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery = "SELECT * FROM waitlist WHERE bookId = @bookId";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@bookId", bookId);
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Waitlist waitlist = new Waitlist
+                            {
+                                bookId = Convert.ToInt32(reader["bookId"]),
+                                accountId = Convert.ToInt32(reader["accountId"]),
+                                added_At = Convert.ToDateTime(reader["added_At"]),
+                                available_At = Convert.ToDateTime(reader["available_At"]),
+                                notified = Convert.ToBoolean(reader["notified"])
+                            };
+
+                            waitlists.Add(waitlist);
+                        }
+                    }
+                }
+            }
+            return waitlists;
+        }
+
+        private DateTime getNextAvailableDate(int bookId)
+        {
+            List<DateTime> copyAvailability = new List<DateTime>();
+
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Step 1: Get the return dates for the 3 copies from Libraries table
+                string queryLibraries = @"
+                SELECT BorrowingDate
+                FROM Libraries 
+                WHERE BookId = @BookId 
+                ORDER BY BorrowingDate ASC";
+
+                using (SqlCommand command = new SqlCommand(queryLibraries, connection))
+                {
+                    command.Parameters.AddWithValue("@BookId", bookId);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            DateTime borrowingDate = Convert.ToDateTime(reader["BorrowingDate"]);
+                            copyAvailability.Add(borrowingDate);
+                        }
+                    }
+                }
+
+                // Step 2: Get the available_at dates from Waitlist table
+                string queryWaitlist = @"
+                SELECT available_At 
+                FROM Waitlist 
+                WHERE BookId = @BookId 
+                ORDER BY available_At ASC";
+
+                List<DateTime> waitlistAvailability = new List<DateTime>();
+
+                using (SqlCommand command = new SqlCommand(queryWaitlist, connection))
+                {
+                    command.Parameters.AddWithValue("@BookId", bookId);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            DateTime availableAt = Convert.ToDateTime(reader["available_At"]);
+                            waitlistAvailability.Add(availableAt);
+                        }
+                    }
+                }
+
+                int index = waitlistAvailability.Count;
+                if (index < copyAvailability.Count)
+                    return copyAvailability[index];
+                return waitlistAvailability[index - copyAvailability.Count].AddDays(30);
+            }
+        }
+
 
         public ActionResult BuyBook(int bookId, bool isHomePage)
         {

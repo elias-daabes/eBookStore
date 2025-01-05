@@ -403,7 +403,12 @@
                     {
                         <input type="submit" class="nav-btn" value="My Cart" />
                     }
-                <li><a href="#waiting-list">My Waiting List</a></li>
+                <li>
+                    @using (Html.BeginForm("MyWaitlist", "Waitlist", FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="My Waitlist" />
+                    }
+                </li>
                 <li>
                     @using (Html.BeginForm("MyLibrary", "Account", FormMethod.Post))
                     {
@@ -653,9 +658,9 @@
     }
     @if (TempData["WaitlistRequest"] != null)
     {
-        <script>
+<script>
         document.addEventListener("DOMContentLoaded", function () {
-            var message = '@TempData["WaitlistRequest"]';
+            var message = @Html.Raw(Json.Encode(TempData["WaitlistRequest"]));
             var userConfirmed = confirm(message);
 
             if (userConfirmed) {
@@ -663,7 +668,7 @@
                 window.location.href = '@Url.Action("AddToWaitlist", "Waitlist", new { bookId = (int)TempData["BookId"] })';
             }
         });
-        </script>
+</script>
     }
 
 </body>
