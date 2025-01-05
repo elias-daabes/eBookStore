@@ -146,7 +146,7 @@ namespace eBookStore.Controllers
 
                             string sqlQuery2 = "SELECT * FROM authors WHERE bookId = @bookId";
                             using (SqlCommand command2 = new SqlCommand(sqlQuery2, connection))
-                            {s
+                            {
                                 command2.Parameters.AddWithValue("@bookId", book.id);
                                 using (SqlDataReader reader2 = command2.ExecuteReader())
                                 {

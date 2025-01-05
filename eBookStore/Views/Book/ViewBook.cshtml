@@ -509,27 +509,27 @@
 
     </div>
     <div class="rating-section">
-                <h3>Add Your Feedback</h3>
-                @using (Html.BeginForm("AddBookFeedback", "Book", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                {
-                    @Html.Hidden("bookFeedback.AccountId", Session["AccountId"])
-                    @Html.Hidden("bookFeedback.BookId", Model.book.id)
-                    @Html.Hidden("bookFeedback.Created_At", DateTime.Now.ToString("yyyy-MM-dd"))
+        <h3>Add Your Feedback</h3>
+        @using (Html.BeginForm("AddBookFeedback", "Book", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.Hidden("bookFeedback.AccountId", Session["AccountId"])
+            @Html.Hidden("bookFeedback.BookId", Model.book.id)
+            @Html.Hidden("bookFeedback.Created_At", DateTime.Now.ToString("yyyy-MM-dd"))
 
-                    <div class="form-group">
-                        <label for="rating"><strong>Rating (1 to 5):</strong></label>
+            <div class="form-group">
+                <label for="rating"><strong>Rating (1 to 5):</strong></label>
 
-                        @Html.DropDownListFor(obj => obj.bookFeedback.Rating, new SelectList(new List<int> { 5, 4, 3, 2, 1 })) @Html.ValidationMessageFor(obj => obj.bookFeedback.Rating) <br />
+                @Html.DropDownListFor(obj => obj.bookFeedback.Rating, new SelectList(new List<int> { 5, 4, 3, 2, 1 })) @Html.ValidationMessageFor(obj => obj.bookFeedback.Rating) <br />
 
-                    </div>
+            </div>
 
-                    <div class="form-group">
-                        @Html.TextAreaFor(model => model.bookFeedback.Comment, new { placeholder = "Enter your feedback...", @class = "fixed-textarea" }) @Html.ValidationMessageFor(obj => obj.bookFeedback.Comment)
+            <div class="form-group">
+                @Html.TextAreaFor(model => model.bookFeedback.Comment, new { placeholder = "Enter your feedback...", @class = "fixed-textarea" }) @Html.ValidationMessageFor(obj => obj.bookFeedback.Comment)
 
-                    </div>
+            </div>
 
-                    <input type="submit" class="btn btn-primary" value="Send Feedback" />
-                }
+            <input type="submit" class="btn btn-primary" value="Send Feedback" />
+        }
         @foreach (BookFeedback bookFeedback in Model.bookFeedbacksList)
         {
             <div class="user-rating">
@@ -546,6 +546,19 @@
         }
     </div>
 
+    @if (TempData["WaitlistRequest"] != null)
+    {
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var message = '@TempData["WaitlistRequest"]';
+            var userConfirmed = confirm(message);
 
+            if (userConfirmed) {
+                // Redirect to add to waitlist action
+                window.location.href = '@Url.Action("AddToWaitlist", "Waitlist", new { bookId = (int)TempData["BookId"] })';
+            }
+        });
+        </script>
+    }
 </body>
 </html>
