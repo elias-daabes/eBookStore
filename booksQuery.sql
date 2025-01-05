@@ -3,7 +3,7 @@ GO
 
 drop table IF EXISTS books;
 CREATE TABLE books (
-    id INT  PRIMARY KEY,       -- Unique identifier for the book
+    id INT PRIMARY KEY,       -- Unique identifier for the book
     title VARCHAR(150) NOT NULL,             -- Title of the book
     publisher VARCHAR(100) NOT NULL,         -- Publisher's name
     priceForBorrowing DECIMAL(10, 2) NOT NULL, -- Price for borrowing
@@ -167,6 +167,7 @@ VALUES
     ('Jack', 'Anderson', 'jack.anderson@example.com', 'Password109', 0),
     ('Kathy', 'Thomas', 'kathy.thomas@example.com', 'Password110', 0),
     ('Liam', 'Jackson', 'liam.jackson@example.com', 'Password111', 0),
+    ('Elias', 'Daabes', 'eliasad89@gmail.com', '123123', 0),
     ('Mona', 'White', 'mona.white@example.com', 'Password112', 0);
 
 
@@ -196,6 +197,7 @@ VALUES
 (3, 7, NULL, '2025-01-05'),
 (3, 8, NULL, '2025-01-10'),
 (4, 1, '2025-01-3', '2025-01-15'),
+(15, 1, '2025-01-3', '2025-01-15'),
 (4, 10, NULL, '2025-01-20');
 
 DROP TABLE IF EXISTS WebFeedbacks;
@@ -253,4 +255,12 @@ CREATE TABLE Waitlist (
 	available_At DATETIME NOT NULL,
 	notified BIT DEFAULT 0,
 	PRIMARY KEY(BookId,AccountId)
+);
+
+DROP TABLE IF EXISTS Notifications;
+CREATE TABLE Notifications (
+	accountId INT NOT NULL,
+	context TEXT, 
+	notified_At DATETIME NOT NULL,
+	PRIMARY KEY(accountId, notified_At)
 );

@@ -13,8 +13,14 @@ namespace eBookStore.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly EmailService _emailService;
         private readonly string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
         // GET: Home
+
+        public HomeController()
+        {
+            _emailService = new EmailService();
+        }
         public ActionResult HomePage()
         {
             deleteOverDuedBooks();
@@ -393,10 +399,26 @@ namespace eBookStore.Controllers
                             DeleteBookFromLibraryFunction(account.Id, library.books[i].id);
                             // quentity of book should be increased by 1
                             ReturnBookToStore(library.books[i].id);
-                            //send notification
-                        }
+                        string subject = $"Book '{library.books[i].id}' Deleted";
+                        string body = $"<p>Dear User,</p>" +
+                                      $"<p>We regret to inform you that the book <strong>{library.books[i].title}</strong> has been removed from our library system.</p>" +
+                                      $"<p>If you have any questions, feel free to contact us.</p>" +
+                                      $"<p>Thank you for understanding.</p>";
+
+                        _emailService.SendEmailAsync(getAccountById(account.Id).Email, subject, body);
+                    }
                     }
             }
+        }
+
+        private Account getAccountById(int id)
+        {
+            List<Account>accounts = getAccountsList();
+            foreach(var account in accounts)
+            {
+                if (account.Id == id) return account;
+            }
+            return null;
         }
 
         private List<Account> getAccountsList()
