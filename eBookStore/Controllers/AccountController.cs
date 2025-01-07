@@ -505,7 +505,18 @@ namespace eBookStore.Controllers
             }
             Book book1 = getBookByid(bookId);
 
+
+
             if (book1.borrowingCopies == 0)
+            {
+                TempData["BookId"] = book1.id;
+                TempData["WaitlistRequest"] = $"Borrowing copies are not available currently for '{book1.title}' book. {getWaitlistsListByBookId(book1.id).Count} readers are in the waiting list. it could be available at {getNextAvailableDate(book1.id).ToString("dd/MM/yyyy")}. Do you want to be added to wait list?";
+                return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
+            }
+
+            bool inWaitList = currentAccountInWaitlist(bookId, accountId, book1.borrowingCopies);
+
+            if (!inWaitList)
             {
                 TempData["BookId"] = book1.id;
                 TempData["WaitlistRequest"] = $"Borrowing copies are not available currently for '{book1.title}' book. {getWaitlistsListByBookId(book1.id).Count} readers are in the waiting list. it could be available at {getNextAvailableDate(book1.id).ToString("dd/MM/yyyy")}. Do you want to be added to wait list?";
@@ -518,6 +529,20 @@ namespace eBookStore.Controllers
             TempData["ActionSuccess"] = "Book '" + getBookByid(bookId).title + "' has been borrowed successfully. Enter the library to view formats.";
             return RedirectToAction("HomePage", "Home");
 
+        }
+
+        private bool currentAccountInWaitlist(int bookId, int accountId, int borrowingCopies)
+        {
+            List<Waitlist> waitlists = getWaitlistsListByBookId(bookId);
+            if (waitlists.Count > 0)
+            {
+                for (int i = 0; i < borrowingCopies; i++)
+                {
+                    if (waitlists[i].accountId == accountId)
+                        return true;
+                }
+            }
+            return false;
         }
 
         public List<Waitlist> getWaitlistsListByBookId(int bookId)
