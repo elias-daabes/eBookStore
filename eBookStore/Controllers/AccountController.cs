@@ -84,8 +84,8 @@ namespace eBookStore.Controllers
                 connection.Open();
 
                 string sqlQuery = "INSERT INTO Accounts (FirstName, LastName, Email, Password, IsAdmin) " +
-                                          "OUTPUT INSERTED.Id " +
-                                          "VALUES (@FirstName, @LastName, @Email, @Password, @IsAdmin)";
+                                  "OUTPUT INSERTED.Id " +
+                                  "VALUES (@FirstName, @LastName, @Email, @Password, @IsAdmin)";
 
                 using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
@@ -96,11 +96,10 @@ namespace eBookStore.Controllers
                     command.Parameters.AddWithValue("@IsAdmin", 0);
 
                     account.Id = Convert.ToInt32(command.ExecuteScalar());
-
-                    command.ExecuteNonQuery();
                 }
             }
         }
+
         public ActionResult ManageAccounts()
         {
             AccountViewModel accountViewModel = new AccountViewModel
@@ -514,15 +513,15 @@ namespace eBookStore.Controllers
                 return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
             }
 
-            bool inWaitList = currentAccountInWaitlist(bookId, accountId, book1.borrowingCopies);
+            bool allowdToBorrow = IsAllowdToBorrow(bookId, accountId, book1.borrowingCopies);
 
-            if (!inWaitList)
+            if (!allowdToBorrow)
             {
                 TempData["BookId"] = book1.id;
                 TempData["WaitlistRequest"] = $"Borrowing copies are not available currently for '{book1.title}' book. {getWaitlistsListByBookId(book1.id).Count} readers are in the waiting list. it could be available at {getNextAvailableDate(book1.id).ToString("dd/MM/yyyy")}. Do you want to be added to wait list?";
                 return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
             }
-
+            DeleteBookFromWaitlist(bookId);
             BorrowBookFromStore(bookId);
             addBookToLibrary(accountId, bookId, true);
             TempData["ActionError"] = "complete payment"; //TODO: should be deleted and replace by payment action
@@ -531,9 +530,12 @@ namespace eBookStore.Controllers
 
         }
 
-        private bool currentAccountInWaitlist(int bookId, int accountId, int borrowingCopies)
+        private bool IsAllowdToBorrow(int bookId, int accountId, int borrowingCopies)
         {
             List<Waitlist> waitlists = getWaitlistsListByBookId(bookId);
+            // if the available copies are greater than waitlist size, then it's ok to borrow
+            if (waitlists.Count < borrowingCopies)
+                return true;
             if (waitlists.Count > 0)
             {
                 for (int i = 0; i < borrowingCopies; i++)
@@ -689,6 +691,24 @@ namespace eBookStore.Controllers
                 }
             }
 
+        }
+
+        public ActionResult DeleteBookFromWaitlist(int bookId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string sqlQuery = "DELETE FROM Waitlist WHERE bookId = @bookId AND accountId = @accoutnId";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@bookId", bookId);
+                    command.Parameters.AddWithValue("@accoutnId", (int)Session["AccountId"]);
+                    command.ExecuteNonQuery();
+                    TempData["SuccessMessage"] = "Book deleted successfully.";
+
+                }
+            }
+            return RedirectToAction("MyWaitlist");
         }
     }
 }
