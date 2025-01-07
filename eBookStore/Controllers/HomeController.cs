@@ -405,7 +405,7 @@ namespace eBookStore.Controllers
                                       $"<p>If you have any questions, feel free to contact us.</p>" +
                                       $"<p>Thank you for understanding.</p>";
 
-                        _emailService.SendEmailAsync(getAccountById(account.Id).Email, subject, body);
+                        //_emailService.SendEmailAsync(getAccountById(account.Id).Email, subject, body);
                     }
                     }
             }
