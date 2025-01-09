@@ -24,6 +24,7 @@ namespace eBookStore.Controllers
         public ActionResult HomePage()
         {
             deleteOverDuedBooks();
+            sendNotificationToAccountsInWaitlist();
             HomePageViewModel homePageViewModel = new HomePageViewModel
             {
                 bookViewModel = new BookViewModel
@@ -39,6 +40,69 @@ namespace eBookStore.Controllers
 
             };
             return View(homePageViewModel);
+        }
+
+        private void sendNotificationToAccountsInWaitlist()
+        {
+            List<Book> booksList = getBooksList();
+            foreach(Book book in booksList)
+            {
+                if (book.borrowingCopies > 0)
+                {
+                    List<Waitlist> waitlists = getWaitlistsListByBookId(book.id);
+                    for (int i = 0; i < book.borrowingCopies; i++)
+                    {
+                        if (waitlists.Count > 0) { 
+                            Account account = getAccountById(waitlists[i].accountId);
+                            if (!waitlists[i].notified)
+                            {
+                                sendAvailaletyMessage(account.Email, book.title);
+                                UpdateNotifiedField(book.id, account.Id);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void sendAvailaletyMessage(string email, string title)
+        {
+            string subject = $"Book '{title}' is available for borrowing";
+            string body = $"<p>Dear User,</p>" +
+                          $"<p>We want to inform you that the book <strong>{title}</strong> is now available for borrowing in our system.</p>";
+
+            //_emailService.SendEmailAsync(email, subject, body); //TODO: add email before uncomment this line
+        }
+
+        private List<Waitlist> getWaitlistsListByBookId(int bookId)
+        {
+            List<Waitlist> waitlists = new List<Waitlist>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery = "SELECT * FROM waitlist WHERE bookId = @bookId";
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@bookId", bookId);
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Waitlist waitlist = new Waitlist
+                            {
+                                bookId = Convert.ToInt32(reader["bookId"]),
+                                accountId = Convert.ToInt32(reader["accountId"]),
+                                added_At = Convert.ToDateTime(reader["added_At"]),
+                                available_At = Convert.ToDateTime(reader["available_At"]),
+                                notified = Convert.ToBoolean(reader["notified"])
+                            };
+
+                            waitlists.Add(waitlist);
+                        }
+                    }
+                }
+            }
+            return waitlists;
         }
 
         private List<WebFeedback> getWebFeedbacksList()
@@ -537,7 +601,29 @@ namespace eBookStore.Controllers
             }
             return null;
         }
-        
+
+        private void UpdateNotifiedField(int bookId, int accountId)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery = @"
+            UPDATE Waitlist
+            SET notified = @notified
+            WHERE bookId = @bookId AND accountId = @accountId";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@notified", true); // Setting notified field to true
+                    command.Parameters.AddWithValue("@bookId", bookId);
+                    command.Parameters.AddWithValue("@accountId", accountId);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
 
 
     }
