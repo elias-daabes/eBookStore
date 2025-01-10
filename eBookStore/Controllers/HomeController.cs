@@ -24,6 +24,7 @@ namespace eBookStore.Controllers
         public ActionResult HomePage()
         {
             deleteOverDuedBooks();
+            sendReminedNotification();
             sendNotificationToAccountsInWaitlist();
             HomePageViewModel homePageViewModel = new HomePageViewModel
             {
@@ -40,6 +41,29 @@ namespace eBookStore.Controllers
 
             };
             return View(homePageViewModel);
+        }
+
+        private void sendReminedNotification()
+        {
+            List<Account> accounts = getAccountsList();
+            foreach(Account account in accounts)
+            {
+                Library libraries = getLibraryBooks(account.Id);
+                for(int i = 0; i < libraries.books.Count; i++) { 
+                    //List<Waitlist> waitlists = getWaitlistsListByBookId(libraries.books[i].id);
+                    if (libraries.BorrowingDates[i] != null && libraries.BorrowingDates[i] <= DateTime.Today.AddDays(5) && libraries.remind_notified[i]==false) { 
+
+                        Book book = getBookByid(libraries.books[i].id);
+                        string subject = $"5 days left for borrowing Book '{book.title}' ";
+                        string body = $"<p>Dear User,</p>" +
+                                        $"<p>We want to inform you that there are 5 days left for borrowing the book <strong>{book.title}</strong>.</p>";
+
+                        _emailService.SendEmailAsync(account.Email, subject, body); //TODO: add email before uncomment this line
+                        UpdateRemindField(book.id, account.Id);                       
+                    }
+                }
+               
+            }
         }
 
         private void sendNotificationToAccountsInWaitlist()
@@ -94,7 +118,7 @@ namespace eBookStore.Controllers
                                 accountId = Convert.ToInt32(reader["accountId"]),
                                 added_At = Convert.ToDateTime(reader["added_At"]),
                                 available_At = Convert.ToDateTime(reader["available_At"]),
-                                notified = Convert.ToBoolean(reader["notified"])
+                                notified = Convert.ToBoolean(reader["notified"]),
                             };
 
                             waitlists.Add(waitlist);
@@ -560,7 +584,7 @@ namespace eBookStore.Controllers
             Library libraryBooks = new Library();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string sqlQuery = "SELECT AccountId, BookId, BorrowingDate, AcquisitionDate FROM Libraries WHERE AccountId = @AccountId";
+                string sqlQuery = "SELECT AccountId, BookId, BorrowingDate, AcquisitionDate, remind_notified FROM Libraries WHERE AccountId = @AccountId";
                 using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
                     command.Parameters.AddWithValue("@AccountId", AccountId);
@@ -572,7 +596,8 @@ namespace eBookStore.Controllers
                             AccountId = AccountId,
                             books = new List<Book>(),
                             BorrowingDates = new List<DateTime?>(),
-                            AcquisitionDate = new List<DateTime>()
+                            AcquisitionDate = new List<DateTime>(),
+                            remind_notified = new List<bool>(),
                         };
 
                         while (reader.Read())
@@ -580,10 +605,12 @@ namespace eBookStore.Controllers
                             int bookId = Convert.ToInt32(reader["BookId"]);
                             DateTime? borrowingDate = reader["BorrowingDate"] != DBNull.Value ? Convert.ToDateTime(reader["BorrowingDate"]) : (DateTime?)null;
                             DateTime acquisitionDate = Convert.ToDateTime(reader["AcquisitionDate"]);
+                            bool remind_notified = Convert.ToBoolean(reader["remind_notified"]);
 
                             libraryBooks.books.Add(getBookByid(bookId));
                             libraryBooks.BorrowingDates.Add(borrowingDate);
                             libraryBooks.AcquisitionDate.Add(acquisitionDate);
+                            libraryBooks.remind_notified.Add(remind_notified);
                         }
 
                     }
@@ -618,6 +645,28 @@ namespace eBookStore.Controllers
                     command.Parameters.AddWithValue("@notified", true); // Setting notified field to true
                     command.Parameters.AddWithValue("@bookId", bookId);
                     command.Parameters.AddWithValue("@accountId", accountId);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        private void UpdateRemindField(int bookId, int accountId)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sqlQuery = @"
+            UPDATE Libraries
+            SET remind_notified = @remind_notified
+            WHERE BookId = @bookId AND AccountId = @accountId";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@remind_notified", true); // Setting notified field to true
+                    command.Parameters.AddWithValue("@BookId", bookId);
+                    command.Parameters.AddWithValue("@AccountId", accountId);
 
                     connection.Open();
                     command.ExecuteNonQuery();

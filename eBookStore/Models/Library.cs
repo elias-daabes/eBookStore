@@ -11,5 +11,6 @@ namespace eBookStore.Models
         public List<Book> books { get; set; }
         public List<DateTime?> BorrowingDates { get; set; }
         public List<DateTime> AcquisitionDate { get; set; }
+        public List<bool> remind_notified { get; set; }
     }
 }

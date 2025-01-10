@@ -177,6 +177,7 @@ CREATE TABLE Libraries (
     BookId INT,
     BorrowingDate DATE,
     AcquisitionDate DATE, 
+	remind_notified BIT DEFAULT 0,
     PRIMARY KEY (AccountId, BookId)
 );
 
@@ -197,7 +198,7 @@ VALUES
 (3, 7, NULL, '2025-01-05'),
 (3, 8, NULL, '2025-01-10'),
 (4, 1, '2025-02-3', '2025-01-15'),
-(4, 10, NULL, '2025-01-20');
+(15, 10, '2025-1-12', '2025-01-20');
 
 DROP TABLE IF EXISTS WebFeedbacks;
 CREATE TABLE WebFeedbacks (
