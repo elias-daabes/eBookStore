@@ -40,6 +40,7 @@ namespace eBookStore.Controllers
                 }
 
             };
+            TempData["BooksCount"] = (int)homePageViewModel.bookViewModel.booksList.Count;
             return View(homePageViewModel);
         }
 
@@ -515,7 +516,7 @@ namespace eBookStore.Controllers
             }
             if (onlySalePrices.HasValue && onlySalePrices.Value)
             {
-                booksList = booksList.Where(b => b.dateSale > DateTime.Today).ToList();
+                booksList = booksList.Where(b => b.dateSale >= DateTime.Today).ToList();
             }
 
             HomePageViewModel homePageViewModel = new HomePageViewModel { 

@@ -479,6 +479,7 @@
     </div>
     <div class="two-sides">
         <div class="book-container">
+            <h4>Available books: @TempData["BooksCount"]</h4>
             @foreach (Book obj in Model.bookViewModel.booksList)
             {
                 <div class="book-item"
