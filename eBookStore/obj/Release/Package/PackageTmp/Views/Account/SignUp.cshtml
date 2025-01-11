@@ -1,0 +1,118 @@
+﻿@model eBookStore.Models.Account
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>SignUp</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+            .form-group label {
+                font-size: 14px;
+                font-weight: bold;
+                color: #555;
+                display: block;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                box-sizing: border-box;
+            }
+
+                .form-group input:focus {
+                    outline-color: #007bff;
+                    border-color: #007bff;
+                }
+
+        .text-danger {
+            color: #d9534f;
+            font-size: 12px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+    </style>
+
+</head>
+<body>
+
+    <div class="container">
+        <h2>Sign Up</h2>
+
+        @using (Html.BeginForm("SignUpAccount", "Account", FormMethod.Post))
+        {
+            <div class="form-group">
+                <label>First Name</label>
+                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @Value = Model.FirstName })
+                @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger"})
+            </div>
+
+            <div class="form-group">
+                <label>Last Name</label>
+                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @Value = Model.LastName })
+                @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @Value = Model.Email })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", @Value = Model.Password })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
+
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+        }
+
+</body>
+</html>

@@ -398,6 +398,21 @@
         <nav>
             <ul>
                 <h1>eBook Store</h1>
+                @if ((int)Session["AccountId"] == 1)
+                {
+                    <li>
+                        @using (Html.BeginForm("ManageAccounts", "Account", FormMethod.Post))
+                        {
+                            <input type="submit" class="nav-btn" value="Accounts" />
+                        }
+                    </li>
+                    <li>
+                        @using (Html.BeginForm("Enter", "Book", FormMethod.Post))
+                        {
+                            <input type="submit" class="nav-btn" value="Books" />
+                        }
+                    </li>
+                }
                 <li>
                     @using (Html.BeginForm("MyCart", "Cart", FormMethod.Post))
                     {

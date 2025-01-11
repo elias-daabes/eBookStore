@@ -153,7 +153,7 @@ CREATE TABLE Accounts (
 
 INSERT INTO Accounts (FirstName, LastName, Email, Password, IsAdmin)
 VALUES
-    ('Admin', 'Admin', 'admin@admin.com', 'admin', 1),
+    ('Admin', 'Admin', 'admin@example.com', '123123', 1),
     ('Jane', 'Smith', 'jane.smith@example.com', '123123', 0),
     ('Alice', 'Johnson', 'alice.johnson@example.com', 'Password789', 0),
     ('Bob', 'Williams', 'bob.williams@example.com', 'Password101', 0),

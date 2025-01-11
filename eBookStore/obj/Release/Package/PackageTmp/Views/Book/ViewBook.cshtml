@@ -1,0 +1,569 @@
+﻿@model eBookStore.ViewModels.BookFeedbackViewModel
+@using eBookStore.Models
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Book View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        .search-bar {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+            .search-bar input[type="text"] {
+                width: 60%;
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            .search-bar input[type="submit"] {
+                padding: 10px 20px;
+                font-size: 16px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+                .search-bar input[type="submit"]:hover {
+                    background-color: #0056b3;
+                }
+
+        .book-container {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            flex: 5;
+            padding: 20px 300px;
+        }
+
+        .book-item {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 15px;
+            width: inherit;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+            .book-item img {
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                height: 260px;
+                margin-right: 15px;
+                max-width: 100%;
+            }
+
+        .book-and-details {
+            display: flex;
+        }
+
+        .book-details div {
+            margin: 5px 0;
+        }
+
+        .line-through {
+            text-decoration: line-through;
+            color: red;
+        }
+
+        .book-item input[type="button"] {
+            margin: 5px 5px 0 0;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            .book-item input[type="button"]:hover {
+                background-color: #0056b3;
+            }
+
+        .book-item input[type="submit"] {
+            margin: 5px 5px 0 0;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            .book-item input[type="submit"]:hover {
+                background-color: #0056b3;
+            }
+
+        .two-sides {
+            display: flex;
+            width: 100%;
+        }
+
+        .right-container {
+            padding-right: 300px;
+            flex: 2;
+        }
+
+        .rating-section {
+            margin: 20px auto;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .user-rating {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+        /* Global Reset */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h2 {
+            text-align: left;
+            font-size: 24px;
+            color: #DD761C;
+            margin: 10px 0;
+        }
+
+        nav {
+            background-color: #FDE49E;
+            padding: 5px 0;
+            text-align: right;
+        }
+
+            nav h1 {
+                margin: 0;
+                color: #6DC5D1;
+                font-size: 32px;
+                flex-grow: 1; /* Allows h1 to take up space for centering */
+                text-align: left;
+                padding-left: 8px;
+            }
+
+            nav ul {
+                align-items: center;
+                list-style: none;
+                display: flex;
+                justify-content: right;
+                gap: 20px;
+            }
+
+                nav ul li {
+                    display: inline;
+                    margin-top: 5px;
+                }
+
+                    nav ul li a {
+                        color: #DD761C;
+                        text-decoration: none;
+                        font-size: 18px;
+                        padding: 10px 20px;
+                        transition: background-color 0.3s, transform 0.2s;
+                    }
+
+                        nav ul li a:hover {
+                            background-color: #FEB941;
+                            transform: translateY(-2px);
+                        }
+
+                        nav ul li a:active {
+                            background-color: #FEB941;
+                            transform: translateY(0);
+                        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #DD761C;
+            font-size: 1rem;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 10px 20px;
+        }
+
+            .nav-btn:hover {
+                background-color: #FEB941;
+                transform: translateY(-2px);
+            }
+
+            .nav-btn:active {
+                background-color: #FEB941;
+                transform: translateY(0);
+            }
+
+
+        .interaction-buttons {
+            align-content: end;
+        }
+        /* Search Bar Styling */
+        .search-bar {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+            .search-bar input[type="text"] {
+                width: 800px;
+                padding: 10px;
+                font-size: 16px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                margin-right: 10px;
+            }
+
+            .search-bar input[type="button"] {
+                background-color: #4CAF50;
+                color: white;
+                font-size: 16px;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s, transform 0.2s;
+            }
+
+                .search-bar input[type="button"]:hover {
+                    background-color: #45a049;
+                    transform: translateY(-2px);
+                }
+
+                .search-bar input[type="button"]:active {
+                    background-color: #3e8e41;
+                    transform: translateY(0);
+                }
+
+        /* Filter Container */
+        .filter-container {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
+        }
+
+            /* Labels */
+            .filter-container label {
+                display: block;
+                margin: 10px 0 5px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            /* Radio Buttons and Dropdown */
+            .filter-container input[type="radio"] {
+                margin-right: 8px;
+            }
+
+            .filter-container select {
+                width: 100%;
+                padding: 8px;
+                margin-top: 5px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+
+            /* Sort Button */
+            .filter-container input[type="submit"] {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                color: #fff;
+                background-color: #007bff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+                .filter-container input[type="submit"]:hover {
+                    background-color: #0056b3;
+                }
+
+            /* Messages */
+            .filter-container .alert {
+                margin-top: 15px;
+                padding: 10px;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+
+            .filter-container .alert-info {
+                background-color: #e7f3ff;
+                color: #3178c6;
+                border: 1px solid #bee3f8;
+            }
+
+            /* Subtext */
+            .filter-container h6 {
+                font-size: 12px;
+                color: #555;
+                margin: 10px 0;
+                font-style: italic;
+            }
+
+        .rowed {
+            display: flex;
+        }
+
+        .error-message {
+            background-color: #fe6868;
+            color: white;
+            border: 2px solid red;
+            font-size: 18px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 8px 8px;
+            margin: 8px 8px;
+        }
+
+        .success-message {
+            background-color: #68fe68;
+            color: darkgreen;
+            border: 2px solid green;
+            font-size: 18px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 8px 8px;
+            margin: 8px 8px;
+        }
+
+        #borrow-btn {
+            background-color: #ffbb00;
+        }
+
+            #borrow-btn:hover {
+                background-color: #DD761C; /* Darker blue on hover */
+            }
+
+        .star {
+            color: darkorange;
+            
+        }
+    </style>
+</head>
+<body>
+    @if (Session["AccountId"] != null)
+    {
+        <nav>
+            <ul>
+                <h1>eBook Store</h1>
+                <li>
+                    @using (Html.BeginForm("MyCart", "Cart", FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="My Cart" />
+                    }
+                </li>
+                <li>
+                    @using (Html.BeginForm("MyWaitlist", "Waitlist", FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="My Waitlist" />
+                    }
+                </li>
+                <li>
+                    @using (Html.BeginForm("MyLibrary", "Account", FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="My Library" />}
+                </li>
+                <li>
+                    @using (Html.BeginForm("Logout", "Account"))
+                    {
+                        <input type="submit" class="nav-btn" value="Log Out" />}
+                </li>
+            </ul>
+        </nav> }
+    else
+    {
+        <nav>
+            <ul>
+                <h1>eBook Store</h1>
+                <li>
+                    @using (Html.BeginForm("MyCart", "Cart", FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="My Cart" />
+                    }
+                </li>
+                <li>
+                    @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="Log In" />}
+                </li>
+                <li>
+                    @using (Html.BeginForm("SignUp", "Account", FormMethod.Post))
+                    {
+                        <input type="submit" class="nav-btn" value="Sign Up" />}
+                </li>
+            </ul>
+        </nav>}
+    @if (TempData["DeniedAccessToLibrary"] != null)
+    {
+        <div class="error-message">@TempData["DeniedAccessToLibrary"]</div>}
+    @if (TempData["ActionError"] != null)
+    {
+        <div class="error-message">@TempData["ActionError"]</div>}
+    @if (TempData["ActionSuccess"] != null)
+    {
+        <div class="success-message">@TempData["ActionSuccess"]</div>}
+    <div class="book-container">
+        <div class="book-item">
+            <div class="book-and-details">
+                <img src="@Model.book.coverImagePath" alt="Book Cover" loading="lazy" />
+
+                <div class="book-details">
+                    <div><h2> @Model.book.title</h2></div>
+                    <div><strong>Author(s):</strong> @(Model.book.authors[0].authorName == "" ? string.Join(", ", Model.book.authors.Skip(1).Select(a => a.authorName)): string.Join(", ", Model.book.authors.Select(a => a.authorName)))</div>
+                    <div><strong>Genre:</strong> @Model.book.genre</div>
+                    <div><strong>Publisher:</strong> @Model.book.publisher</div>
+                    <div>
+                        @if (Model.book.dateSale.HasValue)
+                        {
+                            <strong>Buying Price:</strong><span class="line-through"> @Model.book.priceForBuying</span> @Model.book.priceSaleForBuying
+                            <br />
+                            <strong>Borrowing Price:</strong><span class="line-through"> @Model.book.priceForBorrowing</span> @Model.book.priceSaleForBorrowing
+                            <div><strong>Sale Date:</strong> @Model.book.dateSale.ToString().Replace("00:00:00", "")</div>
+                        }
+                        else
+                        {
+                            <strong>Buying Price:</strong> @Model.book.priceForBuying<br />
+                            <strong>Borrowing Price:</strong> @Model.book.priceForBorrowing
+                        }
+                    </div>
+
+                    <div><strong>Year Published:</strong> @Model.book.yearOfPublishing</div>
+                    <div><strong>Age Limitation:</strong> @Model.book.ageLimitation</div>
+                    <div><strong>In Stock:</strong> @Model.book.quantityInStock</div>
+                    <div><strong>Popularity:</strong> @Model.book.popularity</div>
+                </div>
+            </div>
+            <div class="interaction-buttons">
+                @using (Html.BeginForm("BuyBook", "Account", new { bookId = Model.book.id, isHomePage = false }))
+                {
+                    <input type="submit" name="name" id="buy-btn" value="Buy Now" />
+                }
+                @using (Html.BeginForm("AddBookToCart", "Cart", new { bookId = Model.book.id, isHomePage = false }))
+                {
+                    <input type="submit" name="name" id="cart-btn" value="Add To Cart" />
+                }
+                @if (Model.book.popularity < 7)
+                {
+                    //Books that are not that much popular
+                    using (Html.BeginForm("BorrowBook", "Account", new { bookId = Model.book.id, isHomePage = false }))
+                    {
+                        <input type="submit" name="name" id="borrow-btn" value="Borrow" />
+                    }
+                }
+                @if (Model.book.quantityInStock == 0)
+                {
+                    <input type="button" name="name" value="Add to Waiting List" />
+                }
+
+            </div>
+        </div>
+
+
+    </div>
+    <div class="rating-section">
+        <h3>Add Your Feedback</h3>
+        @using (Html.BeginForm("AddBookFeedback", "Book", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.Hidden("bookFeedback.AccountId", Session["AccountId"])
+            @Html.Hidden("bookFeedback.BookId", Model.book.id)
+            @Html.Hidden("bookFeedback.Created_At", DateTime.Now.ToString("yyyy-MM-dd"))
+
+            <div class="form-group">
+                <label for="rating"><strong>Rating (1 to 5):</strong></label>
+
+                @Html.DropDownListFor(obj => obj.bookFeedback.Rating, new SelectList(new List<int> { 5, 4, 3, 2, 1 })) @Html.ValidationMessageFor(obj => obj.bookFeedback.Rating) <br />
+
+            </div>
+
+            <div class="form-group">
+                @Html.TextAreaFor(model => model.bookFeedback.Comment, new { placeholder = "Enter your feedback...", @class = "fixed-textarea" }) @Html.ValidationMessageFor(obj => obj.bookFeedback.Comment)
+
+            </div>
+
+            <input type="submit" class="btn btn-primary" value="Send Feedback" />
+        }
+        @foreach (BookFeedback bookFeedback in Model.bookFeedbacksList)
+        {
+            <div class="user-rating">
+                <div><strong>Name: </strong>@bookFeedback.Name</div>
+                <div>
+                    <strong>Rating: </strong>
+                    <span style="color:orange">
+                        @(new string('★', bookFeedback.Rating))@(new string('☆', 5 - bookFeedback.Rating))
+                    </span>
+                </div>
+                <div><strong>Comment: </strong>@bookFeedback.Comment</div>
+                <div>@bookFeedback.Created_At.ToString("dd/MM/yyyy")</div>
+            </div>
+        }
+    </div>
+
+    @if (TempData["WaitlistRequest"] != null)
+    {
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var message = '@TempData["WaitlistRequest"]';
+            var userConfirmed = confirm(message);
+
+            if (userConfirmed) {
+                // Redirect to add to waitlist action
+                window.location.href = '@Url.Action("AddToWaitlist", "Waitlist", new { bookId = (int)Session["BookId"] })';
+            }
+        });
+        </script>
+    }
+</body>
+</html>
