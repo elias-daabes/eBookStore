@@ -546,7 +546,7 @@
 
                     <label> Sort By:</label>
                     <div class="rowed">
-                        <input type="radio" name="sortColumn" value="BuyingPrice" id="sortBuyingPrice" />
+                        <input type="radio" name="sortColumn" value="BuyingPrice" id="sortBuyingPrice" checked/>
                         <label for="sortPrice"> Buying price *   </label>
                     </div>
                     <div class="rowed">
@@ -570,13 +570,37 @@
                     <label> Order:</label>
 
                     <div class="rowed">
-                        <input type="radio" name="sortOrder" value="asc" id="orderAsc" />
+                        <input type="radio" name="sortOrder" value="asc" id="orderAsc" checked/>
                         <label for="orderAsc"> Ascending </label>
                     </div>
                     <div class="rowed">
                         <input type="radio" name="sortOrder" value="desc" id="orderDesc" />
                         <label for="orderDesc"> Descending </label><br />
                     </div>
+                    <div>
+                        @{List<string> prices = new List<string> {
+                                "< 5", "5 - 10", "10 - 15",
+                                "15 - 20", "20 - 30", "30+"}; }
+                    </div>
+
+                    <label> Price Type:</label>
+
+                    <div class="rowed">
+                        <input type="radio" name="byPriceType" value="buyingPrice" id="buyingPrice" checked/>
+                        <label for="buyingPrice"> Buying </label>
+                    </div>
+                    <div class="rowed">
+                        <input type="radio" name="byPriceType" value="borrowingPrice" id="borrowingPrice" />
+                        <label for="borrowingPrice"> Borrowing </label><br />
+                    </div>
+                    <label>Price Range: </label>
+                    <select name="priceRange" id="genre">
+                        <option value="">-- Select Price Range --</option>
+                        @foreach (var price in prices)
+                        {
+                            <option value="@price">@price</option>
+                        }
+                    </select><br />
                     <div>
                         @{List<string> genres = new List<string> {
                                 "Classic", "Dystopian", "Fantasy",

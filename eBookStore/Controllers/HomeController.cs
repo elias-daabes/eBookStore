@@ -58,7 +58,7 @@ namespace eBookStore.Controllers
                         string body = $"<p>Dear User,</p>" +
                                         $"<p>We want to inform you that there are 5 days left for borrowing the book <strong>{book.title}</strong>.</p>";
 
-                        _emailService.SendEmailAsync(account.Email, subject, body); //TODO: add email before uncomment this line
+                       // _emailService.SendEmailAsync(account.Email, subject, body); //TODO: add email before uncomment this line
                         UpdateRemindField(book.id, account.Id);                       
                     }
                 }
@@ -406,7 +406,7 @@ namespace eBookStore.Controllers
 
         }
 
-        public ActionResult Filtering(string sortColumn, string sortOrder, string genre)
+        public ActionResult Filtering(string sortColumn, string sortOrder, string genre, string priceRange, string byPriceType)
         {
             List<Book> booksList = getBooksList();
 
@@ -415,6 +415,61 @@ namespace eBookStore.Controllers
             {
                 booksList = booksList.Where(b => b.genre.Equals(genre, StringComparison.OrdinalIgnoreCase)).ToList();
             }
+
+            if (!string.IsNullOrEmpty(priceRange))
+            {
+                if (byPriceType == "buyingPrice")
+                {
+                    switch (priceRange)
+                    {
+                        case "< 5":
+                            booksList = booksList.Where(b => b.priceForBuying < 5).ToList();
+                            break;
+                        case "5 - 10":
+                            booksList = booksList.Where(b => b.priceForBuying < 10 && b.priceForBuying >= 5).ToList();
+                            break;
+                        case "10 - 15":
+                            booksList = booksList.Where(b => b.priceForBuying < 15 && b.priceForBuying >= 10).ToList();
+                            break;
+                        case "15 - 20":
+                            booksList = booksList.Where(b => b.priceForBuying < 20 && b.priceForBuying >= 15).ToList();
+                            break;
+                        case "20 - 30":
+                            booksList = booksList.Where(b => b.priceForBuying < 30 && b.priceForBuying >= 20).ToList();
+                            break;
+                        case "30+":
+                            booksList = booksList.Where(b => b.priceForBuying > 30).ToList();
+                            break;
+
+                    }
+                }
+                else
+                {
+                    switch (priceRange)
+                    {
+                        case "< 5":
+                            booksList = booksList.Where(b => b.priceForBorrowing < 5).ToList();
+                            break;
+                        case "5 - 10":
+                            booksList = booksList.Where(b => b.priceForBorrowing < 10 && b.priceForBorrowing >= 5).ToList();
+                            break;
+                        case "10 - 15":
+                            booksList = booksList.Where(b => b.priceForBorrowing < 15 && b.priceForBorrowing >= 10).ToList();
+                            break;
+                        case "15 - 20":
+                            booksList = booksList.Where(b => b.priceForBorrowing < 20 && b.priceForBorrowing >= 15).ToList();
+                            break;
+                        case "20 - 30":
+                            booksList = booksList.Where(b => b.priceForBorrowing < 30 && b.priceForBorrowing >= 20).ToList();
+                            break;
+                        case "30+":
+                            booksList = booksList.Where(b => b.priceForBorrowing > 30).ToList();
+                            break;
+
+                    }
+                }
+            }
+
 
             // Apply sorting based on selected options
             if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortOrder))
