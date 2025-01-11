@@ -146,7 +146,7 @@
                     <td>
                         @if (Model.BorrowingDates[index] == null) //check date: not null = borrowed book
                         {
-                            using (Html.BeginForm("DeleteBookFromLibrary", "Account", new { bookId = Model.books[index].id, accountId = Model.AccountId }, FormMethod.Post, new { onsubmit = "return confirm('Are you sure you want to delete this book?');" }))
+                            using (Html.BeginForm("DeleteBookFromLibrary", "Account", new { bookId = Model.books[index].id, accountId = Model.AccountId, isBorrow = false }, FormMethod.Post, new { onsubmit = "return confirm('Are you sure you want to delete this book?');" }))
                             {
                                 <input type="submit" class="delete-button" value="Delete Book" />
                             }
