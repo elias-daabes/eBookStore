@@ -158,6 +158,7 @@
     <Compile Include="Controllers\EmailService.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
+    <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Controllers\WaitlistController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -171,6 +172,7 @@
     <Compile Include="Models\Library.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\Notification.cs" />
+    <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\Waitlist.cs" />
     <Compile Include="Models\WebFeedback.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -226,12 +228,14 @@
     <Content Include="Views\Book\ViewBook.cshtml" />
     <Content Include="Views\Cart\MyCart.cshtml" />
     <Content Include="Views\Waitlist\MyWaitlist.cshtml" />
+    <Content Include="Views\Account\PaymentPage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="BookFiles\" />
     <Folder Include="Images\" />
     <Folder Include="Views\Notification\" />
+    <Folder Include="Views\Payment\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

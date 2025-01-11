@@ -422,9 +422,7 @@ namespace eBookStore.Controllers
         }
         public ActionResult Logout()
         {
-            Cart cart = (Cart)Session["Cart"];
             Session.Clear();
-            Session["Cart"] = cart;
             return RedirectToAction("HomePage", "Home");
         }
 
@@ -479,6 +477,126 @@ namespace eBookStore.Controllers
 
             }
         }
+        public ActionResult PaymentPage()
+        {
+            return View(new Payment());
+        }
+
+        [HttpPost]
+        public ActionResult SubmitPayment(Payment payment)
+        {
+            if (!ModelState.IsValid)
+            {
+                sendFailedPaymentCompletion();
+                return View("PaymentPage", payment);
+            }
+            int accountId = (int)Session["accountId"];
+            int bookId;
+            string status = TempData["status"].ToString();
+            switch (status)
+            {
+                case "BorrowingBook":
+                    bookId = (int)TempData["BookIdToAquire"];
+                    DeleteBookFromWaitlist(bookId);
+                    BorrowBookFromStore(bookId);
+                    addBookToLibrary(accountId, bookId, true);
+                    TempData["ActionSuccess"] = "Book '" + getBookByid(bookId).title + "' has been borrowed successfully. Enter the library to view formats.";
+                    sendSuccessfullBorrowingPayment();
+                    break;
+
+                case "BuyingBook":
+                    bookId = (int)TempData["BookIdToAquire"];
+                    BuyBookFromStore(bookId);
+                    addBookToLibrary(accountId, bookId, false);
+                    TempData["ActionSuccess"] = "Book '" + getBookByid(bookId).title + "' has been purchased successfully. Enter the library to view formats.";
+                    sendSuccessfullBuyingPayment();
+                    break;
+
+                case "BuyingCart":
+                    Cart cart = (Cart)Session["Cart"];
+
+                    foreach (Book book in cart.BooksList)
+                    {
+                        AcquireBookFromStore(book.id);
+                        addBookToLibrary(accountId, book.id, false);
+
+                    }
+                    TempData["ActionSuccess"] = "Books have been purchased successfully. Enter the library to view the formats.";
+                    sendSuccessfullCartPayment();
+
+                    break;
+                default:
+                    break;
+            }
+            return RedirectToAction("HomePage", "Home");
+        }
+
+        private void sendSuccessfullCartPayment()
+        {
+            string subject = $"Successfully purchased";
+            string body = $"<p>Dear User,</p>" +
+                            $"<p>Your payment has been completed successfully. You can read the books in your library.\nAmount paid: {(decimal)Session["Amount"]}</p>";
+
+            // _emailService.SendEmailAsync(account.Email, subject, body); //TODO: add email before uncomment this line
+        }
+
+        private void sendSuccessfullBuyingPayment()
+        {
+            int bookId = (int)Session["BookId"];
+            Book book = getBookByid(bookId);
+            string subject = $"Successfully purchased the book '{book.title}' ";
+            string body = $"<p>Dear User,</p>" +
+                            $"<p>Book <strong>{book.title}</strong> has been purchased successfully. You can read it in your library.\nAmount paid: {(decimal)Session["Amount"]}</p>";
+
+            // _emailService.SendEmailAsync(account.Email, subject, body); //TODO: add email before uncomment this line
+        }
+
+        private void sendFailedPaymentCompletion()
+        {
+            string subject = $"Payment Failur";
+            string body = $"<p>Dear User,</p>" +
+                            $"<p>Unfortunatelly, your payment did not complete successfully. please try again.</p>";
+
+            // _emailService.SendEmailAsync(account.Email, subject, body); //TODO: add email before uncomment this line
+        }
+
+        private void sendSuccessfullBorrowingPayment()
+        {
+            int bookId = (int)Session["BookId"];
+            Book book = getBookByid(bookId);
+            string subject = $"Successfully borrowing the book '{book.title}' ";
+            string body = $"<p>Dear User,</p>" +
+                            $"<p>Book <strong>{book.title}</strong> has been borrowed successfully. You can read it in your library.\nAmount paid: {(decimal)Session["Amount"]}</p>";
+
+            // _emailService.SendEmailAsync(account.Email, subject, body); //TODO: add email before uncomment this line
+        }
+
+        private void AcquireBookFromStore(int id)
+        {
+
+            string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string sqlQuery = "UPDATE books SET quantityInStock = quantityInStock - 1 WHERE id = @id";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+
+                    command.Parameters.AddWithValue("@id", id);
+
+                    // Execute query
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        // GET: Payment/PaymentSuccess
+        public ActionResult PaymentSuccess()
+        {
+            // Return a success page or view after the payment is successfully processed
+            return View();
+        }
 
         public ActionResult BorrowBook(int bookId, bool isHomePage)
         {
@@ -508,7 +626,7 @@ namespace eBookStore.Controllers
 
             if (book1.borrowingCopies == 0)
             {
-                TempData["BookId"] = book1.id;
+                Session["BookId"] = book1.id;
                 TempData["WaitlistRequest"] = $"Borrowing copies are not available currently for '{book1.title}' book. {getWaitlistsListByBookId(book1.id).Count} readers are in the waiting list. it could be available at {getNextAvailableDate(book1.id).ToString("dd/MM/yyyy")}. Do you want to be added to wait list?";
                 return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
             }
@@ -517,16 +635,14 @@ namespace eBookStore.Controllers
 
             if (!allowdToBorrow)
             {
-                TempData["BookId"] = book1.id;
+                Session["BookId"] = book1.id;
                 TempData["WaitlistRequest"] = $"Borrowing copies are not available currently for '{book1.title}' book. {getWaitlistsListByBookId(book1.id).Count} readers are in the waiting list. it could be available at {getNextAvailableDate(book1.id).ToString("dd/MM/yyyy")}. Do you want to be added to wait list?";
                 return isHomePage ? RedirectToAction("HomePage", "Home") : RedirectToAction("ViewBook", "Book", new { id = bookId });
             }
-            DeleteBookFromWaitlist(bookId);
-            BorrowBookFromStore(bookId);
-            addBookToLibrary(accountId, bookId, true);
-            TempData["ActionError"] = "complete payment"; //TODO: should be deleted and replace by payment action
-            TempData["ActionSuccess"] = "Book '" + getBookByid(bookId).title + "' has been borrowed successfully. Enter the library to view formats.";
-            return RedirectToAction("HomePage", "Home");
+            TempData["BookIdToAquire"] = bookId;
+            Session["Amount"] = book1.dateSale.HasValue ? book1.priceSaleForBorrowing : book1.priceForBorrowing;
+            TempData["status"] = "BorrowingBook"; 
+            return RedirectToAction("PaymentPage");
 
         }
 
@@ -660,11 +776,12 @@ namespace eBookStore.Controllers
                 TempData["ActionError"] = "Book out of stock.";
                 return isHomePage? RedirectToAction("HomePage", "Home"): RedirectToAction("ViewBook", "Book", new { id = bookId });
             }
-            BuyBookFromStore(bookId);
-            addBookToLibrary(accountId, bookId, false);
-            TempData["ActionError"] = "complete payment"; //TODO: should be deleted and replace by payment action
-            TempData["ActionSuccess"] = "Book '" + getBookByid(bookId).title + "' has been purchased successfully. Enter the library to view formats.";
-            return RedirectToAction("HomePage", "Home");
+            TempData["BookIdToAquire"] = bookId;
+            Session["Amount"] = wantedBook.dateSale.HasValue? wantedBook.priceSaleForBuying : wantedBook.priceForBuying;
+            Session["BookId"] = bookId;
+            TempData["status"] = "BuyingBook";
+            return RedirectToAction("PaymentPage");
+
 
         }
 

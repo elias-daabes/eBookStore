@@ -173,8 +173,8 @@ C:\Users\tahal\source\repos\eBookStore\eBookStore\bin\System.Web.WebPages.Razor.
 C:\Users\tahal\source\repos\eBookStore\eBookStore\bin\Newtonsoft.Json.xml
 C:\Users\tahal\source\repos\eBookStore\eBookStore\bin\Antlr3.Runtime.pdb
 C:\Users\tahal\source\repos\eBookStore\eBookStore\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\tahal\source\repos\eBookStore\eBookStore\obj\Debug\eBookStore.csproj.AssemblyReference.cache
 C:\Users\tahal\source\repos\eBookStore\eBookStore\obj\Debug\eBookStore.csproj.CoreCompileInputs.cache
 C:\Users\tahal\source\repos\eBookStore\eBookStore\obj\Debug\eBookStore.csproj.CopyComplete
 C:\Users\tahal\source\repos\eBookStore\eBookStore\obj\Debug\eBookStore.dll
 C:\Users\tahal\source\repos\eBookStore\eBookStore\obj\Debug\eBookStore.pdb
+C:\Users\tahal\source\repos\eBookStore\eBookStore\obj\Debug\eBookStore.csproj.AssemblyReference.cache

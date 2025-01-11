@@ -251,19 +251,19 @@ namespace eBookStore.Controllers
                 TempData["ActionError"] = "Please log in to complete this purchasing process.";
                 return RedirectToAction("MyCart", "Cart");
             }
+
             Cart cart = (Cart)Session["Cart"];
             int accountId = (int)Session["accountId"];
-
+            decimal sumAmount = 0;
             foreach (Book book in cart.BooksList)
             {
-                AcquireBookFromStore(book.id);
-                addBookToLibrary(accountId, book.id, false);
-
+                sumAmount += (book.dateSale.HasValue ? (decimal)book.priceSaleForBuying : book.priceForBuying);
             }
-            Session["Cart"] = null;
-            TempData["ActionError"] = "complete payment"; //TODO: should be deleted and replace by payment action
-            TempData["ActionSuccess"] = "Books has been purchased successfully. Enter the library to view formats.";
-            return RedirectToAction("HomePage", "Home");
+
+            Session["Amount"] = sumAmount;
+            TempData["status"] = "BuyingCart";
+            return RedirectToAction("PaymentPage", "Account");
+
 
         }
 

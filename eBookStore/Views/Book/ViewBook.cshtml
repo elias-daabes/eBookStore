@@ -560,7 +560,7 @@
 
             if (userConfirmed) {
                 // Redirect to add to waitlist action
-                window.location.href = '@Url.Action("AddToWaitlist", "Waitlist", new { bookId = (int)TempData["BookId"] })';
+                window.location.href = '@Url.Action("AddToWaitlist", "Waitlist", new { bookId = (int)Session["BookId"] })';
             }
         });
         </script>
