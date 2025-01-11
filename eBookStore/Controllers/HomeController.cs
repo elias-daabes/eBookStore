@@ -406,7 +406,7 @@ namespace eBookStore.Controllers
 
         }
 
-        public ActionResult Filtering(string sortColumn, string sortOrder, string genre, string priceRange, string byPriceType)
+        public ActionResult Filtering(string sortColumn, string sortOrder, string genre, string priceRange, string byPriceType, bool? onlySalePrices)
         {
             List<Book> booksList = getBooksList();
 
@@ -471,6 +471,7 @@ namespace eBookStore.Controllers
             }
 
 
+
             // Apply sorting based on selected options
             if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortOrder))
             {
@@ -511,6 +512,10 @@ namespace eBookStore.Controllers
             else
             {
                 ViewBag.Message = "No filtering or sorting options were chosen; displaying default order.";
+            }
+            if (onlySalePrices.HasValue && onlySalePrices.Value)
+            {
+                booksList = booksList.Where(b => b.dateSale > DateTime.Today).ToList();
             }
 
             HomePageViewModel homePageViewModel = new HomePageViewModel { 
