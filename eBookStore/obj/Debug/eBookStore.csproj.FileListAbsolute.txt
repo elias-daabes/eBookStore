@@ -178,3 +178,26 @@ C:\Users\tahal\source\repos\eBookStore\eBookStore\obj\Debug\eBookStore.csproj.Co
 C:\Users\tahal\source\repos\eBookStore\eBookStore\obj\Debug\eBookStore.dll
 C:\Users\tahal\source\repos\eBookStore\eBookStore\obj\Debug\eBookStore.pdb
 C:\Users\tahal\source\repos\eBookStore\eBookStore\obj\Debug\eBookStore.csproj.AssemblyReference.cache
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\BouncyCastle.Cryptography.dll
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\MailKit.dll
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\MimeKit.dll
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.Buffers.dll
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.Formats.Asn1.dll
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.Memory.dll
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.Numerics.Vectors.dll
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.Runtime.CompilerServices.Unsafe.dll
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.Threading.Tasks.Extensions.dll
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.ValueTuple.dll
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\BouncyCastle.Cryptography.xml
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\MailKit.pdb
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\MailKit.xml
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\MailKit.dll.config
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\MimeKit.pdb
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\MimeKit.xml
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.Buffers.xml
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.Formats.Asn1.xml
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.Memory.xml
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.Numerics.Vectors.xml
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.Runtime.CompilerServices.Unsafe.xml
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.Threading.Tasks.Extensions.xml
+D:\College Projects\MVC Project\eBookStore\eBookStore\bin\System.ValueTuple.xml

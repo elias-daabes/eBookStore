@@ -14,8 +14,12 @@ namespace eBookStore.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly EmailService _emailService;
         private readonly string connectionString = ConfigurationManager.ConnectionStrings["defaultConnectionString"].ConnectionString;
-
+        public AccountController()
+        {
+            _emailService = new EmailService();
+        }
         // GET: Account
         public ActionResult Index()
         {
@@ -335,6 +339,7 @@ namespace eBookStore.Controllers
                     Session["AccountId"] = account.Id;
                     Session["FirstName"] = account.FirstName;
                     Session["LastName"] = account.LastName;
+                    Session["Email"] = account.Email;
                     return RedirectToAction("HomePage", "Home");
                 }
                 else
@@ -537,7 +542,7 @@ namespace eBookStore.Controllers
             string body = $"<p>Dear User,</p>" +
                             $"<p>Your payment has been completed successfully. You can read the books in your library.\nAmount paid: {(decimal)Session["Amount"]}</p>";
 
-            // _emailService.SendEmailAsync(account.Email, subject, body); //TODO: add email before uncomment this line
+            _emailService.SendEmailAsync((string)Session["Email"], subject, body); 
         }
 
         private void sendSuccessfullBuyingPayment()
@@ -548,7 +553,7 @@ namespace eBookStore.Controllers
             string body = $"<p>Dear User,</p>" +
                             $"<p>Book <strong>{book.title}</strong> has been purchased successfully. You can read it in your library.\nAmount paid: {(decimal)Session["Amount"]}</p>";
 
-            // _emailService.SendEmailAsync(account.Email, subject, body); //TODO: add email before uncomment this line
+            _emailService.SendEmailAsync((string)Session["Email"], subject, body); 
         }
 
         private void sendFailedPaymentCompletion()
@@ -557,7 +562,7 @@ namespace eBookStore.Controllers
             string body = $"<p>Dear User,</p>" +
                             $"<p>Unfortunatelly, your payment did not complete successfully. please try again.</p>";
 
-            // _emailService.SendEmailAsync(account.Email, subject, body); //TODO: add email before uncomment this line
+            _emailService.SendEmailAsync((string)Session["Email"], subject, body);
         }
 
         private void sendSuccessfullBorrowingPayment()
@@ -568,7 +573,7 @@ namespace eBookStore.Controllers
             string body = $"<p>Dear User,</p>" +
                             $"<p>Book <strong>{book.title}</strong> has been borrowed successfully. You can read it in your library.\nAmount paid: {(decimal)Session["Amount"]}</p>";
 
-            // _emailService.SendEmailAsync(account.Email, subject, body); //TODO: add email before uncomment this line
+            _emailService.SendEmailAsync((string)Session["Email"], subject, body); 
         }
 
         private void AcquireBookFromStore(int id)

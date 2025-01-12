@@ -59,7 +59,7 @@ namespace eBookStore.Controllers
                         string body = $"<p>Dear User,</p>" +
                                         $"<p>We want to inform you that there are 5 days left for borrowing the book <strong>{book.title}</strong>.</p>";
 
-                       // _emailService.SendEmailAsync(account.Email, subject, body); //TODO: add email before uncomment this line
+                       _emailService.SendEmailAsync(account.Email, subject, body);
                         UpdateRemindField(book.id, account.Id);                       
                     }
                 }
@@ -96,7 +96,7 @@ namespace eBookStore.Controllers
             string body = $"<p>Dear User,</p>" +
                           $"<p>We want to inform you that the book <strong>{title}</strong> is now available for borrowing in our system.</p>";
 
-            //_emailService.SendEmailAsync(email, subject, body); //TODO: add email before uncomment this line
+            _emailService.SendEmailAsync(email, subject, body);
         }
 
         private List<Waitlist> getWaitlistsListByBookId(int bookId)
